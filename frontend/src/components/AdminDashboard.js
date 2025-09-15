@@ -529,8 +529,7 @@ const StaffManager = ({ token, onRefresh }) => {
 
   const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title }) => {
     const handleFieldChange = (field, value) => {
-      const updatedData = { ...staffData, [field]: value };
-      onChange(updatedData);
+      onChange({ ...staffData, [field]: value });
     };
 
     return (
