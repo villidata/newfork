@@ -219,14 +219,15 @@ async def register_user(user: UserCreate):
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    # Check if this is the first user (make them admin)
+    # Check if this is the first user or admin email (make them admin)
     user_count = await db.users.count_documents({})
+    admin_emails = ["admin@frisorlafata.dk", "admin2@frisorlafata.dk"]
     
     # Create user
     hashed_password = get_password_hash(user.password)
     user_dict = user.dict()
     user_dict.pop('password')
-    if user_count == 0:  # First user becomes admin
+    if user_count == 0 or user.email in admin_emails:  # First user or admin email becomes admin
         user_dict['is_admin'] = True
     user_obj = User(**user_dict)
     
