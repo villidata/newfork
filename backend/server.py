@@ -583,7 +583,55 @@ async def execute_paypal_payment(payment_id: str, payer_id: str):
         logging.error(f"PayPal payment execution failed: {e}")
         raise HTTPException(status_code=500, detail="Payment execution failed")
 
-# Initialize default data
+# Admin management route
+@api_router.post("/admin/create-admin")
+async def create_admin_user():
+    """Create or update admin user - for initial setup only"""
+    admin_email = "admin@frisorlafata.dk"
+    admin_password = "admin123"
+    
+    # Check if admin already exists
+    existing_admin = await db.users.find_one({"email": admin_email})
+    
+    if existing_admin:
+        # Update existing user to admin
+        await db.users.update_one(
+            {"email": admin_email},
+            {"$set": {"is_admin": True}}
+        )
+        return {"message": f"Updated {admin_email} to admin status"}
+    else:
+        # Create new admin user
+        hashed_password = get_password_hash(admin_password)
+        admin_user = {
+            "id": str(uuid.uuid4()),
+            "name": "Admin LaFata",
+            "email": admin_email,
+            "phone": "+45 12345678",
+            "is_admin": True,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.users.insert_one(admin_user)
+        await db.user_passwords.insert_one({
+            "user_id": admin_user["id"], 
+            "password": hashed_password
+        })
+        
+        return {"message": f"Created admin user: {admin_email}"}
+
+@api_router.post("/admin/make-admin/{user_email}")
+async def make_user_admin(user_email: str):
+    """Make any existing user an admin - for setup purposes"""
+    result = await db.users.update_one(
+        {"email": user_email},
+        {"$set": {"is_admin": True}}
+    )
+    
+    if result.modified_count > 0:
+        return {"message": f"Successfully made {user_email} an admin"}
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
 @api_router.post("/admin/init-data")
 async def initialize_default_data():
     """Initialize default staff, services, and email templates"""
