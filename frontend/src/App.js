@@ -263,9 +263,15 @@ const Home = () => {
               <h2 className="text-2xl font-bold text-gold font-serif">Frisor LaFata</h2>
             </div>
             <p className="text-gray-300 mb-4">Klassisk barbering siden 2010</p>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm mb-2">
               © 2024 Frisor LaFata. Alle rettigheder forbeholdes.
             </p>
+            <a 
+              href="/admin" 
+              className="text-xs text-gray-500 hover:text-gold transition-colors"
+            >
+              Admin Login
+            </a>
           </div>
         </div>
       </footer>
