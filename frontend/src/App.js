@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
@@ -7,11 +7,14 @@ import { Card, CardContent } from "./components/ui/card";
 import { Badge } from "./components/ui/badge";
 import { Separator } from "./components/ui/separator";
 import { Clock, MapPin, Phone, Mail, Scissors, Users, Star } from "lucide-react";
+import BookingSystem from "./components/BookingSystem";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const Home = () => {
+  const [showBooking, setShowBooking] = useState(false);
+
   const helloWorldApi = async () => {
     try {
       const response = await axios.get(`${API}/`);
@@ -56,7 +59,10 @@ const Home = () => {
                 <a href="#services" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Tjenester</a>
                 <a href="#staff" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Frisører</a>
                 <a href="#contact" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Kontakt</a>
-                <Button className="bg-gold text-black hover:bg-gold/90 font-semibold">
+                <Button 
+                  className="bg-gold text-black hover:bg-gold/90 font-semibold"
+                  onClick={() => setShowBooking(true)}
+                >
                   Book tid
                 </Button>
               </div>
@@ -91,7 +97,11 @@ const Home = () => {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="bg-gold text-black hover:bg-gold/90 text-lg px-8 py-3 font-semibold">
+            <Button 
+              size="lg" 
+              className="bg-gold text-black hover:bg-gold/90 text-lg px-8 py-3 font-semibold"
+              onClick={() => setShowBooking(true)}
+            >
               Book din tid nu
             </Button>
             <Button variant="outline" size="lg" className="border-gold text-gold hover:bg-gold hover:text-black text-lg px-8 py-3">
@@ -227,7 +237,11 @@ const Home = () => {
             
             <div className="bg-black/50 border border-gold/20 rounded-lg p-8">
               <h3 className="text-2xl font-semibold text-gold mb-6">Book din tid</h3>
-              <Button size="lg" className="w-full bg-gold text-black hover:bg-gold/90 text-lg py-3 font-semibold">
+              <Button 
+                size="lg" 
+                className="w-full bg-gold text-black hover:bg-gold/90 text-lg py-3 font-semibold"
+                onClick={() => setShowBooking(true)}
+              >
                 Gå til booking system
               </Button>
               <Separator className="my-6 bg-gold/20" />
@@ -254,6 +268,10 @@ const Home = () => {
           </div>
         </div>
       </footer>
+
+      {showBooking && (
+        <BookingSystem onClose={() => setShowBooking(false)} />
+      )}
     </div>
   );
 };
