@@ -173,11 +173,22 @@ const BookingSystem = ({ onClose }) => {
       const response = await axios.post(`${API}/bookings`, bookingData);
       
       if (paymentMethod === 'paypal') {
-        // Redirect to PayPal (placeholder)
-        const paypalResponse = await axios.post(`${API}/payments/paypal/create`, {
-          booking_id: response.data.id
+        // Create PayPal payment
+        const paypalResponse = await axios.post(`${API}/payments/paypal/create`, null, {
+          params: {
+            booking_id: response.data.id,
+            amount: getTotalPrice()
+          }
         });
-        console.log('PayPal payment created:', paypalResponse.data);
+        
+        if (paypalResponse.data.approval_url && !paypalResponse.data.error) {
+          // Redirect to PayPal for payment
+          window.location.href = paypalResponse.data.approval_url;
+          return; // Don't show success message yet
+        } else {
+          console.log('PayPal demo mode:', paypalResponse.data);
+          // Continue with success flow for demo mode
+        }
       }
 
       setBookingConfirmed(true);
