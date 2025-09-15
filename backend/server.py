@@ -338,9 +338,9 @@ async def get_bookings(current_user: User = Depends(get_current_user)):
     return [Booking(**parse_from_mongo(booking)) for booking in bookings]
 
 @api_router.get("/bookings/available-slots")
-async def get_available_slots(staff_id: str, date: str):
+async def get_available_slots(staff_id: str, date_param: str):
     """Get available time slots for a specific staff member and date"""
-    booking_date = datetime.fromisoformat(date).date()
+    booking_date = datetime.fromisoformat(date_param).date()
     day_name = booking_date.strftime('%A').lower()
     
     # Check if staff works on this day
