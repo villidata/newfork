@@ -1,34 +1,226 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+html {
+  scroll-behavior: smooth;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #000000;
+  color: #ffffff;
+  line-height: 1.6;
 }
 
-.App-link {
-    color: #61dafb;
+.font-serif {
+  font-family: 'Playfair Display', serif;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+/* Custom gold color */
+.text-gold {
+  color: #D4AF37;
+}
+
+.bg-gold {
+  background-color: #D4AF37;
+}
+
+.border-gold {
+  border-color: #D4AF37;
+}
+
+.hover\:bg-gold:hover {
+  background-color: #D4AF37;
+}
+
+.hover\:text-gold:hover {
+  color: #D4AF37;
+}
+
+/* Custom gold variants */
+.text-gold\/80 {
+  color: rgba(212, 175, 55, 0.8);
+}
+
+.bg-gold\/90 {
+  background-color: rgba(212, 175, 55, 0.9);
+}
+
+.bg-gold\/10 {
+  background-color: rgba(212, 175, 55, 0.1);
+}
+
+.border-gold\/20 {
+  border-color: rgba(212, 175, 55, 0.2);
+}
+
+.border-gold\/50 {
+  border-color: rgba(212, 175, 55, 0.5);
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+.transition-colors {
+  transition: color 0.3s ease;
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+/* Backdrop blur for navigation */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.8);
+}
+
+/* Navigation hover effects */
+nav a {
+  position: relative;
+}
+
+nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #D4AF37;
+  transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+/* Button hover animations */
+button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+}
+
+/* Card hover effects */
+.hover\:transform:hover {
+  transform: translateY(-5px);
+}
+
+.hover\:scale-105:hover {
+  transform: scale(1.05);
+}
+
+/* Image overlay effects */
+.image-overlay {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(212,175,55,0.1) 100%);
+  z-index: 1;
+}
+
+/* Text shadow for better readability */
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Section spacing */
+section {
+  position: relative;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .text-5xl {
+    font-size: 2.5rem;
+  }
+  
+  .text-7xl {
+    font-size: 3.5rem;
+  }
+  
+  nav .hidden {
+    display: none;
+  }
+}
+
+/* Focus states for accessibility */
+button:focus,
+a:focus {
+  outline: 2px solid #D4AF37;
+  outline-offset: 2px;
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Responsive typography */
+@media (min-width: 1024px) {
+  .responsive-text {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .text-gold {
+    color: #FFD700;
+  }
+  
+  .bg-gold {
+    background-color: #FFD700;
+  }
 }
