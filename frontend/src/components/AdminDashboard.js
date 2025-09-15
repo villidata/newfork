@@ -363,7 +363,7 @@ const ServiceManager = ({ token, onRefresh }) => {
               <div>
                 <Label className="text-gold">Category</Label>
                 <Select 
-                  value={editingService.category} 
+                  value={editingService.category || 'general'} 
                   onValueChange={(value) => setEditingService(prev => ({ ...prev, category: value }))}
                 >
                   <SelectTrigger className="bg-black/50 border-gold/30 text-white">
@@ -382,7 +382,7 @@ const ServiceManager = ({ token, onRefresh }) => {
               <div>
                 <Label className="text-gold">Description</Label>
                 <Textarea
-                  value={editingService.description}
+                  value={editingService.description || ''}
                   onChange={(e) => setEditingService(prev => ({ ...prev, description: e.target.value }))}
                   className="bg-black/50 border-gold/30 text-white"
                 />
