@@ -181,6 +181,14 @@ const ServiceManager = ({ token, onRefresh }) => {
     }
   };
 
+  const handleNewServiceChange = (field, value) => {
+    setNewService(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleEditServiceChange = (field, value) => {
+    setEditingService(prev => ({ ...prev, [field]: value }));
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
