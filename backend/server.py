@@ -360,7 +360,7 @@ async def get_available_slots(staff_id: str, date_param: str):
     }).to_list(length=None)
     
     # Generate time slots (30-minute intervals)
-    from datetime import datetime, timedelta
+    from datetime import timedelta
     start_time = datetime.strptime(business_hours["start"], "%H:%M").time()
     end_time = datetime.strptime(business_hours["end"], "%H:%M").time()
     
