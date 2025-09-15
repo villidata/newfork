@@ -80,7 +80,7 @@ const BookingSystem = ({ onClose }) => {
     try {
       setLoading(true);
       const dateStr = selectedDate.toISOString().split('T')[0];
-      const response = await axios.get(`${API}/bookings/available-slots?staff_id=${selectedStaff}&date=${dateStr}`);
+      const response = await axios.get(`${API}/bookings/available-slots?staff_id=${selectedStaff}&date_param=${dateStr}`);
       setAvailableSlots(response.data.available_slots);
       setSelectedSlot('');
     } catch (error) {
