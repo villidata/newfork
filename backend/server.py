@@ -483,10 +483,8 @@ async def create_paypal_payment(booking_id: str):
 
 # Initialize default data
 @api_router.post("/admin/init-data")
-async def initialize_default_data(current_user: User = Depends(get_current_user)):
+async def initialize_default_data():
     """Initialize default staff, services, and email templates"""
-    if not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="Admin access required")
     
     # Default staff
     default_staff = [
