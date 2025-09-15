@@ -508,6 +508,14 @@ const StaffManager = ({ token, onRefresh }) => {
     }
   };
 
+  const handleNewStaffChange = (field, value) => {
+    setNewStaff(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleEditStaffChange = (field, value) => {
+    setEditingStaff(prev => ({ ...prev, [field]: value }));
+  };
+
   const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
   const dayLabels = {
     monday: 'Monday',
