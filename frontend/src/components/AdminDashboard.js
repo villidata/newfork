@@ -212,7 +212,7 @@ const ServiceManager = ({ token, onRefresh }) => {
                   <Input
                     type="number"
                     value={newService.duration_minutes}
-                    onChange={(e) => setNewService(prev => ({ ...prev, duration_minutes: parseInt(e.target.value) }))}
+                    onChange={(e) => setNewService(prev => ({ ...prev, duration_minutes: parseInt(e.target.value) || 0 }))}
                     className="bg-black/50 border-gold/30 text-white"
                   />
                 </div>
@@ -221,7 +221,7 @@ const ServiceManager = ({ token, onRefresh }) => {
                   <Input
                     type="number"
                     value={newService.price}
-                    onChange={(e) => setNewService(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
+                    onChange={(e) => setNewService(prev => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
                     className="bg-black/50 border-gold/30 text-white"
                   />
                 </div>
