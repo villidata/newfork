@@ -113,7 +113,7 @@ class FrisorLaFataAPITester:
 
     def test_available_slots(self, staff_id, test_date):
         """Test getting available slots"""
-        endpoint = f"bookings/available-slots?staff_id={staff_id}&date={test_date}"
+        endpoint = f"bookings/available-slots?staff_id={staff_id}&date_param={test_date}"
         return self.run_test("Get Available Slots", "GET", endpoint, 200)
 
     def test_create_booking(self, staff_id, service_ids, booking_date, booking_time):
