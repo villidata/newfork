@@ -335,7 +335,7 @@ const ServiceManager = ({ token, onRefresh }) => {
               <div>
                 <Label className="text-gold">Service Name</Label>
                 <Input
-                  value={editingService.name}
+                  value={editingService.name || ''}
                   onChange={(e) => setEditingService(prev => ({ ...prev, name: e.target.value }))}
                   className="bg-black/50 border-gold/30 text-white"
                 />
@@ -345,8 +345,8 @@ const ServiceManager = ({ token, onRefresh }) => {
                   <Label className="text-gold">Duration (minutes)</Label>
                   <Input
                     type="number"
-                    value={editingService.duration_minutes}
-                    onChange={(e) => setEditingService(prev => ({ ...prev, duration_minutes: parseInt(e.target.value) }))}
+                    value={editingService.duration_minutes || 0}
+                    onChange={(e) => setEditingService(prev => ({ ...prev, duration_minutes: parseInt(e.target.value) || 0 }))}
                     className="bg-black/50 border-gold/30 text-white"
                   />
                 </div>
@@ -354,8 +354,8 @@ const ServiceManager = ({ token, onRefresh }) => {
                   <Label className="text-gold">Price (DKK)</Label>
                   <Input
                     type="number"
-                    value={editingService.price}
-                    onChange={(e) => setEditingService(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
+                    value={editingService.price || 0}
+                    onChange={(e) => setEditingService(prev => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
                     className="bg-black/50 border-gold/30 text-white"
                   />
                 </div>
