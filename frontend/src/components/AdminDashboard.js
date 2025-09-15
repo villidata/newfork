@@ -547,81 +547,82 @@ const StaffManager = ({ token, onRefresh }) => {
             placeholder="e.g., 5 years"
           />
         </div>
-      
-      <div>
-        <Label className="text-gold mb-3 block">Working Hours</Label>
-        <div className="space-y-3 max-h-60 overflow-y-auto">
-          {days.map(day => (
-            <div key={day} className="flex items-center space-x-3 p-2 rounded border border-gold/20">
-              <Checkbox
-                checked={staffData.available_hours?.[day]?.enabled ?? false}
-                onCheckedChange={(checked) => onChange({
-                  ...staffData,
-                  available_hours: {
-                    ...staffData.available_hours,
-                    [day]: { 
-                      ...staffData.available_hours?.[day], 
-                      enabled: checked,
-                      start: staffData.available_hours?.[day]?.start || '09:00',
-                      end: staffData.available_hours?.[day]?.end || '18:00'
-                    }
-                  }
-                })}
-                className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
-              />
-              <div className="w-20 text-gold text-sm">{dayLabels[day]}</div>
-              {staffData.available_hours?.[day]?.enabled && (
-                <>
-                  <Input
-                    type="time"
-                    value={staffData.available_hours[day].start}
-                    onChange={(e) => onChange({
-                      ...staffData,
-                      available_hours: {
-                        ...staffData.available_hours,
-                        [day]: { ...staffData.available_hours[day], start: e.target.value }
+        
+        <div>
+          <Label className="text-gold mb-3 block">Working Hours</Label>
+          <div className="space-y-3 max-h-60 overflow-y-auto">
+            {days.map(day => (
+              <div key={day} className="flex items-center space-x-3 p-2 rounded border border-gold/20">
+                <Checkbox
+                  checked={staffData.available_hours?.[day]?.enabled ?? false}
+                  onCheckedChange={(checked) => {
+                    const updatedHours = {
+                      ...staffData.available_hours,
+                      [day]: { 
+                        ...staffData.available_hours?.[day], 
+                        enabled: checked,
+                        start: staffData.available_hours?.[day]?.start || '09:00',
+                        end: staffData.available_hours?.[day]?.end || '18:00'
                       }
-                    })}
-                    className="w-24 bg-black/50 border-gold/30 text-white text-sm"
-                  />
-                  <span className="text-gold">to</span>
-                  <Input
-                    type="time"
-                    value={staffData.available_hours[day].end}
-                    onChange={(e) => onChange({
-                      ...staffData,
-                      available_hours: {
-                        ...staffData.available_hours,
-                        [day]: { ...staffData.available_hours[day], end: e.target.value }
-                      }
-                    })}
-                    className="w-24 bg-black/50 border-gold/30 text-white text-sm"
-                  />
-                </>
-              )}
-            </div>
-          ))}
+                    };
+                    handleFieldChange('available_hours', updatedHours);
+                  }}
+                  className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                />
+                <div className="w-20 text-gold text-sm">{dayLabels[day]}</div>
+                {staffData.available_hours?.[day]?.enabled && (
+                  <>
+                    <Input
+                      type="time"
+                      value={staffData.available_hours[day].start}
+                      onChange={(e) => {
+                        const updatedHours = {
+                          ...staffData.available_hours,
+                          [day]: { ...staffData.available_hours[day], start: e.target.value }
+                        };
+                        handleFieldChange('available_hours', updatedHours);
+                      }}
+                      className="w-24 bg-black/50 border-gold/30 text-white text-sm"
+                    />
+                    <span className="text-gold">to</span>
+                    <Input
+                      type="time"
+                      value={staffData.available_hours[day].end}
+                      onChange={(e) => {
+                        const updatedHours = {
+                          ...staffData.available_hours,
+                          [day]: { ...staffData.available_hours[day], end: e.target.value }
+                        };
+                        handleFieldChange('available_hours', updatedHours);
+                      }}
+                      className="w-24 bg-black/50 border-gold/30 text-white text-sm"
+                    />
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <div className="flex justify-end space-x-2">
+          <Button 
+            variant="outline" 
+            onClick={onCancel}
+            className="border-gold/50 text-gold hover:bg-gold hover:text-black"
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={onSubmit}
+            disabled={loading}
+            className="bg-gold text-black hover:bg-gold/90"
+          >
+            {loading ? 'Saving...' : 'Save'}
+          </Button>
         </div>
       </div>
-      
-      <div className="flex justify-end space-x-2">
-        <Button 
-          variant="outline" 
-          onClick={onCancel}
-          className="border-gold/50 text-gold hover:bg-gold hover:text-black"
-        >
-          Cancel
-        </Button>
-        <Button 
-          onClick={onSubmit}
-          disabled={loading}
-          className="bg-gold text-black hover:bg-gold/90"
-        >
-          {loading ? 'Saving...' : 'Save'}
-        </Button>
-      </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="space-y-6">
