@@ -140,7 +140,7 @@ class Staff(BaseModel):
     name: str
     specialty: str
     experience: str
-    available_hours: dict = Field(default_factory=dict)  # {"monday": ["09:00", "17:00"]}
+    available_hours: dict = Field(default_factory=dict)  # {"monday": {"start": "09:00", "end": "17:00", "enabled": true}}
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class StaffCreate(BaseModel):
@@ -148,6 +148,12 @@ class StaffCreate(BaseModel):
     specialty: str
     experience: str
     available_hours: dict = Field(default_factory=dict)
+
+class StaffUpdate(BaseModel):
+    name: Optional[str] = None
+    specialty: Optional[str] = None
+    experience: Optional[str] = None
+    available_hours: Optional[dict] = None
 
 class Service(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -164,6 +170,13 @@ class ServiceCreate(BaseModel):
     price: float
     description: str = ""
     category: str = "general"
+
+class ServiceUpdate(BaseModel):
+    name: Optional[str] = None
+    duration_minutes: Optional[int] = None
+    price: Optional[float] = None
+    description: Optional[str] = None
+    category: Optional[str] = None
 
 class Booking(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -188,6 +201,11 @@ class BookingCreate(BaseModel):
     booking_time: time
     payment_method: str = "cash"
     notes: str = ""
+
+class BookingUpdate(BaseModel):
+    status: Optional[str] = None
+    payment_status: Optional[str] = None
+    notes: Optional[str] = None
 
 class EmailTemplate(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -285,6 +303,33 @@ async def get_staff():
     staff_list = await db.staff.find().to_list(length=None)
     return [Staff(**parse_from_mongo(staff)) for staff in staff_list]
 
+@api_router.put("/staff/{staff_id}", response_model=Staff)
+async def update_staff(staff_id: str, staff_update: StaffUpdate, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    update_data = {k: v for k, v in staff_update.dict().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    result = await db.staff.update_one({"id": staff_id}, {"$set": update_data})
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Staff member not found")
+    
+    updated_staff = await db.staff.find_one({"id": staff_id})
+    return Staff(**parse_from_mongo(updated_staff))
+
+@api_router.delete("/staff/{staff_id}")
+async def delete_staff(staff_id: str, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    result = await db.staff.delete_one({"id": staff_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Staff member not found")
+    
+    return {"message": "Staff member deleted successfully"}
+
 # Service routes
 @api_router.post("/services", response_model=Service)
 async def create_service(service: ServiceCreate, current_user: User = Depends(get_current_user)):
@@ -299,6 +344,33 @@ async def create_service(service: ServiceCreate, current_user: User = Depends(ge
 async def get_services():
     services = await db.services.find().to_list(length=None)
     return [Service(**parse_from_mongo(service)) for service in services]
+
+@api_router.put("/services/{service_id}", response_model=Service)
+async def update_service(service_id: str, service_update: ServiceUpdate, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    update_data = {k: v for k, v in service_update.dict().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    result = await db.services.update_one({"id": service_id}, {"$set": update_data})
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    updated_service = await db.services.find_one({"id": service_id})
+    return Service(**parse_from_mongo(updated_service))
+
+@api_router.delete("/services/{service_id}")
+async def delete_service(service_id: str, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    result = await db.services.delete_one({"id": service_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    return {"message": "Service deleted successfully"}
 
 # Booking routes
 @api_router.post("/bookings", response_model=Booking)
@@ -345,6 +417,33 @@ async def get_bookings(current_user: User = Depends(get_current_user)):
     
     return [Booking(**parse_from_mongo(booking)) for booking in bookings]
 
+@api_router.put("/bookings/{booking_id}", response_model=Booking)
+async def update_booking(booking_id: str, booking_update: BookingUpdate, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    update_data = {k: v for k, v in booking_update.dict().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    result = await db.bookings.update_one({"id": booking_id}, {"$set": update_data})
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    
+    updated_booking = await db.bookings.find_one({"id": booking_id})
+    return Booking(**parse_from_mongo(updated_booking))
+
+@api_router.delete("/bookings/{booking_id}")
+async def delete_booking(booking_id: str, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    result = await db.bookings.delete_one({"id": booking_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    
+    return {"message": "Booking deleted successfully"}
+
 @api_router.get("/bookings/available-slots")
 async def get_available_slots(staff_id: str, date_param: str):
     """Get available time slots for a specific staff member and date"""
@@ -356,7 +455,13 @@ async def get_available_slots(staff_id: str, date_param: str):
     if not staff_member:
         raise HTTPException(status_code=404, detail="Staff member not found")
     
-    business_hours = BUSINESS_HOURS.get(day_name)
+    # Get staff available hours or use business hours
+    staff_hours = staff_member.get("available_hours", {}).get(day_name)
+    if staff_hours and staff_hours.get("enabled", False):
+        business_hours = {"start": staff_hours["start"], "end": staff_hours["end"]}
+    else:
+        business_hours = BUSINESS_HOURS.get(day_name)
+    
     if not business_hours or not business_hours["start"]:
         return {"available_slots": []}
     
@@ -396,87 +501,6 @@ async def get_available_slots(staff_id: str, date_param: str):
         current += timedelta(minutes=30)
     
     return {"available_slots": slots}
-
-# Email template routes
-@api_router.post("/email-templates", response_model=EmailTemplate)
-async def create_email_template(template: EmailTemplateCreate, current_user: User = Depends(get_current_user)):
-    if not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="Admin access required")
-    
-    template_obj = EmailTemplate(**template.dict())
-    await db.email_templates.insert_one(prepare_for_mongo(template_obj.dict()))
-    return template_obj
-
-@api_router.get("/email-templates", response_model=List[EmailTemplate])
-async def get_email_templates(current_user: User = Depends(get_current_user)):
-    if not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="Admin access required")
-    
-    templates = await db.email_templates.find().to_list(length=None)
-    return [EmailTemplate(**parse_from_mongo(template)) for template in templates]
-
-# Email sending function
-async def send_booking_confirmation(booking: Booking):
-    """Send booking confirmation email"""
-    if not EMAIL_CONFIG['email'] or not EMAIL_CONFIG['password']:
-        return  # Email not configured
-    
-    try:
-        # Get customer info
-        customer = await db.users.find_one({"id": booking.customer_id})
-        staff_member = await db.staff.find_one({"id": booking.staff_id})
-        
-        if not customer or not staff_member:
-            return
-        
-        # Get email template
-        template = await db.email_templates.find_one({"name": "booking_confirmation", "language": "da"})
-        
-        if template:
-            subject = template["subject"]
-            content = template["content"]
-        else:
-            # Default template
-            subject = "Booking bekræftelse - Frisor LaFata"
-            content = """
-            Hej {customer_name},
-            
-            Din tid er blevet booket hos Frisor LaFata.
-            
-            Dato: {booking_date}
-            Tid: {booking_time}
-            Frisør: {staff_name}
-            
-            Vi ser frem til at se dig!
-            
-            Med venlig hilsen,
-            Frisor LaFata
-            """
-        
-        # Replace placeholders
-        content = content.format(
-            customer_name=customer["name"],
-            booking_date=booking.booking_date,
-            booking_time=booking.booking_time,
-            staff_name=staff_member["name"]
-        )
-        
-        # Send email
-        msg = MIMEMultipart()
-        msg['From'] = f"{EMAIL_CONFIG['from_name']} <{EMAIL_CONFIG['email']}>"
-        msg['To'] = customer["email"]
-        msg['Subject'] = subject
-        
-        msg.attach(MIMEText(content, 'plain', 'utf-8'))
-        
-        server = smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'])
-        server.starttls()
-        server.login(EMAIL_CONFIG['email'], EMAIL_CONFIG['password'])
-        server.send_message(msg)
-        server.quit()
-        
-    except Exception as e:
-        logging.error(f"Failed to send email: {e}")
 
 # PayPal integration routes
 @api_router.post("/payments/paypal/create")
@@ -583,6 +607,24 @@ async def execute_paypal_payment(payment_id: str, payer_id: str):
         logging.error(f"PayPal payment execution failed: {e}")
         raise HTTPException(status_code=500, detail="Payment execution failed")
 
+# Email template routes
+@api_router.post("/email-templates", response_model=EmailTemplate)
+async def create_email_template(template: EmailTemplateCreate, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    template_obj = EmailTemplate(**template.dict())
+    await db.email_templates.insert_one(prepare_for_mongo(template_obj.dict()))
+    return template_obj
+
+@api_router.get("/email-templates", response_model=List[EmailTemplate])
+async def get_email_templates(current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    templates = await db.email_templates.find().to_list(length=None)
+    return [EmailTemplate(**parse_from_mongo(template)) for template in templates]
+
 # Admin management route
 @api_router.post("/admin/create-admin")
 async def create_admin_user():
@@ -632,6 +674,8 @@ async def make_user_admin(user_email: str):
         return {"message": f"Successfully made {user_email} an admin"}
     else:
         raise HTTPException(status_code=404, detail="User not found")
+
+# Initialize default data
 @api_router.post("/admin/init-data")
 async def initialize_default_data():
     """Initialize default staff, services, and email templates"""
@@ -690,6 +734,69 @@ Frisor LaFata""",
         await db.email_templates.insert_one(prepare_for_mongo(template_obj.dict()))
     
     return {"message": "Default data initialized successfully"}
+
+# Email sending function
+async def send_booking_confirmation(booking: Booking):
+    """Send booking confirmation email"""
+    if not EMAIL_CONFIG['email'] or not EMAIL_CONFIG['password']:
+        return  # Email not configured
+    
+    try:
+        # Get customer info
+        customer = await db.users.find_one({"id": booking.customer_id})
+        staff_member = await db.staff.find_one({"id": booking.staff_id})
+        
+        if not customer or not staff_member:
+            return
+        
+        # Get email template
+        template = await db.email_templates.find_one({"name": "booking_confirmation", "language": "da"})
+        
+        if template:
+            subject = template["subject"]
+            content = template["content"]
+        else:
+            # Default template
+            subject = "Booking bekræftelse - Frisor LaFata"
+            content = """
+            Hej {customer_name},
+            
+            Din tid er blevet booket hos Frisor LaFata.
+            
+            Dato: {booking_date}
+            Tid: {booking_time}
+            Frisør: {staff_name}
+            
+            Vi ser frem til at se dig!
+            
+            Med venlig hilsen,
+            Frisor LaFata
+            """
+        
+        # Replace placeholders
+        content = content.format(
+            customer_name=customer["name"],
+            booking_date=booking.booking_date,
+            booking_time=booking.booking_time,
+            staff_name=staff_member["name"]
+        )
+        
+        # Send email
+        msg = MIMEMultipart()
+        msg['From'] = f"{EMAIL_CONFIG['from_name']} <{EMAIL_CONFIG['email']}>"
+        msg['To'] = customer["email"]
+        msg['Subject'] = subject
+        
+        msg.attach(MIMEText(content, 'plain', 'utf-8'))
+        
+        server = smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'])
+        server.starttls()
+        server.login(EMAIL_CONFIG['email'], EMAIL_CONFIG['password'])
+        server.send_message(msg)
+        server.quit()
+        
+    except Exception as e:
+        logging.error(f"Failed to send email: {e}")
 
 # Include the router in the main app
 app.include_router(api_router)
