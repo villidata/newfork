@@ -511,36 +511,42 @@ const StaffManager = ({ token, onRefresh }) => {
     sunday: 'Sunday'
   };
 
-  const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title }) => (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gold">{title}</h3>
-      <div>
-        <Label className="text-gold">Name</Label>
-        <Input
-          value={staffData.name}
-          onChange={(e) => onChange({ ...staffData, name: e.target.value })}
-          className="bg-black/50 border-gold/30 text-white"
-          placeholder="Staff member name"
-        />
-      </div>
-      <div>
-        <Label className="text-gold">Specialty</Label>
-        <Input
-          value={staffData.specialty}
-          onChange={(e) => onChange({ ...staffData, specialty: e.target.value })}
-          className="bg-black/50 border-gold/30 text-white"
-          placeholder="e.g., Classic haircuts"
-        />
-      </div>
-      <div>
-        <Label className="text-gold">Experience</Label>
-        <Input
-          value={staffData.experience}
-          onChange={(e) => onChange({ ...staffData, experience: e.target.value })}
-          className="bg-black/50 border-gold/30 text-white"
-          placeholder="e.g., 5 years"
-        />
-      </div>
+  const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title }) => {
+    const handleFieldChange = (field, value) => {
+      const updatedData = { ...staffData, [field]: value };
+      onChange(updatedData);
+    };
+
+    return (
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gold">{title}</h3>
+        <div>
+          <Label className="text-gold">Name</Label>
+          <Input
+            value={staffData.name || ''}
+            onChange={(e) => handleFieldChange('name', e.target.value)}
+            className="bg-black/50 border-gold/30 text-white"
+            placeholder="Staff member name"
+          />
+        </div>
+        <div>
+          <Label className="text-gold">Specialty</Label>
+          <Input
+            value={staffData.specialty || ''}
+            onChange={(e) => handleFieldChange('specialty', e.target.value)}
+            className="bg-black/50 border-gold/30 text-white"
+            placeholder="e.g., Classic haircuts"
+          />
+        </div>
+        <div>
+          <Label className="text-gold">Experience</Label>
+          <Input
+            value={staffData.experience || ''}
+            onChange={(e) => handleFieldChange('experience', e.target.value)}
+            className="bg-black/50 border-gold/30 text-white"
+            placeholder="e.g., 5 years"
+          />
+        </div>
       
       <div>
         <Label className="text-gold mb-3 block">Working Hours</Label>
