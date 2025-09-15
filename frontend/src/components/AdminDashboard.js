@@ -344,7 +344,7 @@ const ServiceManager = ({ token, onRefresh }) => {
                 <Label className="text-gold">Service Name</Label>
                 <Input
                   value={editingService.name || ''}
-                  onChange={(e) => setEditingService(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) => handleEditServiceChange('name', e.target.value)}
                   className="bg-black/50 border-gold/30 text-white"
                 />
               </div>
@@ -354,7 +354,7 @@ const ServiceManager = ({ token, onRefresh }) => {
                   <Input
                     type="number"
                     value={editingService.duration_minutes || 0}
-                    onChange={(e) => setEditingService(prev => ({ ...prev, duration_minutes: parseInt(e.target.value) || 0 }))}
+                    onChange={(e) => handleEditServiceChange('duration_minutes', parseInt(e.target.value) || 0)}
                     className="bg-black/50 border-gold/30 text-white"
                   />
                 </div>
@@ -363,7 +363,7 @@ const ServiceManager = ({ token, onRefresh }) => {
                   <Input
                     type="number"
                     value={editingService.price || 0}
-                    onChange={(e) => setEditingService(prev => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
+                    onChange={(e) => handleEditServiceChange('price', parseFloat(e.target.value) || 0)}
                     className="bg-black/50 border-gold/30 text-white"
                   />
                 </div>
@@ -372,7 +372,7 @@ const ServiceManager = ({ token, onRefresh }) => {
                 <Label className="text-gold">Category</Label>
                 <Select 
                   value={editingService.category || 'general'} 
-                  onValueChange={(value) => setEditingService(prev => ({ ...prev, category: value }))}
+                  onValueChange={(value) => handleEditServiceChange('category', value)}
                 >
                   <SelectTrigger className="bg-black/50 border-gold/30 text-white">
                     <SelectValue />
@@ -391,7 +391,7 @@ const ServiceManager = ({ token, onRefresh }) => {
                 <Label className="text-gold">Description</Label>
                 <Textarea
                   value={editingService.description || ''}
-                  onChange={(e) => setEditingService(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) => handleEditServiceChange('description', e.target.value)}
                   className="bg-black/50 border-gold/30 text-white"
                 />
               </div>
