@@ -93,7 +93,93 @@ body {
   backdrop-filter: blur(12px);
 }
 
-/* Custom scrollbar */
+/* Calendar styling for better visibility */
+.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: #D4AF37;
+  --rdp-background-color: #1a1a1a;
+  --rdp-accent-color-dark: #B8941F;
+  --rdp-background-color-dark: #1a1a1a;
+  --rdp-outline: 2px solid var(--rdp-accent-color);
+  --rdp-outline-selected: 2px solid var(--rdp-accent-color);
+  color: #D4AF37;
+}
+
+.rdp-months {
+  background-color: #1a1a1a;
+}
+
+.rdp-month {
+  background-color: #1a1a1a;
+}
+
+.rdp-table {
+  background-color: #1a1a1a;
+}
+
+.rdp-head_cell {
+  color: #D4AF37 !important;
+  font-weight: 600;
+}
+
+.rdp-cell {
+  color: #ffffff !important;
+}
+
+.rdp-button {
+  color: #ffffff !important;
+  border: 1px solid transparent;
+}
+
+.rdp-button:hover {
+  background-color: #D4AF37 !important;
+  color: #000000 !important;
+}
+
+.rdp-button_reset {
+  color: #ffffff !important;
+}
+
+.rdp-day {
+  color: #ffffff !important;
+}
+
+.rdp-day:hover {
+  background-color: #D4AF37 !important;
+  color: #000000 !important;
+}
+
+.rdp-day_selected {
+  background-color: #D4AF37 !important;
+  color: #000000 !important;
+  font-weight: bold;
+}
+
+.rdp-day_today {
+  background-color: rgba(212, 175, 55, 0.2) !important;
+  color: #D4AF37 !important;
+  font-weight: bold;
+}
+
+.rdp-day_disabled {
+  color: #666666 !important;
+  opacity: 0.5;
+}
+
+.rdp-caption_label {
+  color: #D4AF37 !important;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.rdp-nav_button {
+  color: #D4AF37 !important;
+}
+
+.rdp-nav_button:hover {
+  background-color: #D4AF37 !important;
+  color: #000000 !important;
+}
 ::-webkit-scrollbar {
   width: 8px;
 }
