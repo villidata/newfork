@@ -221,7 +221,7 @@ async def register_user(user: UserCreate):
     
     # Check if this is the first user or admin email (make them admin)
     user_count = await db.users.count_documents({})
-    admin_emails = ["admin@frisorlafata.dk", "admin2@frisorlafata.dk", "admin3@frisorlafata.dk"]
+    admin_emails = ["admin@frisorlafata.dk", "admin2@frisorlafata.dk", "admin3@frisorlafata.dk", "admin4@frisorlafata.dk"]
     
     # Create user
     hashed_password = get_password_hash(user.password)
