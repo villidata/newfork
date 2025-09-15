@@ -227,7 +227,12 @@ async def register_user(user: UserCreate):
     hashed_password = get_password_hash(user.password)
     user_dict = user.dict()
     user_dict.pop('password')
-    if user_count == 0 or user.email in admin_emails:  # First user or admin email becomes admin
+    
+    # Debug check
+    is_admin = user_count == 0 or user.email in admin_emails
+    print(f"User count: {user_count}, Email: {user.email}, Is admin: {is_admin}")
+    
+    if is_admin:  # First user or admin email becomes admin
         user_dict['is_admin'] = True
     user_obj = User(**user_dict)
     
