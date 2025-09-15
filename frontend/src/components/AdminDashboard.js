@@ -209,7 +209,7 @@ const ServiceManager = ({ token, onRefresh }) => {
                 <Label className="text-gold">Service Name</Label>
                 <Input
                   value={newService.name}
-                  onChange={(e) => setNewService(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) => handleNewServiceChange('name', e.target.value)}
                   className="bg-black/50 border-gold/30 text-white"
                   placeholder="e.g., Classic Haircut"
                 />
@@ -220,7 +220,7 @@ const ServiceManager = ({ token, onRefresh }) => {
                   <Input
                     type="number"
                     value={newService.duration_minutes}
-                    onChange={(e) => setNewService(prev => ({ ...prev, duration_minutes: parseInt(e.target.value) || 0 }))}
+                    onChange={(e) => handleNewServiceChange('duration_minutes', parseInt(e.target.value) || 0)}
                     className="bg-black/50 border-gold/30 text-white"
                   />
                 </div>
@@ -229,7 +229,7 @@ const ServiceManager = ({ token, onRefresh }) => {
                   <Input
                     type="number"
                     value={newService.price}
-                    onChange={(e) => setNewService(prev => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
+                    onChange={(e) => handleNewServiceChange('price', parseFloat(e.target.value) || 0)}
                     className="bg-black/50 border-gold/30 text-white"
                   />
                 </div>
@@ -238,7 +238,7 @@ const ServiceManager = ({ token, onRefresh }) => {
                 <Label className="text-gold">Category</Label>
                 <Select 
                   value={newService.category} 
-                  onValueChange={(value) => setNewService(prev => ({ ...prev, category: value }))}
+                  onValueChange={(value) => handleNewServiceChange('category', value)}
                 >
                   <SelectTrigger className="bg-black/50 border-gold/30 text-white">
                     <SelectValue />
@@ -257,7 +257,7 @@ const ServiceManager = ({ token, onRefresh }) => {
                 <Label className="text-gold">Description</Label>
                 <Textarea
                   value={newService.description}
-                  onChange={(e) => setNewService(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) => handleNewServiceChange('description', e.target.value)}
                   className="bg-black/50 border-gold/30 text-white"
                   placeholder="Service description..."
                 />
