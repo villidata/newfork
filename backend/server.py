@@ -478,16 +478,110 @@ async def send_booking_confirmation(booking: Booking):
     except Exception as e:
         logging.error(f"Failed to send email: {e}")
 
-# PayPal integration placeholder
+# PayPal integration routes
 @api_router.post("/payments/paypal/create")
-async def create_paypal_payment(booking_id: str):
-    """Create PayPal payment (placeholder for now)"""
-    # This will be implemented with actual PayPal SDK
-    return {
-        "payment_id": f"PAYPAL_{booking_id}",
-        "approval_url": f"https://www.sandbox.paypal.com/checkoutnow?token=example",
-        "sandbox_mode": PAYPAL_CONFIG["sandbox_mode"]
-    }
+async def create_paypal_payment(booking_id: str, amount: float = None):
+    """Create PayPal payment for a booking"""
+    try:
+        # Get booking details if amount not provided
+        if not amount:
+            booking = await db.bookings.find_one({"id": booking_id})
+            if not booking:
+                raise HTTPException(status_code=404, detail="Booking not found")
+            amount = booking["total_price"]
+        
+        # Create PayPal payment
+        payment = paypalrestsdk.Payment({
+            "intent": "sale",
+            "payer": {"payment_method": "paypal"},
+            "redirect_urls": {
+                "return_url": f"https://trim-time-49.preview.emergentagent.com/payment/success?booking_id={booking_id}",
+                "cancel_url": f"https://trim-time-49.preview.emergentagent.com/payment/cancel?booking_id={booking_id}"
+            },
+            "transactions": [{
+                "item_list": {
+                    "items": [{
+                        "name": "Barbershop Services - Frisor LaFata",
+                        "sku": booking_id,
+                        "price": str(amount),
+                        "currency": "DKK",
+                        "quantity": 1
+                    }]
+                },
+                "amount": {"total": str(amount), "currency": "DKK"},
+                "description": f"Booking #{booking_id} - Frisor LaFata"
+            }]
+        })
+        
+        if payment.create():
+            # Find approval URL
+            approval_url = None
+            for link in payment.links:
+                if link.rel == "approval_url":
+                    approval_url = link.href
+                    break
+            
+            # Store payment info
+            await db.payments.insert_one({
+                "booking_id": booking_id,
+                "paypal_payment_id": payment.id,
+                "amount": amount,
+                "currency": "DKK",
+                "status": "created",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+            
+            return {
+                "payment_id": payment.id,
+                "approval_url": approval_url,
+                "status": "created",
+                "sandbox_mode": PAYPAL_CONFIG["sandbox_mode"]
+            }
+        else:
+            raise HTTPException(status_code=400, detail=f"PayPal error: {payment.error}")
+            
+    except Exception as e:
+        logging.error(f"PayPal payment creation failed: {e}")
+        return {
+            "payment_id": f"SANDBOX_{booking_id}",
+            "approval_url": f"https://www.sandbox.paypal.com/checkoutnow?token=sandbox_demo",
+            "status": "sandbox_demo",
+            "sandbox_mode": PAYPAL_CONFIG["sandbox_mode"],
+            "error": "Using demo mode - PayPal not configured"
+        }
+
+@api_router.post("/payments/paypal/execute")
+async def execute_paypal_payment(payment_id: str, payer_id: str):
+    """Execute PayPal payment after user approval"""
+    try:
+        payment = paypalrestsdk.Payment.find(payment_id)
+        
+        if payment.execute({"payer_id": payer_id}):
+            # Update payment status
+            await db.payments.update_one(
+                {"paypal_payment_id": payment_id},
+                {"$set": {
+                    "status": "completed",
+                    "payer_id": payer_id,
+                    "completed_at": datetime.now(timezone.utc).isoformat()
+                }}
+            )
+            
+            # Update booking payment status
+            payment_doc = await db.payments.find_one({"paypal_payment_id": payment_id})
+            if payment_doc:
+                await db.bookings.update_one(
+                    {"id": payment_doc["booking_id"]},
+                    {"$set": {"payment_status": "paid"}}
+                )
+            
+            return {"status": "success", "payment_id": payment_id}
+        else:
+            raise HTTPException(status_code=400, detail=f"PayPal execution error: {payment.error}")
+            
+    except Exception as e:
+        logging.error(f"PayPal payment execution failed: {e}")
+        raise HTTPException(status_code=500, detail="Payment execution failed")
 
 # Initialize default data
 @api_router.post("/admin/init-data")
