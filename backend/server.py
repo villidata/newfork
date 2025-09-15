@@ -44,8 +44,15 @@ EMAIL_CONFIG = {
 PAYPAL_CONFIG = {
     'client_id': os.environ.get('PAYPAL_CLIENT_ID', 'sandbox_client_id'),
     'client_secret': os.environ.get('PAYPAL_CLIENT_SECRET', 'sandbox_secret'),
-    'sandbox_mode': True  # Will be configurable
+    'sandbox_mode': os.environ.get('PAYPAL_SANDBOX_MODE', 'true').lower() == 'true'
 }
+
+# Configure PayPal SDK
+paypalrestsdk.configure({
+    "mode": "sandbox" if PAYPAL_CONFIG['sandbox_mode'] else "live",
+    "client_id": PAYPAL_CONFIG['client_id'],
+    "client_secret": PAYPAL_CONFIG['client_secret']
+})
 
 # Create the main app
 app = FastAPI(title="Frisor LaFata API", version="1.0.0")
