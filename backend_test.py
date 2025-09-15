@@ -180,12 +180,18 @@ def main():
         # Test 8: Create booking (if we have services)
         if services_list and len(services_list) > 0:
             service_id = services_list[0]['id']
-            tester.test_create_booking(
-                staff_id=staff_id,
-                service_ids=[service_id],
-                booking_date=tomorrow,
-                booking_time="10:00:00"
-            )
+            # Get available slots first
+            success, slots_data = tester.test_available_slots(staff_id, tomorrow)
+            if success and slots_data.get('available_slots'):
+                available_time = slots_data['available_slots'][0]  # Use first available slot
+                tester.test_create_booking(
+                    staff_id=staff_id,
+                    service_ids=[service_id],
+                    booking_date=tomorrow,
+                    booking_time=f"{available_time}:00"
+                )
+            else:
+                print("❌ No available slots found for booking test")
     
     # Test 9: Get user bookings
     tester.test_get_bookings()
