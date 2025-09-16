@@ -217,9 +217,9 @@ class Booking(BaseModel):
 
 class BookingCreate(BaseModel):
     customer_id: str
-    customer_name: str
-    customer_email: str
-    customer_phone: str
+    customer_name: Optional[str] = ""
+    customer_email: Optional[str] = ""
+    customer_phone: Optional[str] = ""
     staff_id: str
     services: List[str]
     booking_date: date
