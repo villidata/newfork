@@ -93,6 +93,15 @@ const PublicPage = () => {
                 <Link to="/" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Hjem</Link>
                 <a href="/#services" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Tjenester</a>
                 <a href="/#staff" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Frisører</a>
+                {pages.slice(0, 3).map((page) => (
+                  <Link 
+                    key={page.id} 
+                    to={`/page/${page.slug}`} 
+                    className="text-gold hover:text-gold/80 transition-colors px-3 py-2"
+                  >
+                    {page.title}
+                  </Link>
+                ))}
                 <a href="/#contact" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Kontakt</a>
               </div>
             </div>
