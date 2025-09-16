@@ -14,7 +14,6 @@ import {
   GiBeard,
   GiCurlyHair,
   GiHairStrands,
-  GiMirror,
   GiScissors,
   GiSpray,
   GiHotSurface
