@@ -1305,12 +1305,16 @@ def main():
     tester.test_staff_avatar_integration()
     tester.test_database_avatar_urls_consistency()
     
-    # Test 11: NEW FEATURE - Content Management System (Pages)
-    print("\n" + "📄 CONTENT MANAGEMENT SYSTEM TESTS (NEW FEATURE)" + "=" * 20)
-    tester.test_create_page()
+    # Test 11: NEW FEATURE - Enhanced Page Management System
+    print("\n" + "📄 ENHANCED PAGE MANAGEMENT SYSTEM TESTS" + "=" * 25)
+    tester.test_enhanced_page_model()
+    tester.test_public_pages_api()
+    tester.test_page_crud_enhanced_features()
     tester.test_get_pages()
-    tester.test_update_page()
-    tester.test_delete_page()
+    
+    # Test 11.5: NEW FEATURE - Video Upload System
+    print("\n" + "🎥 VIDEO UPLOAD SYSTEM TESTS" + "=" * 35)
+    tester.test_video_upload_endpoint()
     
     # Test 12: NEW FEATURE - Site Settings Management
     print("\n" + "⚙️ SITE SETTINGS TESTS (NEW FEATURE)" + "=" * 30)
