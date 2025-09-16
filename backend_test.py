@@ -1690,7 +1690,12 @@ def main():
     print("\n" + "🗑️ DELETE BOOKING TEST (NEW FEATURE)" + "=" * 30)
     tester.test_delete_booking()
     
-    # Test 16: PayPal payment
+    # Test 16: NEW FEATURE - Comprehensive Gallery Tests
+    print("\n" + "🖼️ COMPREHENSIVE GALLERY SYSTEM TESTS" + "=" * 25)
+    tester.test_gallery_url_construction_analysis()
+    tester.test_gallery_comprehensive()
+    
+    # Test 17: PayPal payment
     print("\n" + "💳 PAYMENT SYSTEM TESTS" + "=" * 40)
     tester.test_paypal_payment()
     
