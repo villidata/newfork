@@ -1768,7 +1768,7 @@ const AdminDashboard = ({ token, user, onLogout }) => {
           </TabsList>
 
           <TabsContent value="bookings">
-            <BookingManager 
+            <EnhancedBookingManager 
               token={token} 
               staff={staff} 
               services={services} 
