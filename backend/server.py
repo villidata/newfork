@@ -141,6 +141,7 @@ class Staff(BaseModel):
     name: str
     specialty: str
     experience: str
+    avatar_url: str = ""
     available_hours: dict = Field(default_factory=dict)  # {"monday": {"start": "09:00", "end": "17:00", "enabled": true}}
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -148,12 +149,14 @@ class StaffCreate(BaseModel):
     name: str
     specialty: str
     experience: str
+    avatar_url: str = ""
     available_hours: dict = Field(default_factory=dict)
 
 class StaffUpdate(BaseModel):
     name: Optional[str] = None
     specialty: Optional[str] = None
     experience: Optional[str] = None
+    avatar_url: Optional[str] = None
     available_hours: Optional[dict] = None
 
 class Service(BaseModel):
