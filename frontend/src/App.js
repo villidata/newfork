@@ -194,6 +194,9 @@ const Home = () => {
                 <a href="#services" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Tjenester</a>
                 <a href="#staff" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Frisører</a>
                 <a href="#gallery" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Galleri</a>
+                {settings.social_media_enabled && (
+                  <a href="#social" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Social Media</a>
+                )}
                 {pages.slice(0, 3).map((page) => (
                   <Link 
                     key={page.id} 
