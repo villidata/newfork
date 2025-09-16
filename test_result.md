@@ -101,3 +101,91 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Staff avatar images are not displaying correctly on the frontend despite being successfully uploaded. The images should be visible in the admin dashboard staff management section."
+
+backend:
+  - task: "Static file serving configuration"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Static files are correctly mounted at /uploads path using FastAPI StaticFiles middleware. Backend serves uploads from /app/backend/uploads/ directory."
+
+  - task: "Avatar upload endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Avatar upload endpoint at /api/upload/avatar is working correctly and saves files to uploads/avatars/ directory."
+
+  - task: "BACKEND_URL configuration"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Had incorrect BACKEND_URL pointing to localhost instead of production URL."
+        - working: true
+          agent: "main"
+          comment: "Fixed BACKEND_URL to use correct production URL: https://frisor-admin.preview.emergentagent.com"
+
+frontend:
+  - task: "Staff avatar display in admin dashboard"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/AdminDashboard.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Avatar images were not displaying due to incorrect URLs in database pointing to localhost:8000."
+        - working: true
+          agent: "main"
+          comment: "Fixed by updating existing avatar URLs in database to use correct production URLs. Avatar now displays correctly in staff cards."
+
+  - task: "Avatar upload functionality in staff forms"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/AdminDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Avatar upload functionality is working correctly and generates proper URLs for newly uploaded images."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: true
+
+test_plan:
+  current_focus:
+    - "Avatar display verification"
+    - "Avatar upload testing"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "main"
+      message: "Avatar display issue has been resolved. The problem was that existing avatar URLs in the database pointed to localhost:8000 instead of the production URL. Fixed by updating the database records to use correct HTTPS URLs. Ready for comprehensive testing."
