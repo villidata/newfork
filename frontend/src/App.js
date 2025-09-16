@@ -15,6 +15,10 @@ const API = `${BACKEND_URL}/api`;
 
 const Home = () => {
   const [showBooking, setShowBooking] = useState(false);
+  const [services, setServices] = useState([]);
+  const [staff, setStaff] = useState([]);
+  const [settings, setSettings] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const helloWorldApi = async () => {
     try {
@@ -25,24 +29,73 @@ const Home = () => {
     }
   };
 
+  const fetchData = async () => {
+    try {
+      const [servicesRes, staffRes, settingsRes] = await Promise.all([
+        axios.get(`${API}/services`),
+        axios.get(`${API}/staff`),
+        axios.get(`${API}/public/settings`)
+      ]);
+      
+      setServices(servicesRes.data);
+      setStaff(staffRes.data);
+      setSettings(settingsRes.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // Fallback to default data if API fails
+      setServices([
+        { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" },
+        { name: "Skæg trimning", duration_minutes: 20, price: 200, category: "beard", icon: "🪒" },
+        { name: "Vask & styling", duration_minutes: 45, price: 400, category: "styling", icon: "💧" },
+        { name: "Farvning", duration_minutes: 60, price: 600, category: "coloring", icon: "🎨" },
+        { name: "Børneklip", duration_minutes: 25, price: 250, category: "haircut", icon: "👶" },
+        { name: "Komplet styling", duration_minutes: 90, price: 750, category: "premium", icon: "⭐" }
+      ]);
+      setStaff([
+        { name: "Lars Andersen", specialty: "Klassisk klipning", experience: "15 år" },
+        { name: "Mikael Jensen", specialty: "Modern styling", experience: "12 år" },
+        { name: "Sofia Nielsen", specialty: "Farvning", experience: "8 år" }
+      ]);
+      setSettings({
+        site_title: "Frisor LaFata",
+        site_description: "Klassisk barbering siden 2010",
+        contact_phone: "+45 12 34 56 78",
+        contact_email: "info@frisorlafata.dk",
+        address: "Hovedgaden 123, 1000 København",
+        hero_title: "Klassisk Barbering",
+        hero_subtitle: "i Hjertet af Byen",
+        hero_description: "Oplev den autentiske barber-oplevelse hos Frisor LaFata. Vi kombinerer traditionel håndværk med moderne teknikker.",
+        hero_image: "https://images.unsplash.com/photo-1573586927918-3e6476da8395?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwzfHxyZXRybyUyMGJhcmJlcnxlbnwwfHx8fDE3NTc5NzcyODB8MA&ixlib=rb-4.1.0&q=85"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     helloWorldApi();
+    fetchData();
   }, []);
 
-  const services = [
-    { name: "Klipning", duration: "30 min", price: "350 DKK", icon: "✂️" },
-    { name: "Skæg trimning", duration: "20 min", price: "200 DKK", icon: "🪒" },
-    { name: "Vask & styling", duration: "45 min", price: "400 DKK", icon: "💧" },
-    { name: "Farvning", duration: "60 min", price: "600 DKK", icon: "🎨" },
-    { name: "Børneklip", duration: "25 min", price: "250 DKK", icon: "👶" },
-    { name: "Komplet styling", duration: "90 min", price: "750 DKK", icon: "⭐" }
-  ];
+  const getServiceIcon = (category) => {
+    const icons = {
+      haircut: "✂️",
+      beard: "🪒",
+      styling: "💧",
+      coloring: "🎨",
+      premium: "⭐",
+      general: "✨"
+    };
+    return icons[category] || "✨";
+  };
 
-  const staff = [
-    { name: "Lars Andersen", specialty: "Klassisk klipning", experience: "15 år" },
-    { name: "Mikael Jensen", specialty: "Modern styling", experience: "12 år" },
-    { name: "Sofia Nielsen", specialty: "Farvning", experience: "8 år" }
-  ];
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-gold">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-gold">
