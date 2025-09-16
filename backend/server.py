@@ -225,6 +225,51 @@ class EmailTemplateCreate(BaseModel):
     content: str
     language: str = "da"
 
+class Page(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    slug: str
+    content: str
+    meta_description: str = ""
+    is_published: bool = True
+    images: List[str] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PageCreate(BaseModel):
+    title: str
+    slug: str
+    content: str
+    meta_description: str = ""
+    is_published: bool = True
+    images: List[str] = Field(default_factory=list)
+
+class PageUpdate(BaseModel):
+    title: Optional[str] = None
+    slug: Optional[str] = None
+    content: Optional[str] = None
+    meta_description: Optional[str] = None
+    is_published: Optional[bool] = None
+    images: Optional[List[str]] = None
+
+class SiteSettings(BaseModel):
+    site_title: str = "Frisor LaFata"
+    site_description: str = "Klassisk barbering siden 2010"
+    contact_phone: str = "+45 12 34 56 78"
+    contact_email: str = "info@frisorlafata.dk"
+    address: str = "Hovedgaden 123, 1000 København"
+    hero_title: str = "Klassisk Barbering"
+    hero_subtitle: str = "i Hjertet af Byen"
+    hero_description: str = "Oplev den autentiske barber-oplevelse hos Frisor LaFata."
+    hero_image: str = ""
+    paypal_client_id: str = ""
+    paypal_client_secret: str = ""
+    paypal_sandbox_mode: bool = True
+    email_smtp_server: str = "smtp.gmail.com"
+    email_smtp_port: int = 587
+    email_user: str = ""
+    email_password: str = ""
+
 # Business hours configuration
 BUSINESS_HOURS = {
     "monday": {"start": "09:00", "end": "18:00"},
