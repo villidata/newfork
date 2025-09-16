@@ -367,6 +367,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/admin" element={<AdminApp />} />
+          <Route path="/page/:slug" element={<PublicPage />} />
         </Routes>
       </BrowserRouter>
     </div>
