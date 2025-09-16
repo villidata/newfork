@@ -532,16 +532,21 @@ const StaffManager = ({ token, onRefresh }) => {
   };
 
   const handleDeleteStaff = async (staffId) => {
+    console.log('Delete staff clicked:', staffId);
     if (window.confirm('Are you sure you want to delete this staff member?')) {
       try {
-        await axios.delete(`${API}/staff/${staffId}`, {
+        console.log('Deleting staff with token:', token ? 'Token exists' : 'No token');
+        const response = await axios.delete(`${API}/staff/${staffId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        console.log('Delete response:', response);
+        alert('Staff member deleted successfully!');
         fetchStaff();
         onRefresh();
       } catch (error) {
         console.error('Error deleting staff:', error);
-        alert('Failed to delete staff member. Please try again.');
+        console.error('Error response:', error.response?.data);
+        alert(`Failed to delete staff member: ${error.response?.data?.detail || error.message}`);
       }
     }
   };
