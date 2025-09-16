@@ -401,12 +401,9 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Social Media Settings Backend Implementation"
-    - "Admin Dashboard Social Media Settings Interface"
-    - "Public Website Social Media Section Display"
-    - "Social Media Navigation Link"
-  stuck_tasks: []
+  current_focus: []
+  stuck_tasks:
+    - "Admin Dashboard Access Issue - URL redirects to public homepage instead of admin interface"
   test_all: false
   test_priority: "high_first"
 
