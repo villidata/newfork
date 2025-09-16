@@ -755,16 +755,100 @@ async def update_booking(booking_id: str, booking_update: BookingUpdate, current
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
     
-    update_data = {k: v for k, v in booking_update.dict().items() if v is not None}
-    if not update_data:
-        raise HTTPException(status_code=400, detail="No fields to update")
-    
-    result = await db.bookings.update_one({"id": booking_id}, {"$set": update_data})
-    if result.modified_count == 0:
+    existing_booking = await db.bookings.find_one({"id": booking_id})
+    if not existing_booking:
         raise HTTPException(status_code=404, detail="Booking not found")
     
-    updated_booking = await db.bookings.find_one({"id": booking_id})
-    return Booking(**parse_from_mongo(updated_booking))
+    # Track if we're changing the time/date for email notification
+    time_changed = False
+    original_date = existing_booking.get("booking_date")
+    original_time = existing_booking.get("booking_time")
+    
+    update_data = {}
+    for field, value in booking_update.dict(exclude_unset=True).items():
+        if value is not None:
+            if field in ["booking_date", "booking_time"]:
+                # Check for time/date changes
+                if field == "booking_date" and value.isoformat() != original_date:
+                    time_changed = True
+                elif field == "booking_time" and value.strftime('%H:%M:%S') != original_time:
+                    time_changed = True
+                    
+            update_data[field] = prepare_for_mongo({field: value})[field]
+    
+    # If changing time/date, check for conflicts
+    if "booking_date" in update_data or "booking_time" in update_data:
+        new_date = datetime.fromisoformat(update_data.get("booking_date", original_date)).date()
+        new_time_str = update_data.get("booking_time", original_time)
+        if isinstance(new_time_str, str):
+            new_time = datetime.strptime(new_time_str, '%H:%M:%S').time()
+        else:
+            new_time = new_time_str
+            
+        # Enhanced conflict checking for rescheduling
+        booking_start_time = datetime.combine(new_date, new_time)
+        booking_end_time = booking_start_time + timedelta(minutes=existing_booking["total_duration"])
+        
+        # Find overlapping bookings (excluding current booking)
+        existing_bookings = await db.bookings.find({
+            "staff_id": existing_booking["staff_id"],
+            "booking_date": new_date.isoformat(),
+            "status": {"$in": ["pending", "confirmed"]},
+            "id": {"$ne": booking_id}  # Exclude current booking
+        }).to_list(length=None)
+        
+        for existing in existing_bookings:
+            existing_start = datetime.combine(
+                new_date, 
+                datetime.strptime(existing["booking_time"], '%H:%M:%S').time()
+            )
+            existing_end = existing_start + timedelta(minutes=existing["total_duration"])
+            
+            # Check for overlap
+            if (booking_start_time < existing_end and booking_end_time > existing_start):
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"Time slot conflicts with existing booking at {existing['booking_time']}"
+                )
+    
+    update_data["updated_at"] = datetime.now(timezone.utc)
+    
+    await db.bookings.update_one({"id": booking_id}, {"$set": update_data})
+    
+    # Get updated booking
+    updated_booking_data = await db.bookings.find_one({"id": booking_id})
+    updated_booking = Booking(**parse_from_mongo(updated_booking_data))
+    
+    # Send appropriate email notification
+    if time_changed:
+        await send_booking_email(updated_booking, "changed")
+    elif booking_update.status == "confirmed":
+        await send_booking_email(updated_booking, "confirmed")
+    
+    return updated_booking
+
+@api_router.put("/bookings/{booking_id}/confirm")
+async def confirm_booking(booking_id: str, current_user: User = Depends(get_current_user)):
+    """Confirm a pending booking"""
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    existing_booking = await db.bookings.find_one({"id": booking_id})
+    if not existing_booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    
+    await db.bookings.update_one(
+        {"id": booking_id}, 
+        {"$set": {"status": "confirmed", "updated_at": datetime.now(timezone.utc)}}
+    )
+    
+    # Get updated booking and send confirmation email
+    updated_booking_data = await db.bookings.find_one({"id": booking_id})
+    updated_booking = Booking(**parse_from_mongo(updated_booking_data))
+    
+    await send_booking_email(updated_booking, "confirmed")
+    
+    return {"message": "Booking confirmed successfully"}
 
 @api_router.delete("/bookings/{booking_id}")
 async def delete_booking(booking_id: str, current_user: User = Depends(get_current_user)):
