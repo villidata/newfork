@@ -321,6 +321,18 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Gallery Manager SelectItem empty value error fix"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/GalleryManager.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "COMPREHENSIVE TESTING COMPLETED: ✅ Gallery Manager SelectItem fix successful! Fixed the 'A <Select.Item /> must have a value prop that is not an empty string' error by changing SelectItem value from empty string to 'none'. Verified: 1) Staff Member dropdown shows 'No staff assigned' option correctly, 2) SelectItem uses 'none' value instead of empty string (lines 296, 502), 3) Form submission converts 'none' to null for backend (lines 89, 122), 4) getStaffName function handles 'none' value properly (line 157), 5) Edit dialog uses 'none' as default for null staff_id values (line 495). NO SelectItem validation errors detected in console. Gallery item creation form works without errors. Admin login successful, Gallery Management tab accessible, Add Gallery Item dialog functional."
+
 agent_communication:
     - agent: "main"
       message: "Fixed React input field focus loss bug in Staff editing form. The issue was caused by the StaffForm component being re-created on every render because it was defined inside the StaffManager component. Fixed by: 1) Extracting StaffForm component outside StaffManager, 2) Using useCallback for handleEditStaffChange and handleNewStaffChange functions, 3) Adding stable key props to input fields. Ready for testing to verify the fix works correctly."
@@ -330,3 +342,5 @@ agent_communication:
       message: "TINYMCE EDITOR FIX IMPLEMENTED: Fixed TinyMCE API key validation error for page creation functionality. Configured TinyMCE to work without cloud API key validation by adding apiKey='no-api-key' with promotion: false and upgrade_source: false. Simplified plugins to avoid cloud dependencies. Editor should now load without 'api key could not be validated' error and work in offline/self-hosted mode. Ready for testing to verify TinyMCE editor loads and works without API key validation errors."
     - agent: "testing"
       message: "TINYMCE EDITOR FIX SUCCESSFUL: ✅ Comprehensive testing completed successfully! TinyMCE editor now works perfectly without API key validation errors. The fix involved using JSDelivr CDN with license_key: 'gpl' configuration. Editor is fully functional: loads without errors, typing works, formatting features (Bold, Italic) work, word count active, contentEditable=true. Page creation functionality is now restored - admins can create and edit pages without the previous 'editor is disabled because the api key could not be validated by the api key validation server' error. The TinyMCE editor fix has been successfully implemented and tested."
+    - agent: "testing"
+      message: "GALLERY MANAGER SELECTITEM FIX VERIFIED: ✅ Successfully tested the Gallery Manager SelectItem empty value error fix. The fix has resolved the 'A <Select.Item /> must have a value prop that is not an empty string' error that was preventing gallery item creation. Verified implementation: Staff Member dropdown uses 'none' value instead of empty string, form submission properly converts 'none' to null for backend, getStaffName function handles 'none' value correctly, edit dialog defaults to 'none' for null staff_id values. NO SelectItem validation errors detected during comprehensive testing. Gallery item creation form is now fully functional without errors."
