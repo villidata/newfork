@@ -618,9 +618,13 @@ async def send_booking_email(booking: Booking, email_type: str):
         if not settings:
             settings = SiteSettings().dict()
         
-        # Check if email is configured
+        # Check if email is configured and customer has email
         if not settings.get('email_user') or not settings.get('email_password'):
             print("Email not configured, skipping booking email")
+            return
+            
+        if not booking.customer_email:
+            print("Customer email not available, skipping booking email")
             return
         
         # Get staff and services details for the email
