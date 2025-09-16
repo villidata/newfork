@@ -282,6 +282,11 @@ const ServiceManager = ({ token, onRefresh }) => {
                   placeholder="Service description..."
                 />
               </div>
+              <IconSelector
+                selectedIcon={newService.icon}
+                onIconSelect={(icon) => handleNewServiceChange('icon', icon)}
+                className="mb-4"
+              />
               <div className="flex justify-end space-x-2">
                 <Button 
                   variant="outline" 
