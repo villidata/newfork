@@ -116,6 +116,15 @@ const Home = () => {
                 <a href="#home" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Hjem</a>
                 <a href="#services" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Tjenester</a>
                 <a href="#staff" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Frisører</a>
+                {pages.slice(0, 3).map((page) => (
+                  <a 
+                    key={page.id} 
+                    href={`/page/${page.slug}`} 
+                    className="text-gold hover:text-gold/80 transition-colors px-3 py-2"
+                  >
+                    {page.title}
+                  </a>
+                ))}
                 <a href="#contact" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Kontakt</a>
                 <Button 
                   className="bg-gold text-black hover:bg-gold/90 font-semibold"
