@@ -117,13 +117,13 @@ const Home = () => {
                 <a href="#services" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Tjenester</a>
                 <a href="#staff" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Frisører</a>
                 {pages.slice(0, 3).map((page) => (
-                  <a 
+                  <Link 
                     key={page.id} 
-                    href={`/page/${page.slug}`} 
+                    to={`/page/${page.slug}`} 
                     className="text-gold hover:text-gold/80 transition-colors px-3 py-2"
                   >
                     {page.title}
-                  </a>
+                  </Link>
                 ))}
                 <a href="#contact" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Kontakt</a>
                 <Button 
