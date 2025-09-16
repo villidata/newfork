@@ -152,7 +152,7 @@ const ServiceManager = ({ token, onRefresh }) => {
       await axios.post(`${API}/services`, newService, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setNewService({ name: '', duration_minutes: 30, price: 0, description: '', category: 'general' });
+      setNewService({ name: '', duration_minutes: 30, price: 0, description: '', category: 'general', icon: 'sparkles-emoji' });
       setShowAddDialog(false);
       fetchServices();
       onRefresh();
