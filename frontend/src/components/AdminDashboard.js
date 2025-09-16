@@ -1532,6 +1532,7 @@ const AdminDashboard = ({ token, user, onLogout }) => {
           <TabsContent value="revenue">
             <RevenueDashboard 
               token={token} 
+              staff={staff}
               onRefresh={fetchData} 
             />
           </TabsContent>
