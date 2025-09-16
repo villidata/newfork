@@ -420,6 +420,11 @@ const ServiceManager = ({ token, onRefresh }) => {
                   className="bg-black/50 border-gold/30 text-white"
                 />
               </div>
+              <IconSelector
+                selectedIcon={editingService.icon || 'sparkles-emoji'}
+                onIconSelect={(icon) => handleEditServiceChange('icon', icon)}
+                className="mb-4"
+              />
               <div className="flex justify-end space-x-2">
                 <Button 
                   variant="outline" 
