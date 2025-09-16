@@ -661,6 +661,485 @@ class FrisorLaFataAPITester:
         self.token = original_token
         return success, response
 
+    def test_enhanced_page_model(self):
+        """Test enhanced page model with new fields"""
+        print("\n" + "📄 ENHANCED PAGE MODEL TESTS" + "=" * 35)
+        
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        # Test creating pages with different page types
+        page_types = ["page", "blog", "about", "service"]
+        created_pages = []
+        
+        for page_type in page_types:
+            page_data = {
+                "title": f"Enhanced {page_type.title()} {datetime.now().strftime('%H%M%S')}",
+                "slug": f"enhanced-{page_type}-{datetime.now().strftime('%H%M%S')}",
+                "content": f"This is enhanced {page_type} content with rich features",
+                "meta_description": f"Enhanced {page_type} meta description",
+                "is_published": True,
+                "show_in_navigation": True,
+                "navigation_order": len(created_pages) + 1,
+                "page_type": page_type,
+                "featured_image": f"https://frisor-admin.preview.emergentagent.com/uploads/images/featured-{page_type}.jpg",
+                "images": [
+                    f"https://frisor-admin.preview.emergentagent.com/uploads/images/gallery-{page_type}-1.jpg",
+                    f"https://frisor-admin.preview.emergentagent.com/uploads/images/gallery-{page_type}-2.jpg"
+                ],
+                "videos": [
+                    f"https://frisor-admin.preview.emergentagent.com/uploads/videos/demo-{page_type}.mp4"
+                ],
+                "categories": [f"{page_type}-category", "general"],
+                "tags": [f"{page_type}-tag", "enhanced", "test"],
+                "excerpt": f"This is a brief excerpt for the {page_type} page showcasing enhanced features."
+            }
+            
+            success, response = self.run_test(
+                f"Create Enhanced {page_type.title()} Page", 
+                "POST", 
+                "pages", 
+                200, 
+                data=page_data
+            )
+            
+            if success and 'id' in response:
+                created_pages.append({
+                    'id': response['id'],
+                    'type': page_type,
+                    'data': response
+                })
+                
+                # Verify all enhanced fields are present
+                self._verify_enhanced_page_fields(response, page_data, page_type)
+        
+        self.token = original_token
+        return len(created_pages) > 0, created_pages
+
+    def _verify_enhanced_page_fields(self, response, expected_data, page_type):
+        """Verify that enhanced page fields are correctly stored"""
+        self.tests_run += 1
+        print(f"\n🔍 Verifying Enhanced Fields for {page_type.title()} Page...")
+        
+        required_fields = [
+            'page_type', 'categories', 'tags', 'excerpt', 'featured_image',
+            'navigation_order', 'show_in_navigation', 'images', 'videos'
+        ]
+        
+        missing_fields = []
+        incorrect_values = []
+        
+        for field in required_fields:
+            if field not in response:
+                missing_fields.append(field)
+            elif response[field] != expected_data[field]:
+                incorrect_values.append({
+                    'field': field,
+                    'expected': expected_data[field],
+                    'actual': response[field]
+                })
+        
+        if not missing_fields and not incorrect_values:
+            self.tests_passed += 1
+            print(f"✅ Passed - All enhanced fields correctly stored")
+            print(f"   Page Type: {response.get('page_type')}")
+            print(f"   Categories: {len(response.get('categories', []))} items")
+            print(f"   Tags: {len(response.get('tags', []))} items")
+            print(f"   Navigation Order: {response.get('navigation_order')}")
+            return True
+        else:
+            print(f"❌ Failed - Enhanced fields validation failed")
+            if missing_fields:
+                print(f"   Missing fields: {missing_fields}")
+            if incorrect_values:
+                print(f"   Incorrect values: {incorrect_values}")
+            return False
+
+    def test_video_upload_endpoint(self):
+        """Test video upload endpoint with comprehensive validation"""
+        print("\n" + "🎥 VIDEO UPLOAD ENDPOINT TESTS" + "=" * 35)
+        
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+        
+        # Test different video formats
+        video_formats = [
+            ('test_video.mp4', 'video/mp4'),
+            ('test_video.webm', 'video/webm'),
+            ('test_video.ogg', 'video/ogg'),
+            ('test_video.avi', 'video/avi'),
+            ('test_video.mov', 'video/mov')
+        ]
+        
+        uploaded_videos = []
+        
+        for filename, content_type in video_formats:
+            success, response = self._test_video_upload_format(filename, content_type)
+            if success and 'video_url' in response:
+                uploaded_videos.append(response['video_url'])
+        
+        # Test authentication requirement
+        self._test_video_upload_auth_required()
+        
+        # Test invalid file type
+        self._test_video_upload_invalid_file()
+        
+        # Test static file serving for uploaded videos
+        for video_url in uploaded_videos:
+            self._test_video_static_serving(video_url)
+        
+        return len(uploaded_videos) > 0, uploaded_videos
+
+    def _test_video_upload_format(self, filename, content_type):
+        """Test video upload with specific format"""
+        # Create test video content (fake binary data)
+        test_video_content = b"fake_video_content_for_testing_" + filename.encode() + b"_binary_data" * 100
+        
+        url = f"{self.api_url}/upload/video"
+        headers = {'Authorization': f'Bearer {self.admin_token}'}
+        files = {'video': (filename, io.BytesIO(test_video_content), content_type)}
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing Video Upload - {filename}...")
+        
+        try:
+            response = requests.post(url, headers=headers, files=files, timeout=15)
+            
+            success = response.status_code == 200
+            if success:
+                self.tests_passed += 1
+                response_data = response.json()
+                video_url = response_data.get('video_url', '')
+                
+                # Verify URL format and directory
+                expected_domain = "https://frisor-admin.preview.emergentagent.com"
+                expected_path = "/uploads/videos/"
+                
+                if video_url.startswith(expected_domain) and expected_path in video_url:
+                    print(f"✅ Passed - Correct URL format: {video_url}")
+                else:
+                    print(f"❌ URL format issue - Expected {expected_domain}{expected_path}, got: {video_url}")
+                    success = False
+                
+                return success, response_data
+            else:
+                print(f"❌ Failed - Status: {response.status_code}")
+                try:
+                    error_data = response.json()
+                    print(f"   Error: {error_data}")
+                except:
+                    print(f"   Error: {response.text}")
+                return False, {}
+                
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False, {}
+
+    def _test_video_upload_auth_required(self):
+        """Test that video upload requires admin authentication"""
+        # Test without token
+        url = f"{self.api_url}/upload/video"
+        files = {'video': ('test.mp4', io.BytesIO(b"test_video"), 'video/mp4')}
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing Video Upload - No Auth (should fail)...")
+        
+        try:
+            response = requests.post(url, files=files, timeout=10)
+            if response.status_code == 401 or response.status_code == 403:
+                self.tests_passed += 1
+                print(f"✅ Passed - Correctly rejected unauthorized request: {response.status_code}")
+                return True
+            else:
+                print(f"❌ Failed - Should reject unauthorized request, got: {response.status_code}")
+                return False
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False
+
+    def _test_video_upload_invalid_file(self):
+        """Test video upload with invalid file type"""
+        url = f"{self.api_url}/upload/video"
+        headers = {'Authorization': f'Bearer {self.admin_token}'}
+        files = {'video': ('test.txt', io.BytesIO(b"not a video"), 'text/plain')}
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing Video Upload - Invalid File Type (should fail)...")
+        
+        try:
+            response = requests.post(url, headers=headers, files=files, timeout=10)
+            if response.status_code == 400:
+                self.tests_passed += 1
+                print(f"✅ Passed - Correctly rejected invalid file type: {response.status_code}")
+                return True
+            else:
+                print(f"❌ Failed - Should reject invalid file type, got: {response.status_code}")
+                return False
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False
+
+    def _test_video_static_serving(self, video_url):
+        """Test that uploaded video is accessible via static file serving"""
+        self.tests_run += 1
+        print(f"\n🔍 Testing Video Static Serving...")
+        print(f"   URL: {video_url}")
+        
+        try:
+            response = requests.get(video_url, timeout=10)
+            
+            if response.status_code == 200:
+                self.tests_passed += 1
+                content_type = response.headers.get('content-type', '')
+                print(f"✅ Passed - Video accessible, Content-Type: {content_type}")
+                
+                # Note: Content-Type might be overridden by proxy, but file should be accessible
+                return True
+            else:
+                print(f"❌ Failed - Video not accessible: {response.status_code}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Failed - Error accessing video: {str(e)}")
+            return False
+
+    def test_public_pages_api(self):
+        """Test public pages API for navigation"""
+        print("\n" + "🌐 PUBLIC PAGES API TESTS" + "=" * 40)
+        
+        # First create some test pages with different navigation settings
+        if self.admin_token:
+            original_token = self.token
+            self.token = self.admin_token
+            
+            # Create pages with different navigation settings
+            test_pages = [
+                {
+                    "title": "Public Nav Page 1",
+                    "slug": f"public-nav-1-{datetime.now().strftime('%H%M%S')}",
+                    "content": "Public navigation page content",
+                    "is_published": True,
+                    "show_in_navigation": True,
+                    "navigation_order": 1,
+                    "page_type": "page"
+                },
+                {
+                    "title": "Public Nav Page 2",
+                    "slug": f"public-nav-2-{datetime.now().strftime('%H%M%S')}",
+                    "content": "Another public navigation page",
+                    "is_published": True,
+                    "show_in_navigation": True,
+                    "navigation_order": 2,
+                    "page_type": "about"
+                },
+                {
+                    "title": "Hidden Page",
+                    "slug": f"hidden-page-{datetime.now().strftime('%H%M%S')}",
+                    "content": "This page should not appear in navigation",
+                    "is_published": True,
+                    "show_in_navigation": False,
+                    "navigation_order": 3,
+                    "page_type": "page"
+                },
+                {
+                    "title": "Unpublished Page",
+                    "slug": f"unpublished-{datetime.now().strftime('%H%M%S')}",
+                    "content": "This unpublished page should not appear",
+                    "is_published": False,
+                    "show_in_navigation": True,
+                    "navigation_order": 4,
+                    "page_type": "page"
+                }
+            ]
+            
+            created_test_pages = []
+            for page_data in test_pages:
+                success, response = self.run_test(
+                    f"Create Test Page: {page_data['title']}", 
+                    "POST", 
+                    "pages", 
+                    200, 
+                    data=page_data
+                )
+                if success:
+                    created_test_pages.append(response)
+            
+            self.token = original_token
+        
+        # Test public pages endpoint
+        success, response = self.run_test("Get Public Pages", "GET", "public/pages", 200)
+        
+        if success:
+            self._verify_public_pages_response(response)
+        
+        return success, response
+
+    def _verify_public_pages_response(self, pages):
+        """Verify public pages API response structure and filtering"""
+        self.tests_run += 1
+        print(f"\n🔍 Verifying Public Pages Response...")
+        
+        if not isinstance(pages, list):
+            print(f"❌ Failed - Response should be a list, got: {type(pages)}")
+            return False
+        
+        # Check that all returned pages meet criteria
+        invalid_pages = []
+        navigation_orders = []
+        
+        for page in pages:
+            # Check required fields
+            if not page.get('is_published', False):
+                invalid_pages.append(f"Unpublished page: {page.get('title', 'Unknown')}")
+            
+            if not page.get('show_in_navigation', False):
+                invalid_pages.append(f"Hidden page: {page.get('title', 'Unknown')}")
+            
+            # Collect navigation orders for sorting verification
+            nav_order = page.get('navigation_order', 0)
+            navigation_orders.append(nav_order)
+            
+            # Verify enhanced fields are present
+            enhanced_fields = ['page_type', 'categories', 'tags', 'excerpt', 'featured_image']
+            for field in enhanced_fields:
+                if field not in page:
+                    print(f"⚠️  Warning: Enhanced field '{field}' missing from page: {page.get('title', 'Unknown')}")
+        
+        # Check if pages are sorted by navigation_order
+        is_sorted = navigation_orders == sorted(navigation_orders)
+        
+        if not invalid_pages and is_sorted:
+            self.tests_passed += 1
+            print(f"✅ Passed - Public pages correctly filtered and sorted")
+            print(f"   Total pages: {len(pages)}")
+            print(f"   Navigation orders: {navigation_orders}")
+            return True
+        else:
+            print(f"❌ Failed - Public pages validation failed")
+            if invalid_pages:
+                print(f"   Invalid pages found: {invalid_pages}")
+            if not is_sorted:
+                print(f"   Pages not sorted by navigation_order: {navigation_orders}")
+            return False
+
+    def test_page_crud_enhanced_features(self):
+        """Test complete CRUD operations with enhanced page features"""
+        print("\n" + "🔄 PAGE CRUD WITH ENHANCED FEATURES" + "=" * 30)
+        
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        # Create page with all enhanced fields
+        enhanced_page_data = {
+            "title": f"Full Enhanced Page {datetime.now().strftime('%H%M%S')}",
+            "slug": f"full-enhanced-{datetime.now().strftime('%H%M%S')}",
+            "content": "Complete enhanced page with all new features",
+            "meta_description": "Enhanced page with comprehensive metadata",
+            "is_published": True,
+            "show_in_navigation": True,
+            "navigation_order": 10,
+            "page_type": "service",
+            "featured_image": "https://frisor-admin.preview.emergentagent.com/uploads/images/featured-service.jpg",
+            "images": [
+                "https://frisor-admin.preview.emergentagent.com/uploads/images/gallery-1.jpg",
+                "https://frisor-admin.preview.emergentagent.com/uploads/images/gallery-2.jpg",
+                "https://frisor-admin.preview.emergentagent.com/uploads/images/gallery-3.jpg"
+            ],
+            "videos": [
+                "https://frisor-admin.preview.emergentagent.com/uploads/videos/demo-1.mp4",
+                "https://frisor-admin.preview.emergentagent.com/uploads/videos/demo-2.webm"
+            ],
+            "categories": ["premium-services", "hair-styling", "professional"],
+            "tags": ["enhanced", "premium", "styling", "professional", "modern"],
+            "excerpt": "This is a comprehensive service page showcasing all enhanced CMS features including categories, tags, media galleries, and advanced navigation."
+        }
+        
+        # CREATE
+        success, create_response = self.run_test(
+            "Create Enhanced Page (Full Features)", 
+            "POST", 
+            "pages", 
+            200, 
+            data=enhanced_page_data
+        )
+        
+        if not success:
+            self.token = original_token
+            return False, {}
+        
+        page_id = create_response['id']
+        
+        # READ - Verify all fields are correctly stored
+        success, read_response = self.run_test(
+            "Read Enhanced Page", 
+            "GET", 
+            "pages", 
+            200
+        )
+        
+        if success:
+            # Find our created page in the list
+            created_page = None
+            for page in read_response:
+                if page['id'] == page_id:
+                    created_page = page
+                    break
+            
+            if created_page:
+                self._verify_enhanced_page_fields(created_page, enhanced_page_data, "service")
+        
+        # UPDATE - Test updating enhanced fields
+        update_data = {
+            "categories": ["updated-category", "new-category"],
+            "tags": ["updated", "new-tag", "modified"],
+            "excerpt": "Updated excerpt with new information",
+            "page_type": "blog",
+            "navigation_order": 15,
+            "videos": [
+                "https://frisor-admin.preview.emergentagent.com/uploads/videos/updated-demo.mp4"
+            ]
+        }
+        
+        success, update_response = self.run_test(
+            "Update Enhanced Page Fields", 
+            "PUT", 
+            f"pages/{page_id}", 
+            200, 
+            data=update_data
+        )
+        
+        if success:
+            # Verify updated fields
+            for field, expected_value in update_data.items():
+                if update_response.get(field) == expected_value:
+                    print(f"   ✅ {field} updated correctly")
+                else:
+                    print(f"   ❌ {field} update failed - Expected: {expected_value}, Got: {update_response.get(field)}")
+        
+        # DELETE
+        success, delete_response = self.run_test(
+            "Delete Enhanced Page", 
+            "DELETE", 
+            f"pages/{page_id}", 
+            200
+        )
+        
+        self.token = original_token
+        return success, {
+            'create': create_response,
+            'update': update_response,
+            'delete': delete_response
+        }
+
     def test_get_pages(self):
         """Test getting pages (admin required)"""
         if not self.admin_token:
