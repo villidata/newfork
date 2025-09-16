@@ -416,6 +416,192 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Social Media Section */}
+      {settings.social_media_enabled && (
+        <section id="social" className="py-20 bg-black/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-gold mb-4 font-serif">
+                {settings.social_media_title || 'Follow Us'}
+              </h2>
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                {settings.social_media_description || 'Se vores seneste arbejde og tilbud på sociale medier'}
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Instagram */}
+              {settings.instagram_enabled && (settings.instagram_username || settings.instagram_embed_code) && (
+                <Card className="bg-gray-900/50 border-gold/20 hover:border-gold/50 transition-all duration-300">
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="w-8 h-8 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
+                        <span className="text-white font-bold text-sm">IG</span>
+                      </div>
+                      <h3 className="text-xl font-semibold text-gold">Instagram</h3>
+                    </div>
+                    
+                    {settings.instagram_embed_code ? (
+                      <div 
+                        className="instagram-embed-container"
+                        dangerouslySetInnerHTML={{ __html: settings.instagram_embed_code }}
+                      />
+                    ) : settings.instagram_username && (
+                      <div className="text-center">
+                        <p className="text-gray-300 mb-4">Follow us on Instagram</p>
+                        <Button
+                          variant="outline"
+                          className="border-gold/50 text-gold hover:bg-gold hover:text-black"
+                          onClick={() => window.open(`https://instagram.com/${settings.instagram_username.replace('@', '')}`, '_blank')}
+                        >
+                          {settings.instagram_username}
+                        </Button>
+                        {settings.instagram_hashtag && (
+                          <p className="text-gray-400 text-sm mt-2">{settings.instagram_hashtag}</p>
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Facebook */}
+              {settings.facebook_enabled && (settings.facebook_page_url || settings.facebook_embed_code) && (
+                <Card className="bg-gray-900/50 border-gold/20 hover:border-gold/50 transition-all duration-300">
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                        <span className="text-white font-bold text-sm">f</span>
+                      </div>
+                      <h3 className="text-xl font-semibold text-gold">Facebook</h3>
+                    </div>
+                    
+                    {settings.facebook_embed_code ? (
+                      <div 
+                        className="facebook-embed-container"
+                        dangerouslySetInnerHTML={{ __html: settings.facebook_embed_code }}
+                      />
+                    ) : settings.facebook_page_url && (
+                      <div className="text-center">
+                        <p className="text-gray-300 mb-4">Like our Facebook page</p>
+                        <Button
+                          variant="outline"
+                          className="border-gold/50 text-gold hover:bg-gold hover:text-black"
+                          onClick={() => window.open(settings.facebook_page_url, '_blank')}
+                        >
+                          Visit Page
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* TikTok */}
+              {settings.tiktok_enabled && (settings.tiktok_username || settings.tiktok_embed_code) && (
+                <Card className="bg-gray-900/50 border-gold/20 hover:border-gold/50 transition-all duration-300">
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center mr-3 border border-white">
+                        <span className="text-white font-bold text-sm">T</span>
+                      </div>
+                      <h3 className="text-xl font-semibold text-gold">TikTok</h3>
+                    </div>
+                    
+                    {settings.tiktok_embed_code ? (
+                      <div 
+                        className="tiktok-embed-container"
+                        dangerouslySetInnerHTML={{ __html: settings.tiktok_embed_code }}
+                      />
+                    ) : settings.tiktok_username && (
+                      <div className="text-center">
+                        <p className="text-gray-300 mb-4">Follow us on TikTok</p>
+                        <Button
+                          variant="outline"
+                          className="border-gold/50 text-gold hover:bg-gold hover:text-black"
+                          onClick={() => window.open(`https://tiktok.com/${settings.tiktok_username.replace('@', '')}`, '_blank')}
+                        >
+                          {settings.tiktok_username}
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Twitter/X */}
+              {settings.twitter_enabled && (settings.twitter_username || settings.twitter_embed_code) && (
+                <Card className="bg-gray-900/50 border-gold/20 hover:border-gold/50 transition-all duration-300">
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center mr-3 border border-white">
+                        <span className="text-white font-bold text-sm">X</span>
+                      </div>
+                      <h3 className="text-xl font-semibold text-gold">Twitter / X</h3>
+                    </div>
+                    
+                    {settings.twitter_embed_code ? (
+                      <div 
+                        className="twitter-embed-container"
+                        dangerouslySetInnerHTML={{ __html: settings.twitter_embed_code }}
+                      />
+                    ) : settings.twitter_username && (
+                      <div className="text-center">
+                        <p className="text-gray-300 mb-4">Follow us on X</p>
+                        <Button
+                          variant="outline"
+                          className="border-gold/50 text-gold hover:bg-gold hover:text-black"
+                          onClick={() => window.open(`https://x.com/${settings.twitter_username.replace('@', '')}`, '_blank')}
+                        >
+                          {settings.twitter_username}
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* YouTube */}
+              {settings.youtube_enabled && (settings.youtube_channel_url || settings.youtube_embed_code) && (
+                <Card className="bg-gray-900/50 border-gold/20 hover:border-gold/50 transition-all duration-300">
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center mr-3">
+                        <span className="text-white font-bold text-sm">▶</span>
+                      </div>
+                      <h3 className="text-xl font-semibold text-gold">YouTube</h3>
+                    </div>
+                    
+                    {settings.youtube_embed_code ? (
+                      <div 
+                        className="youtube-embed-container"
+                        dangerouslySetInnerHTML={{ __html: settings.youtube_embed_code }}
+                      />
+                    ) : settings.youtube_channel_url && (
+                      <div className="text-center">
+                        <p className="text-gray-300 mb-4">Subscribe to our channel</p>
+                        <Button
+                          variant="outline"
+                          className="border-gold/50 text-gold hover:bg-gold hover:text-black"
+                          onClick={() => window.open(settings.youtube_channel_url, '_blank')}
+                        >
+                          Visit Channel
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            {/* Social Media CTA */}
+            <div className="text-center mt-12">
+              <p className="text-gray-300 mb-4">Stay connected with us on social media for the latest updates and exclusive offers!</p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Contact Section */}
       <section id="contact" className="py-20 bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
