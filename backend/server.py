@@ -1559,7 +1559,32 @@ async def get_public_settings():
             "hero_title": "Klassisk Barbering",
             "hero_subtitle": "i Hjertet af Byen",
             "hero_description": "Oplev den autentiske barber-oplevelse hos Frisor LaFata.",
-            "hero_image": ""
+            "hero_image": "",
+            # Social Media Settings
+            "social_media_enabled": True,
+            "social_media_title": "Follow Us",
+            "social_media_description": "Se vores seneste arbejde og tilbud på sociale medier",
+            # Instagram
+            "instagram_enabled": True,
+            "instagram_username": "",
+            "instagram_hashtag": "",
+            "instagram_embed_code": "",
+            # Facebook
+            "facebook_enabled": True,
+            "facebook_page_url": "",
+            "facebook_embed_code": "",
+            # TikTok
+            "tiktok_enabled": False,
+            "tiktok_username": "",
+            "tiktok_embed_code": "",
+            # Twitter/X
+            "twitter_enabled": False,
+            "twitter_username": "",
+            "twitter_embed_code": "",
+            # YouTube
+            "youtube_enabled": False,
+            "youtube_channel_url": "",
+            "youtube_embed_code": ""
         }
     
     # Return only public settings (exclude sensitive data)
