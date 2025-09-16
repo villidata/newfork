@@ -116,6 +116,9 @@ backend:
         - working: true
           agent: "main"
           comment: "Static files are correctly mounted at /uploads path using FastAPI StaticFiles middleware. Backend serves uploads from /app/backend/uploads/ directory."
+        - working: true
+          agent: "testing"
+          comment: "Verified static file serving works correctly from backend (localhost:8001) with proper content-type headers. External proxy/ingress overrides content-type to text/html but files are accessible. Backend implementation is correct."
 
   - task: "Avatar upload endpoint"
     implemented: true
@@ -128,6 +131,9 @@ backend:
         - working: true
           agent: "main"
           comment: "Avatar upload endpoint at /api/upload/avatar is working correctly and saves files to uploads/avatars/ directory."
+        - working: true
+          agent: "testing"
+          comment: "Comprehensive testing completed. Endpoint accepts jpg/png/gif files, requires admin authentication (403 for non-admin, 400 for invalid files), saves to correct location, and returns proper URLs with production domain https://frisor-admin.preview.emergentagent.com."
 
   - task: "BACKEND_URL configuration"
     implemented: true
@@ -143,6 +149,33 @@ backend:
         - working: true
           agent: "main"
           comment: "Fixed BACKEND_URL to use correct production URL: https://frisor-admin.preview.emergentagent.com"
+        - working: true
+          agent: "testing"
+          comment: "Verified all avatar uploads generate URLs with correct production domain. No localhost URLs found in database. Configuration working correctly."
+
+  - task: "Staff avatar integration"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Staff creation and update with avatar_url field working correctly. Staff API returns proper avatar URLs. Database consistency verified - existing staff have correct production URLs."
+
+  - task: "Avatar authentication and validation"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Avatar upload properly requires admin authentication (returns 403 for unauthorized, 403 for non-admin users). File type validation working (returns 400 for non-image files). All security measures in place."
 
 frontend:
   - task: "Staff avatar display in admin dashboard"
