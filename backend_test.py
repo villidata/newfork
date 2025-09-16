@@ -363,6 +363,277 @@ class FrisorLaFataAPITester:
             print(f"❌ Failed - Error: {str(e)}")
             return False, {}
 
+    def test_avatar_upload_comprehensive(self):
+        """Comprehensive avatar upload testing"""
+        print("\n" + "📸 COMPREHENSIVE AVATAR UPLOAD TESTS" + "=" * 30)
+        
+        # Test 1: Upload with different file types
+        file_types = [
+            ('test_avatar.jpg', 'image/jpeg'),
+            ('test_avatar.png', 'image/png'),
+            ('test_avatar.gif', 'image/gif')
+        ]
+        
+        uploaded_avatars = []
+        
+        for filename, content_type in file_types:
+            success, response = self._test_avatar_upload_file_type(filename, content_type)
+            if success and 'avatar_url' in response:
+                uploaded_avatars.append(response['avatar_url'])
+        
+        # Test 2: Test authentication requirement (non-admin should fail)
+        self._test_avatar_upload_auth_required()
+        
+        # Test 3: Test invalid file type
+        self._test_avatar_upload_invalid_file()
+        
+        # Test 4: Test static file serving for uploaded avatars
+        for avatar_url in uploaded_avatars:
+            self._test_avatar_static_serving(avatar_url)
+        
+        return len(uploaded_avatars) > 0, uploaded_avatars
+
+    def _test_avatar_upload_file_type(self, filename, content_type):
+        """Test avatar upload with specific file type"""
+        if not self.admin_token:
+            return False, {}
+            
+        # Create test image content
+        test_image_content = b"fake_image_content_for_testing_" + filename.encode()
+        
+        url = f"{self.api_url}/upload/avatar"
+        headers = {'Authorization': f'Bearer {self.admin_token}'}
+        files = {'avatar': (filename, io.BytesIO(test_image_content), content_type)}
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing Avatar Upload - {filename}...")
+        
+        try:
+            response = requests.post(url, headers=headers, files=files, timeout=10)
+            
+            success = response.status_code == 200
+            if success:
+                self.tests_passed += 1
+                response_data = response.json()
+                avatar_url = response_data.get('avatar_url', '')
+                
+                # Verify URL format
+                expected_domain = "https://frisor-admin.preview.emergentagent.com"
+                if avatar_url.startswith(expected_domain):
+                    print(f"✅ Passed - Correct URL format: {avatar_url}")
+                else:
+                    print(f"❌ URL format issue - Expected domain {expected_domain}, got: {avatar_url}")
+                    success = False
+                
+                return success, response_data
+            else:
+                print(f"❌ Failed - Status: {response.status_code}")
+                return False, {}
+                
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False, {}
+
+    def _test_avatar_upload_auth_required(self):
+        """Test that avatar upload requires admin authentication"""
+        # Test without token
+        url = f"{self.api_url}/upload/avatar"
+        files = {'avatar': ('test.jpg', io.BytesIO(b"test"), 'image/jpeg')}
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing Avatar Upload - No Auth (should fail)...")
+        
+        try:
+            response = requests.post(url, files=files, timeout=10)
+            if response.status_code == 401 or response.status_code == 403:
+                self.tests_passed += 1
+                print(f"✅ Passed - Correctly rejected unauthorized request: {response.status_code}")
+                return True
+            else:
+                print(f"❌ Failed - Should reject unauthorized request, got: {response.status_code}")
+                return False
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False
+
+        # Test with regular user token (non-admin)
+        if self.token and self.token != self.admin_token:
+            headers = {'Authorization': f'Bearer {self.token}'}
+            
+            self.tests_run += 1
+            print(f"\n🔍 Testing Avatar Upload - Non-Admin Auth (should fail)...")
+            
+            try:
+                response = requests.post(url, headers=headers, files=files, timeout=10)
+                if response.status_code == 403:
+                    self.tests_passed += 1
+                    print(f"✅ Passed - Correctly rejected non-admin request: {response.status_code}")
+                    return True
+                else:
+                    print(f"❌ Failed - Should reject non-admin request, got: {response.status_code}")
+                    return False
+            except Exception as e:
+                print(f"❌ Failed - Error: {str(e)}")
+                return False
+
+    def _test_avatar_upload_invalid_file(self):
+        """Test avatar upload with invalid file type"""
+        if not self.admin_token:
+            return False
+            
+        url = f"{self.api_url}/upload/avatar"
+        headers = {'Authorization': f'Bearer {self.admin_token}'}
+        files = {'avatar': ('test.txt', io.BytesIO(b"not an image"), 'text/plain')}
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing Avatar Upload - Invalid File Type (should fail)...")
+        
+        try:
+            response = requests.post(url, headers=headers, files=files, timeout=10)
+            if response.status_code == 400:
+                self.tests_passed += 1
+                print(f"✅ Passed - Correctly rejected invalid file type: {response.status_code}")
+                return True
+            else:
+                print(f"❌ Failed - Should reject invalid file type, got: {response.status_code}")
+                return False
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False
+
+    def _test_avatar_static_serving(self, avatar_url):
+        """Test that uploaded avatar is accessible via static file serving"""
+        self.tests_run += 1
+        print(f"\n🔍 Testing Avatar Static Serving...")
+        print(f"   URL: {avatar_url}")
+        
+        try:
+            response = requests.get(avatar_url, timeout=10)
+            
+            if response.status_code == 200:
+                self.tests_passed += 1
+                content_type = response.headers.get('content-type', '')
+                print(f"✅ Passed - Avatar accessible, Content-Type: {content_type}")
+                
+                # Verify it's an image content type
+                if content_type.startswith('image/'):
+                    print(f"   ✅ Correct image content type")
+                else:
+                    print(f"   ⚠️  Warning: Expected image content type, got: {content_type}")
+                
+                return True
+            else:
+                print(f"❌ Failed - Avatar not accessible: {response.status_code}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Failed - Error accessing avatar: {str(e)}")
+            return False
+
+    def test_staff_avatar_integration(self):
+        """Test staff creation and update with avatar URLs"""
+        print("\n" + "👥 STAFF AVATAR INTEGRATION TESTS" + "=" * 30)
+        
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+        
+        # First upload an avatar
+        success, avatar_response = self._test_avatar_upload_file_type('staff_avatar.jpg', 'image/jpeg')
+        if not success or 'avatar_url' in avatar_response:
+            print("❌ Failed to upload avatar for staff integration test")
+            return False, {}
+        
+        avatar_url = avatar_response['avatar_url']
+        
+        # Test creating staff with avatar
+        original_token = self.token
+        self.token = self.admin_token
+        
+        staff_data = {
+            "name": f"Avatar Test Staff {datetime.now().strftime('%H%M%S')}",
+            "specialty": "Avatar Testing",
+            "experience": "5 år",
+            "avatar_url": avatar_url,
+            "available_hours": {
+                "monday": {"start": "09:00", "end": "17:00", "enabled": True}
+            }
+        }
+        
+        success, staff_response = self.run_test("Create Staff with Avatar", "POST", "staff", 200, data=staff_data)
+        
+        if success and 'id' in staff_response:
+            staff_id = staff_response['id']
+            
+            # Verify the avatar URL is correctly stored
+            if staff_response.get('avatar_url') == avatar_url:
+                print(f"✅ Staff created with correct avatar URL")
+            else:
+                print(f"❌ Avatar URL mismatch in staff creation")
+            
+            # Test updating staff avatar
+            new_avatar_success, new_avatar_response = self._test_avatar_upload_file_type('updated_avatar.png', 'image/png')
+            if new_avatar_success and 'avatar_url' in new_avatar_response:
+                new_avatar_url = new_avatar_response['avatar_url']
+                
+                update_data = {"avatar_url": new_avatar_url}
+                update_success, update_response = self.run_test(
+                    "Update Staff Avatar", 
+                    "PUT", 
+                    f"staff/{staff_id}", 
+                    200, 
+                    data=update_data
+                )
+                
+                if update_success and update_response.get('avatar_url') == new_avatar_url:
+                    print(f"✅ Staff avatar updated successfully")
+                else:
+                    print(f"❌ Failed to update staff avatar")
+        
+        self.token = original_token
+        return success, staff_response
+
+    def test_database_avatar_urls_consistency(self):
+        """Test that all staff records have correct avatar URLs (no localhost)"""
+        print("\n" + "🗄️ DATABASE AVATAR URL CONSISTENCY TESTS" + "=" * 25)
+        
+        # Get all staff
+        success, staff_list = self.run_test("Get All Staff for URL Check", "GET", "staff", 200)
+        
+        if not success:
+            print("❌ Failed to retrieve staff list")
+            return False
+        
+        localhost_issues = []
+        correct_urls = []
+        
+        for staff in staff_list:
+            avatar_url = staff.get('avatar_url', '')
+            if avatar_url:
+                if 'localhost' in avatar_url or '127.0.0.1' in avatar_url or ':8000' in avatar_url or ':8001' in avatar_url:
+                    localhost_issues.append({
+                        'name': staff.get('name', 'Unknown'),
+                        'id': staff.get('id', 'Unknown'),
+                        'avatar_url': avatar_url
+                    })
+                elif avatar_url.startswith('https://frisor-admin.preview.emergentagent.com'):
+                    correct_urls.append({
+                        'name': staff.get('name', 'Unknown'),
+                        'avatar_url': avatar_url
+                    })
+        
+        self.tests_run += 1
+        if len(localhost_issues) == 0:
+            self.tests_passed += 1
+            print(f"✅ Passed - No localhost URLs found in staff avatars")
+            print(f"   Staff with correct URLs: {len(correct_urls)}")
+        else:
+            print(f"❌ Failed - Found {len(localhost_issues)} staff with localhost URLs:")
+            for issue in localhost_issues:
+                print(f"   - {issue['name']}: {issue['avatar_url']}")
+        
+        return len(localhost_issues) == 0
+
     def test_create_page(self):
         """Test creating page (NEW FEATURE - CMS)"""
         if not self.admin_token:
