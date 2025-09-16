@@ -383,7 +383,7 @@ const BreakManager = ({ token, staff, onRefresh }) => {
                   <SelectValue placeholder="All staff" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-900 border-gold/20">
-                  <SelectItem value="">All Staff</SelectItem>
+                  <SelectItem value="all">All Staff</SelectItem>
                   {staff.map(member => (
                     <SelectItem key={member.id} value={member.id}>
                       {member.name}
