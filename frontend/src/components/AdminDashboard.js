@@ -1529,9 +1529,24 @@ const AdminDashboard = ({ token, user, onLogout }) => {
             />
           </TabsContent>
 
+          <TabsContent value="revenue">
+            <RevenueDashboard 
+              token={token} 
+              onRefresh={fetchData} 
+            />
+          </TabsContent>
+
           <TabsContent value="staff">
             <StaffManager 
               token={token} 
+              onRefresh={fetchData} 
+            />
+          </TabsContent>
+
+          <TabsContent value="breaks">
+            <BreakManager 
+              token={token} 
+              staff={staff}
               onRefresh={fetchData} 
             />
           </TabsContent>
