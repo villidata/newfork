@@ -820,9 +820,11 @@ def main():
     tester.test_update_service()
     tester.test_delete_service()  # NEW FEATURE
     
-    # Test 10: NEW FEATURE - Avatar Upload
-    print("\n" + "📸 AVATAR UPLOAD TESTS (NEW FEATURE)" + "=" * 35)
-    tester.test_avatar_upload()
+    # Test 10: NEW FEATURE - Comprehensive Avatar Upload Tests
+    print("\n" + "📸 COMPREHENSIVE AVATAR TESTS (NEW FEATURE)" + "=" * 25)
+    tester.test_avatar_upload_comprehensive()
+    tester.test_staff_avatar_integration()
+    tester.test_database_avatar_urls_consistency()
     
     # Test 11: NEW FEATURE - Content Management System (Pages)
     print("\n" + "📄 CONTENT MANAGEMENT SYSTEM TESTS (NEW FEATURE)" + "=" * 20)
