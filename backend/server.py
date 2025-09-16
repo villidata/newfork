@@ -1620,6 +1620,148 @@ async def delete_gallery_item(item_id: str, current_user: User = Depends(get_cur
     
     return {"message": "Gallery item deleted successfully"}
 
+# Revenue tracking and analytics
+@api_router.get("/analytics/revenue")
+async def get_revenue_analytics(
+    period: str = "monthly",  # daily, weekly, monthly, yearly
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    staff_id: Optional[str] = None,
+    current_user: User = Depends(get_current_user)
+):
+    """Get revenue analytics with various filters"""
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    try:
+        # Set default date range if not provided
+        if not start_date:
+            if period == "daily":
+                start_date = (datetime.now(timezone.utc) - timedelta(days=30)).date()
+            elif period == "weekly":
+                start_date = (datetime.now(timezone.utc) - timedelta(weeks=12)).date()
+            elif period == "monthly":
+                start_date = (datetime.now(timezone.utc) - timedelta(days=365)).date()
+            else:  # yearly
+                start_date = (datetime.now(timezone.utc) - timedelta(days=1095)).date()  # 3 years
+        else:
+            start_date = datetime.fromisoformat(start_date).date()
+            
+        if not end_date:
+            end_date = datetime.now(timezone.utc).date()
+        else:
+            end_date = datetime.fromisoformat(end_date).date()
+        
+        # Build query
+        query = {
+            "booking_date": {
+                "$gte": start_date.isoformat(),
+                "$lte": end_date.isoformat()
+            },
+            "status": {"$in": ["confirmed", "completed"]},
+            "payment_status": "paid"
+        }
+        
+        if staff_id:
+            query["staff_id"] = staff_id
+        
+        # Get bookings
+        bookings = await db.bookings.find(query).to_list(length=None)
+        
+        # Calculate metrics
+        total_revenue = sum(booking["total_price"] for booking in bookings)
+        total_bookings = len(bookings)
+        average_booking_value = total_revenue / total_bookings if total_bookings > 0 else 0
+        
+        # Group by period
+        revenue_by_period = {}
+        for booking in bookings:
+            booking_date = datetime.fromisoformat(booking["booking_date"]).date()
+            
+            if period == "daily":
+                key = booking_date.isoformat()
+            elif period == "weekly":
+                # Get Monday of the week
+                week_start = booking_date - timedelta(days=booking_date.weekday())
+                key = week_start.isoformat()
+            elif period == "monthly":
+                key = f"{booking_date.year}-{booking_date.month:02d}"
+            else:  # yearly
+                key = str(booking_date.year)
+            
+            if key not in revenue_by_period:
+                revenue_by_period[key] = {"revenue": 0, "bookings": 0}
+            
+            revenue_by_period[key]["revenue"] += booking["total_price"]
+            revenue_by_period[key]["bookings"] += 1
+        
+        # Get top services
+        service_revenue = {}
+        for booking in bookings:
+            for service_id in booking["services"]:
+                if service_id not in service_revenue:
+                    service_revenue[service_id] = {"revenue": 0, "bookings": 0}
+                service_revenue[service_id]["revenue"] += booking["total_price"] / len(booking["services"])
+                service_revenue[service_id]["bookings"] += 1
+        
+        # Get service names
+        services = await db.services.find().to_list(length=None)
+        service_map = {s["id"]: s["name"] for s in services}
+        
+        top_services = [
+            {
+                "service_name": service_map.get(service_id, "Unknown"),
+                "revenue": data["revenue"],
+                "bookings": data["bookings"]
+            }
+            for service_id, data in sorted(service_revenue.items(), key=lambda x: x[1]["revenue"], reverse=True)[:5]
+        ]
+        
+        # Get staff performance
+        staff_revenue = {}
+        for booking in bookings:
+            staff_id = booking["staff_id"]
+            if staff_id not in staff_revenue:
+                staff_revenue[staff_id] = {"revenue": 0, "bookings": 0}
+            staff_revenue[staff_id]["revenue"] += booking["total_price"]
+            staff_revenue[staff_id]["bookings"] += 1
+        
+        # Get staff names
+        staff_list = await db.staff.find().to_list(length=None)
+        staff_map = {s["id"]: s["name"] for s in staff_list}
+        
+        staff_performance = [
+            {
+                "staff_name": staff_map.get(staff_id, "Unknown"),
+                "staff_id": staff_id,
+                "revenue": data["revenue"],
+                "bookings": data["bookings"],
+                "average_per_booking": data["revenue"] / data["bookings"] if data["bookings"] > 0 else 0
+            }
+            for staff_id, data in sorted(staff_revenue.items(), key=lambda x: x[1]["revenue"], reverse=True)
+        ]
+        
+        return {
+            "summary": {
+                "total_revenue": total_revenue,
+                "total_bookings": total_bookings,
+                "average_booking_value": round(average_booking_value, 2),
+                "period": period,
+                "start_date": start_date.isoformat(),
+                "end_date": end_date.isoformat()
+            },
+            "revenue_by_period": [
+                {"period": period, "revenue": data["revenue"], "bookings": data["bookings"]}
+                for period, data in sorted(revenue_by_period.items())
+            ],
+            "top_services": top_services,
+            "staff_performance": staff_performance
+        }
+        
+    except Exception as e:
+        print(f"Error in revenue analytics: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate revenue analytics")
+
 # Admin management route
 @api_router.post("/admin/create-admin")
 async def create_admin_user():
