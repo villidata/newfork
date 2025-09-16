@@ -65,7 +65,7 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
           upgrade_source: false,
           menubar: 'file edit view insert format tools table help',
           plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
             'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
             'insertdatetime', 'media', 'table', 'help', 'wordcount'
           ],
