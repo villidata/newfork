@@ -387,7 +387,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Gallery API endpoints and image URL verification"
+    - "Customizable Service Icons Feature - IconSelector Component"
+    - "Service Creation with Custom Icon Selection"
+    - "Service Editing with Custom Icon Selection"
+    - "Custom Icons Display on Public Website"
+    - "Backend Service Model Icon Support"
   stuck_tasks:
     - "Fix input field focus loss in Staff editing form"
   test_all: false
