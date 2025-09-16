@@ -1311,7 +1311,7 @@ async def upload_avatar(avatar: UploadFile = File(...), current_user: User = Dep
         buffer.write(content)
     
     # Return full URL for the image
-    avatar_url = f"{BACKEND_URL}/uploads/avatars/{filename}"
+    avatar_url = f"{BACKEND_URL}/api/uploads/avatars/{filename}"
     return {"avatar_url": avatar_url}
 
 @api_router.post("/upload/video")
