@@ -177,8 +177,13 @@ const ServiceManager = ({ token, onRefresh }) => {
         });
         console.log('Delete response:', response);
         alert('Service deleted successfully!');
-        fetchServices();
-        onRefresh();
+        
+        // Force refresh the services list
+        await fetchServices();
+        if (onRefresh) onRefresh();
+        
+        // Force page refresh if needed
+        window.location.reload();
       } catch (error) {
         console.error('Error deleting service:', error);
         console.error('Error response:', error.response?.data);
