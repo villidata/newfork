@@ -148,6 +148,10 @@ class FrisorLaFataAPITester:
             return False, {}
         return self.run_test("Get User Bookings", "GET", "bookings", 200)
 
+    def test_paypal_payment(self, booking_id="test_booking_123"):
+        """Test PayPal payment creation"""
+        return self.run_test("Create PayPal Payment", "POST", f"payments/paypal/create?booking_id={booking_id}", 200)
+
     def test_admin_login(self):
         """Test admin login"""
         admin_credentials = {
