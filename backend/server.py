@@ -306,6 +306,29 @@ class SiteSettings(BaseModel):
     email_smtp_port: int = 587
     email_user: str = ""
     email_password: str = ""
+    # Email Templates
+    email_subject_template: str = "Booking Confirmation - {{business_name}}"
+    email_body_template: str = """Dear {{customer_name}},
+
+Thank you for booking with {{business_name}}!
+
+Booking Details:
+- Date: {{booking_date}}
+- Time: {{booking_time}}
+- Services: {{services}}
+- Staff: {{staff_name}}
+- Total Price: {{total_price}} DKK
+
+Location:
+{{business_address}}
+
+Phone: {{business_phone}}
+Email: {{business_email}}
+
+We look forward to seeing you!
+
+Best regards,
+{{business_name}} Team"""
 
 # Business hours configuration
 BUSINESS_HOURS = {
