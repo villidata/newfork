@@ -207,6 +207,21 @@ frontend:
         - working: true
           agent: "main"
           comment: "Avatar upload functionality is working correctly and generates proper URLs for newly uploaded images."
+        - working: true
+          agent: "testing"
+          comment: "COMPREHENSIVE TESTING COMPLETED: ✅ Add New Staff dialog has proper avatar upload interface with upload button and circular preview area (w-16 h-16 rounded-full). Fallback user icon displays correctly when no avatar is selected. Form fields (name, specialty, experience, working hours) function properly. Upload button is properly labeled and accessible. Edit Staff dialog also has avatar upload functionality. All avatar upload interfaces work correctly across responsive viewports."
+
+  - task: "Public staff avatar display"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "COMPREHENSIVE TESTING COMPLETED: ✅ Public homepage staff section displays avatars perfectly with proper circular styling (w-16 h-16 rounded-full object-cover mx-auto mb-4 border-2 border-gold/30). Staff member with avatar shows image correctly using production HTTPS URL. Staff without avatars show fallback user icons. Responsive design works flawlessly across desktop, tablet, and mobile viewports. No console errors or loading issues found."
 
 metadata:
   created_by: "main_agent"
