@@ -1339,7 +1339,7 @@ async def upload_video(video: UploadFile = File(...), current_user: User = Depen
         buffer.write(content)
     
     # Return full URL for the video
-    video_url = f"{BACKEND_URL}/uploads/videos/{filename}"
+    video_url = f"{BACKEND_URL}/api/uploads/videos/{filename}"
     return {"video_url": video_url}
 
 @api_router.post("/upload/image")
