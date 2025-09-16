@@ -60,6 +60,15 @@ paypalrestsdk.configure({
 app = FastAPI(title="Frisor LaFata API", version="1.0.0")
 api_router = APIRouter(prefix="/api")
 
+# Create uploads directory
+uploads_dir = Path("uploads")
+uploads_dir.mkdir(exist_ok=True)
+(uploads_dir / "avatars").mkdir(exist_ok=True)
+(uploads_dir / "images").mkdir(exist_ok=True)
+
+# Mount static files for uploads
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 # Helper functions
 def prepare_for_mongo(data):
     """Convert datetime objects to ISO strings for MongoDB storage"""
