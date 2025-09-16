@@ -54,12 +54,12 @@ const IconSelector = ({ selectedIcon, onIconSelect, className = "" }) => {
       { icon: <FaCut className="h-6 w-6" />, value: "cut", name: "Cut" }
     ],
     "Hair & Styling": [
-      { icon: <GiCurlyHair className="h-6 w-6" />, value: "curly-hair", name: "Curly Hair" },
       { icon: <GiHairStrands className="h-6 w-6" />, value: "hair-strands", name: "Hair Strands" },
       { icon: <GiSpray className="h-6 w-6" />, value: "spray", name: "Hair Spray" },
       { icon: <FaSprayCan className="h-6 w-6" />, value: "spray-can", name: "Spray Can" },
       { icon: <FaPaintBrush className="h-6 w-6" />, value: "paint-brush", name: "Color Brush" },
-      { icon: <Palette className="h-6 w-6" />, value: "palette", name: "Color Palette" }
+      { icon: <Palette className="h-6 w-6" />, value: "palette", name: "Color Palette" },
+      { icon: <GiHotSurface className="h-6 w-6" />, value: "hot-surface", name: "Hot Styling" }
     ],
     "Facial Hair": [
       { icon: <GiMustache className="h-6 w-6" />, value: "mustache", name: "Mustache" },
