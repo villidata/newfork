@@ -19,6 +19,7 @@ const PublicPage = () => {
   useEffect(() => {
     fetchPage();
     fetchSettings();
+    fetchPages();
   }, [slug]);
 
   const fetchPage = async () => {
@@ -40,6 +41,15 @@ const PublicPage = () => {
       setSettings(response.data);
     } catch (error) {
       console.error('Error fetching settings:', error);
+    }
+  };
+
+  const fetchPages = async () => {
+    try {
+      const response = await axios.get(`${API}/public/pages`);
+      setPages(response.data);
+    } catch (error) {
+      console.error('Error fetching pages:', error);
     }
   };
 
