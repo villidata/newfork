@@ -7,12 +7,6 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
   const editorRef = useRef(null);
 
-  // Initialize TinyMCE for self-hosted mode
-  useEffect(() => {
-    // Configure TinyMCE base URL for self-hosted assets
-    tinymce.baseURL = '/tinymce';
-  }, []);
-
   const handleImageUpload = (blobInfo, progress) => new Promise((resolve, reject) => {
     const formData = new FormData();
     formData.append('image', blobInfo.blob(), blobInfo.filename());
