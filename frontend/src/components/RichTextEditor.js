@@ -59,9 +59,10 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
         }}
         init={{
           height: height,
-          // Self-hosted configuration - no API key needed
-          branding: false,
+          // Disable cloud features and API key validation
+          cloud_channels: '6',
           promotion: false,
+          branding: false,
           menubar: 'file edit view insert format tools table help',
           plugins: [
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
