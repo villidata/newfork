@@ -492,7 +492,7 @@ const GalleryManager = ({ token, staff, onRefresh }) => {
                 <div>
                   <Label className="text-gold">Staff Member</Label>
                   <Select 
-                    value={editingItem.staff_id || ''} 
+                    value={editingItem.staff_id || 'none'} 
                     onValueChange={(value) => setEditingItem(prev => ({ ...prev, staff_id: value }))}
                   >
                     <SelectTrigger className="bg-black/50 border-gold/30 text-white">
