@@ -1163,7 +1163,29 @@ const SettingsManager = ({ token, onRefresh }) => {
     email_smtp_server: 'smtp.gmail.com',
     email_smtp_port: 587,
     email_user: '',
-    email_password: ''
+    email_password: '',
+    email_subject_template: 'Booking Confirmation - {{business_name}}',
+    email_body_template: `Dear {{customer_name}},
+
+Thank you for booking with {{business_name}}!
+
+Booking Details:
+- Date: {{booking_date}}
+- Time: {{booking_time}}
+- Services: {{services}}
+- Staff: {{staff_name}}
+- Total Price: {{total_price}} DKK
+
+Location:
+{{business_address}}
+
+Phone: {{business_phone}}
+Email: {{business_email}}
+
+We look forward to seeing you!
+
+Best regards,
+{{business_name}} Team`
   });
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
