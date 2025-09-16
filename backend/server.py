@@ -131,6 +131,20 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise HTTPException(status_code=401, detail="Invalid token")
 
 # Models
+class UserCreate(BaseModel):
+    email: str
+    password: str
+    name: str = ""
+    is_admin: bool = False
+    role: str = "staff"  # "admin", "staff", "manager"
+
+class UserUpdate(BaseModel):
+    email: Optional[str] = None
+    password: Optional[str] = None
+    name: Optional[str] = None
+    is_admin: Optional[bool] = None
+    role: Optional[str] = None
+
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
