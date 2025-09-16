@@ -198,9 +198,9 @@ class ServiceUpdate(BaseModel):
 class Booking(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     customer_id: str
-    customer_name: str
-    customer_email: str
-    customer_phone: str
+    customer_name: Optional[str] = ""
+    customer_email: Optional[str] = ""
+    customer_phone: Optional[str] = ""
     staff_id: str
     services: List[str]  # List of service IDs
     booking_date: date
