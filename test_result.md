@@ -327,7 +327,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Fix input field focus loss in Pages editing form (Content Management)"
+    - "Gallery API endpoints and image URL verification"
   stuck_tasks:
     - "Fix input field focus loss in Staff editing form"
   test_all: false
