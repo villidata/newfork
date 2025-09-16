@@ -5,7 +5,7 @@ from datetime import datetime, date, timedelta
 import io
 
 class FrisorLaFataAPITester:
-    def __init__(self, base_url="https://trim-time-49.preview.emergentagent.com"):
+    def __init__(self, base_url="https://frisor-admin.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.token = None
