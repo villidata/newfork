@@ -454,7 +454,7 @@ const ContentManager = ({ token, onRefresh }) => {
       .trim();
   };
 
-  const handleNewPageChange = (field, value) => {
+  const handleNewPageChange = useCallback((field, value) => {
     setNewPage(prev => {
       const updated = { ...prev, [field]: value };
       // Auto-generate slug when title changes
@@ -463,11 +463,11 @@ const ContentManager = ({ token, onRefresh }) => {
       }
       return updated;
     });
-  };
+  }, []);
 
-  const handleEditPageChange = (field, value) => {
+  const handleEditPageChange = useCallback((field, value) => {
     setEditingPage(prev => ({ ...prev, [field]: value }));
-  };
+  }, []);
 
   const addCategory = (category, pageData, setPageData) => {
     if (category && !pageData.categories.includes(category)) {
