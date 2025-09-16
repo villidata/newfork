@@ -39,7 +39,7 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
   // Initialize TinyMCE for self-hosted mode
   useEffect(() => {
     // Configure TinyMCE base URL for self-hosted assets
-    tinymce.baseURL = '/node_modules/tinymce';
+    tinymce.baseURL = '/tinymce';
   }, []);
 
   const handleImageUpload = (blobInfo, progress) => new Promise((resolve, reject) => {
