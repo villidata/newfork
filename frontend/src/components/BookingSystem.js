@@ -162,6 +162,9 @@ const BookingSystem = ({ onClose }) => {
       // Create booking
       const bookingData = {
         customer_id: customerId,
+        customer_name: customerInfo.name,
+        customer_email: customerInfo.email,
+        customer_phone: customerInfo.phone,
         staff_id: selectedStaff,
         services: selectedServices,
         booking_date: selectedDate.toISOString().split('T')[0],
