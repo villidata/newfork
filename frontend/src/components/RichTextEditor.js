@@ -52,6 +52,7 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
   return (
     <div className="rich-text-editor">
       <Editor
+        apiKey='no-api-key'
         onInit={(evt, editor) => editorRef.current = editor}
         value={value}
         onEditorChange={(content, editor) => {
@@ -59,10 +60,9 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
         }}
         init={{
           height: height,
-          // Disable cloud features and API key validation
-          cloud_channels: '6',
+          // Configure for free usage without premium features
           promotion: false,
-          branding: false,
+          upgrade_source: false,
           menubar: 'file edit view insert format tools table help',
           plugins: [
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
