@@ -39,7 +39,7 @@ const Home = () => {
         axios.get(`${API}/staff`),
         axios.get(`${API}/public/settings`),
         axios.get(`${API}/public/pages`),
-        axios.get(`${API}/gallery/public`)
+        axios.get(`${API}/gallery?featured_only=false`)
       ]);
       
       setServices(servicesRes.data);
