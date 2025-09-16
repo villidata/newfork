@@ -1495,6 +1495,14 @@ const AdminDashboard = ({ token, user, onLogout }) => {
               <FileText className="h-4 w-4 mr-2" />
               Pages
             </TabsTrigger>
+            <TabsTrigger value="gallery" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+              <Image className="h-4 w-4 mr-2" />
+              Gallery
+            </TabsTrigger>
+            <TabsTrigger value="users" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+              <User className="h-4 w-4 mr-2" />
+              Users
+            </TabsTrigger>
             <TabsTrigger value="settings" className="data-[state=active]:bg-gold data-[state=active]:text-black">
               <Settings className="h-4 w-4 mr-2" />
               Settings
