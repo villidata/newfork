@@ -231,11 +231,11 @@ backend:
 frontend:
   - task: "Fix input field focus loss in Staff editing form"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/components/AdminDashboard.js"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "main"
@@ -243,6 +243,9 @@ frontend:
         - working: "NA"
           agent: "main"
           comment: "Fixed by extracting StaffForm component outside StaffManager to prevent re-creation on every render. Added useCallback for handleEditStaffChange and handleNewStaffChange functions. Added stable key props to input fields. This should resolve the focus loss issue."
+        - working: false
+          agent: "testing"
+          comment: "TESTING BLOCKED: Unable to access admin dashboard for testing. Admin page redirects to public homepage instead of showing admin login. Code review shows fix is properly implemented: StaffForm extracted outside StaffManager (lines 594-767), useCallback used for handlers (lines 574-580), stable key props added (lines 665, 675, 685). Implementation appears correct but cannot verify functionality due to routing/access issues."
 
   - task: "Staff avatar display in admin dashboard"
     implemented: true
