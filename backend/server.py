@@ -33,7 +33,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
 ALGORITHM = "HS256"
 # Use the frontend's backend URL for constructing image URLs
-BACKEND_URL = 'https://frisor-admin.preview.emergentagent.com'
+BACKEND_URL = 'https://stylista-admin.preview.emergentagent.com'
 
 # Email configuration (will be configurable from admin)
 EMAIL_CONFIG = {
@@ -1519,8 +1519,8 @@ async def create_paypal_payment(booking_id: str, amount: float = None):
             "intent": "sale",
             "payer": {"payment_method": "paypal"},
             "redirect_urls": {
-                "return_url": f"https://frisor-admin.preview.emergentagent.com/payment/success?booking_id={booking_id}",
-                "cancel_url": f"https://frisor-admin.preview.emergentagent.com/payment/cancel?booking_id={booking_id}"
+                "return_url": f"https://stylista-admin.preview.emergentagent.com/payment/success?booking_id={booking_id}",
+                "cancel_url": f"https://stylista-admin.preview.emergentagent.com/payment/cancel?booking_id={booking_id}"
             },
             "transactions": [{
                 "item_list": {

@@ -5,7 +5,7 @@ from datetime import datetime, date, timedelta
 import io
 
 class FrisorLaFataAPITester:
-    def __init__(self, base_url="https://frisor-admin.preview.emergentagent.com"):
+    def __init__(self, base_url="https://stylista-admin.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.token = None
@@ -418,7 +418,7 @@ class FrisorLaFataAPITester:
                 avatar_url = response_data.get('avatar_url', '')
                 
                 # Verify URL format
-                expected_domain = "https://frisor-admin.preview.emergentagent.com"
+                expected_domain = "https://stylista-admin.preview.emergentagent.com"
                 if avatar_url.startswith(expected_domain):
                     print(f"✅ Passed - Correct URL format: {avatar_url}")
                 else:
@@ -616,7 +616,7 @@ class FrisorLaFataAPITester:
                         'id': staff.get('id', 'Unknown'),
                         'avatar_url': avatar_url
                     })
-                elif avatar_url.startswith('https://frisor-admin.preview.emergentagent.com'):
+                elif avatar_url.startswith('https://stylista-admin.preview.emergentagent.com'):
                     correct_urls.append({
                         'name': staff.get('name', 'Unknown'),
                         'avatar_url': avatar_url
@@ -686,13 +686,13 @@ class FrisorLaFataAPITester:
                 "show_in_navigation": True,
                 "navigation_order": len(created_pages) + 1,
                 "page_type": page_type,
-                "featured_image": f"https://frisor-admin.preview.emergentagent.com/uploads/images/featured-{page_type}.jpg",
+                "featured_image": f"https://stylista-admin.preview.emergentagent.com/uploads/images/featured-{page_type}.jpg",
                 "images": [
-                    f"https://frisor-admin.preview.emergentagent.com/uploads/images/gallery-{page_type}-1.jpg",
-                    f"https://frisor-admin.preview.emergentagent.com/uploads/images/gallery-{page_type}-2.jpg"
+                    f"https://stylista-admin.preview.emergentagent.com/uploads/images/gallery-{page_type}-1.jpg",
+                    f"https://stylista-admin.preview.emergentagent.com/uploads/images/gallery-{page_type}-2.jpg"
                 ],
                 "videos": [
-                    f"https://frisor-admin.preview.emergentagent.com/uploads/videos/demo-{page_type}.mp4"
+                    f"https://stylista-admin.preview.emergentagent.com/uploads/videos/demo-{page_type}.mp4"
                 ],
                 "categories": [f"{page_type}-category", "general"],
                 "tags": [f"{page_type}-tag", "enhanced", "test"],
@@ -817,7 +817,7 @@ class FrisorLaFataAPITester:
                 video_url = response_data.get('video_url', '')
                 
                 # Verify URL format and directory
-                expected_domain = "https://frisor-admin.preview.emergentagent.com"
+                expected_domain = "https://stylista-admin.preview.emergentagent.com"
                 expected_path = "/uploads/videos/"
                 
                 if video_url.startswith(expected_domain) and expected_path in video_url:
@@ -1048,15 +1048,15 @@ class FrisorLaFataAPITester:
             "show_in_navigation": True,
             "navigation_order": 10,
             "page_type": "service",
-            "featured_image": "https://frisor-admin.preview.emergentagent.com/uploads/images/featured-service.jpg",
+            "featured_image": "https://stylista-admin.preview.emergentagent.com/uploads/images/featured-service.jpg",
             "images": [
-                "https://frisor-admin.preview.emergentagent.com/uploads/images/gallery-1.jpg",
-                "https://frisor-admin.preview.emergentagent.com/uploads/images/gallery-2.jpg",
-                "https://frisor-admin.preview.emergentagent.com/uploads/images/gallery-3.jpg"
+                "https://stylista-admin.preview.emergentagent.com/uploads/images/gallery-1.jpg",
+                "https://stylista-admin.preview.emergentagent.com/uploads/images/gallery-2.jpg",
+                "https://stylista-admin.preview.emergentagent.com/uploads/images/gallery-3.jpg"
             ],
             "videos": [
-                "https://frisor-admin.preview.emergentagent.com/uploads/videos/demo-1.mp4",
-                "https://frisor-admin.preview.emergentagent.com/uploads/videos/demo-2.webm"
+                "https://stylista-admin.preview.emergentagent.com/uploads/videos/demo-1.mp4",
+                "https://stylista-admin.preview.emergentagent.com/uploads/videos/demo-2.webm"
             ],
             "categories": ["premium-services", "hair-styling", "professional"],
             "tags": ["enhanced", "premium", "styling", "professional", "modern"],
@@ -1105,7 +1105,7 @@ class FrisorLaFataAPITester:
             "page_type": "blog",
             "navigation_order": 15,
             "videos": [
-                "https://frisor-admin.preview.emergentagent.com/uploads/videos/updated-demo.mp4"
+                "https://stylista-admin.preview.emergentagent.com/uploads/videos/updated-demo.mp4"
             ]
         }
         
