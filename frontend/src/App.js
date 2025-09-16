@@ -34,17 +34,19 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const [servicesRes, staffRes, settingsRes, pagesRes] = await Promise.all([
+      const [servicesRes, staffRes, settingsRes, pagesRes, galleryRes] = await Promise.all([
         axios.get(`${API}/services`),
         axios.get(`${API}/staff`),
         axios.get(`${API}/public/settings`),
-        axios.get(`${API}/public/pages`)
+        axios.get(`${API}/public/pages`),
+        axios.get(`${API}/gallery/public`)
       ]);
       
       setServices(servicesRes.data);
       setStaff(staffRes.data);
       setSettings(settingsRes.data);
       setPages(pagesRes.data);
+      setGalleryItems(galleryRes.data);
     } catch (error) {
       console.error('Error fetching data:', error);
       // Fallback to default data if API fails
