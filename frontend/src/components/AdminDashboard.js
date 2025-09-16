@@ -11,7 +11,7 @@ import { Badge } from './ui/badge';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Checkbox } from './ui/checkbox';
-import { Calendar, Users, Settings, LogOut, User, Scissors, Clock, Mail, Phone, Plus, Edit, Trash2, Save, X } from 'lucide-react';
+import { Calendar, Users, Settings, LogOut, User, Scissors, Clock, Mail, Phone, Plus, Edit, Trash2, Save, X, Upload, Image, FileText, CreditCard, Globe } from 'lucide-react';
 import axios from 'axios';
 import { format } from 'date-fns';
 
@@ -177,6 +177,7 @@ const ServiceManager = ({ token, onRefresh }) => {
         onRefresh();
       } catch (error) {
         console.error('Error deleting service:', error);
+        alert('Failed to delete service. Please try again.');
       }
     }
   };
@@ -423,10 +424,12 @@ const StaffManager = ({ token, onRefresh }) => {
   const [editingStaff, setEditingStaff] = useState(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(null);
   const [newStaff, setNewStaff] = useState({
     name: '',
     specialty: '',
     experience: '',
+    avatar_url: '',
     available_hours: {
       monday: { start: '09:00', end: '18:00', enabled: true },
       tuesday: { start: '09:00', end: '18:00', enabled: true },
@@ -451,6 +454,34 @@ const StaffManager = ({ token, onRefresh }) => {
     }
   };
 
+  const handleAvatarUpload = async (file, isEditing = false) => {
+    try {
+      setUploadingAvatar(isEditing ? 'editing' : 'new');
+      const formData = new FormData();
+      formData.append('avatar', file);
+      
+      const response = await axios.post(`${API}/upload/avatar`, formData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      const avatarUrl = response.data.avatar_url;
+      
+      if (isEditing) {
+        handleEditStaffChange('avatar_url', avatarUrl);
+      } else {
+        handleNewStaffChange('avatar_url', avatarUrl);
+      }
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      alert('Failed to upload avatar. Please try again.');
+    } finally {
+      setUploadingAvatar(null);
+    }
+  };
+
   const handleAddStaff = async () => {
     try {
       setLoading(true);
@@ -461,6 +492,7 @@ const StaffManager = ({ token, onRefresh }) => {
         name: '',
         specialty: '',
         experience: '',
+        avatar_url: '',
         available_hours: {
           monday: { start: '09:00', end: '18:00', enabled: true },
           tuesday: { start: '09:00', end: '18:00', enabled: true },
@@ -504,6 +536,7 @@ const StaffManager = ({ token, onRefresh }) => {
         onRefresh();
       } catch (error) {
         console.error('Error deleting staff:', error);
+        alert('Failed to delete staff member. Please try again.');
       }
     }
   };
@@ -527,7 +560,7 @@ const StaffManager = ({ token, onRefresh }) => {
     sunday: 'Sunday'
   };
 
-  const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title }) => {
+  const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, isEditing = false }) => {
     const handleFieldChange = (field, value) => {
       onChange({ ...staffData, [field]: value });
     };
@@ -535,6 +568,46 @@ const StaffManager = ({ token, onRefresh }) => {
     return (
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gold">{title}</h3>
+        
+        {/* Avatar Upload */}
+        <div>
+          <Label className="text-gold">Avatar</Label>
+          <div className="flex items-center space-x-4 mt-2">
+            {staffData.avatar_url && (
+              <img 
+                src={staffData.avatar_url} 
+                alt="Avatar" 
+                className="w-16 h-16 rounded-full object-cover border-2 border-gold/30"
+              />
+            )}
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) handleAvatarUpload(file, isEditing);
+                }}
+                className="hidden"
+                id={`avatar-upload-${isEditing ? 'edit' : 'new'}`}
+              />
+              <label
+                htmlFor={`avatar-upload-${isEditing ? 'edit' : 'new'}`}
+                className="cursor-pointer inline-flex items-center px-3 py-2 border border-gold/50 rounded-md text-gold hover:bg-gold hover:text-black transition-colors"
+              >
+                {uploadingAvatar === (isEditing ? 'editing' : 'new') ? (
+                  <>Uploading...</>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload Avatar
+                  </>
+                )}
+              </label>
+            </div>
+          </div>
+        </div>
+
         <div>
           <Label className="text-gold">Name</Label>
           <Input
@@ -661,6 +734,7 @@ const StaffManager = ({ token, onRefresh }) => {
               onCancel={() => setShowAddDialog(false)}
               loading={loading}
               title=""
+              isEditing={false}
             />
           </DialogContent>
         </Dialog>
@@ -671,9 +745,22 @@ const StaffManager = ({ token, onRefresh }) => {
           <Card key={member.id} className="bg-gray-900/50 border-gold/20">
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-gold text-lg">{member.name}</CardTitle>
-                  <p className="text-gray-300 text-sm">{member.specialty}</p>
+                <div className="flex items-center space-x-3">
+                  {member.avatar_url ? (
+                    <img 
+                      src={member.avatar_url} 
+                      alt={member.name}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-gold/30"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center">
+                      <Users className="h-6 w-6 text-gold" />
+                    </div>
+                  )}
+                  <div>
+                    <CardTitle className="text-gold text-lg">{member.name}</CardTitle>
+                    <p className="text-gray-300 text-sm">{member.specialty}</p>
+                  </div>
                 </div>
                 <div className="flex space-x-1">
                   <Button
@@ -737,6 +824,7 @@ const StaffManager = ({ token, onRefresh }) => {
               onCancel={() => setEditingStaff(null)}
               loading={loading}
               title=""
+              isEditing={true}
             />
           </DialogContent>
         </Dialog>
@@ -790,6 +878,7 @@ const BookingManager = ({ token, staff, services, onRefresh }) => {
         onRefresh();
       } catch (error) {
         console.error('Error deleting booking:', error);
+        alert('Failed to delete booking. Please try again.');
       }
     }
   };
@@ -1011,6 +1100,625 @@ const BookingManager = ({ token, staff, services, onRefresh }) => {
   );
 };
 
+const ContentManager = ({ token, onRefresh }) => {
+  const [pages, setPages] = useState([]);
+  const [editingPage, setEditingPage] = useState(null);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [newPage, setNewPage] = useState({
+    title: '',
+    slug: '',
+    content: '',
+    meta_description: '',
+    is_published: true,
+    images: []
+  });
+
+  useEffect(() => {
+    fetchPages();
+  }, []);
+
+  const fetchPages = async () => {
+    try {
+      const response = await axios.get(`${API}/pages`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPages(response.data);
+    } catch (error) {
+      console.error('Error fetching pages:', error);
+    }
+  };
+
+  const handleAddPage = async () => {
+    try {
+      setLoading(true);
+      await axios.post(`${API}/pages`, newPage, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNewPage({
+        title: '',
+        slug: '',
+        content: '',
+        meta_description: '',
+        is_published: true,
+        images: []
+      });
+      setShowAddDialog(false);
+      fetchPages();
+      onRefresh();
+    } catch (error) {
+      console.error('Error adding page:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdatePage = async (pageId, updatedData) => {
+    try {
+      await axios.put(`${API}/pages/${pageId}`, updatedData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setEditingPage(null);
+      fetchPages();
+      onRefresh();
+    } catch (error) {
+      console.error('Error updating page:', error);
+    }
+  };
+
+  const handleDeletePage = async (pageId) => {
+    if (window.confirm('Are you sure you want to delete this page?')) {
+      try {
+        await axios.delete(`${API}/pages/${pageId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        fetchPages();
+        onRefresh();
+      } catch (error) {
+        console.error('Error deleting page:', error);
+        alert('Failed to delete page. Please try again.');
+      }
+    }
+  };
+
+  const handleNewPageChange = (field, value) => {
+    setNewPage(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleEditPageChange = (field, value) => {
+    setEditingPage(prev => ({ ...prev, [field]: value }));
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gold">Content Management</h2>
+        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+          <DialogTrigger asChild>
+            <Button className="bg-gold text-black hover:bg-gold/90">
+              <Plus className="h-4 w-4 mr-2" />
+              Add New Page
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-gray-900 border-gold/20 max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-gold">Add New Page</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-gold">Page Title</Label>
+                  <Input
+                    value={newPage.title}
+                    onChange={(e) => handleNewPageChange('title', e.target.value)}
+                    className="bg-black/50 border-gold/30 text-white"
+                    placeholder="e.g., About Us"
+                  />
+                </div>
+                <div>
+                  <Label className="text-gold">URL Slug</Label>
+                  <Input
+                    value={newPage.slug}
+                    onChange={(e) => handleNewPageChange('slug', e.target.value)}
+                    className="bg-black/50 border-gold/30 text-white"
+                    placeholder="e.g., about-us"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label className="text-gold">Meta Description</Label>
+                <Input
+                  value={newPage.meta_description}
+                  onChange={(e) => handleNewPageChange('meta_description', e.target.value)}
+                  className="bg-black/50 border-gold/30 text-white"
+                  placeholder="SEO meta description"
+                />
+              </div>
+              <div>
+                <Label className="text-gold">Content</Label>
+                <Textarea
+                  value={newPage.content}
+                  onChange={(e) => handleNewPageChange('content', e.target.value)}
+                  className="bg-black/50 border-gold/30 text-white min-h-[200px]"
+                  placeholder="Page content... You can use HTML tags for formatting."
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  checked={newPage.is_published}
+                  onCheckedChange={(checked) => handleNewPageChange('is_published', checked)}
+                  className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                />
+                <Label className="text-gold">Published</Label>
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowAddDialog(false)}
+                  className="border-gold/50 text-gold hover:bg-gold hover:text-black"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleAddPage}
+                  disabled={loading}
+                  className="bg-gold text-black hover:bg-gold/90"
+                >
+                  {loading ? 'Creating...' : 'Create Page'}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4">
+        {pages.map((page) => (
+          <Card key={page.id} className="bg-gray-900/50 border-gold/20">
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-gold text-lg">{page.title}</CardTitle>
+                  <p className="text-gray-300 text-sm">/{page.slug}</p>
+                  {page.meta_description && (
+                    <p className="text-gray-400 text-sm mt-1">{page.meta_description}</p>
+                  )}
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge variant={page.is_published ? "default" : "secondary"} className={page.is_published ? "bg-green-500" : "bg-gray-500"}>
+                    {page.is_published ? 'Published' : 'Draft'}
+                  </Badge>
+                  <div className="flex space-x-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setEditingPage(page)}
+                      className="border-gold/50 text-gold hover:bg-gold hover:text-black"
+                    >
+                      <Edit className="h-3 w-3" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDeletePage(page.id)}
+                      className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-gray-300 text-sm">
+                {page.content.substring(0, 200)}
+                {page.content.length > 200 && '...'}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Edit Page Dialog */}
+      {editingPage && (
+        <Dialog open={!!editingPage} onOpenChange={() => setEditingPage(null)}>
+          <DialogContent className="bg-gray-900 border-gold/20 max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-gold">Edit Page</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-gold">Page Title</Label>
+                  <Input
+                    value={editingPage.title || ''}
+                    onChange={(e) => handleEditPageChange('title', e.target.value)}
+                    className="bg-black/50 border-gold/30 text-white"
+                  />
+                </div>
+                <div>
+                  <Label className="text-gold">URL Slug</Label>
+                  <Input
+                    value={editingPage.slug || ''}
+                    onChange={(e) => handleEditPageChange('slug', e.target.value)}
+                    className="bg-black/50 border-gold/30 text-white"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label className="text-gold">Meta Description</Label>
+                <Input
+                  value={editingPage.meta_description || ''}
+                  onChange={(e) => handleEditPageChange('meta_description', e.target.value)}
+                  className="bg-black/50 border-gold/30 text-white"
+                />
+              </div>
+              <div>
+                <Label className="text-gold">Content</Label>
+                <Textarea
+                  value={editingPage.content || ''}
+                  onChange={(e) => handleEditPageChange('content', e.target.value)}
+                  className="bg-black/50 border-gold/30 text-white min-h-[200px]"
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  checked={editingPage.is_published || false}
+                  onCheckedChange={(checked) => handleEditPageChange('is_published', checked)}
+                  className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                />
+                <Label className="text-gold">Published</Label>
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setEditingPage(null)}
+                  className="border-gold/50 text-gold hover:bg-gold hover:text-black"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={() => handleUpdatePage(editingPage.id, editingPage)}
+                  className="bg-gold text-black hover:bg-gold/90"
+                >
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+    </div>
+  );
+};
+
+const SettingsManager = ({ token, onRefresh }) => {
+  const [settings, setSettings] = useState({
+    site_title: 'Frisor LaFata',
+    site_description: 'Klassisk barbering siden 2010',
+    contact_phone: '+45 12 34 56 78',
+    contact_email: 'info@frisorlafata.dk',
+    address: 'Hovedgaden 123, 1000 København',
+    hero_title: 'Klassisk Barbering',
+    hero_subtitle: 'i Hjertet af Byen',
+    hero_description: 'Oplev den autentiske barber-oplevelse hos Frisor LaFata. Vi kombinerer traditionel håndværk med moderne teknikker.',
+    hero_image: '',
+    paypal_client_id: '',
+    paypal_client_secret: '',
+    paypal_sandbox_mode: true,
+    email_smtp_server: 'smtp.gmail.com',
+    email_smtp_port: 587,
+    email_user: '',
+    email_password: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/settings`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSettings(prev => ({ ...prev, ...response.data }));
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    }
+  };
+
+  const handleSaveSettings = async () => {
+    try {
+      setLoading(true);
+      await axios.put(`${API}/settings`, settings, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      onRefresh();
+      alert('Settings saved successfully!');
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      alert('Failed to save settings. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImageUpload = async (file) => {
+    try {
+      setUploadingImage(true);
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      const response = await axios.post(`${API}/upload/image`, formData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      setSettings(prev => ({ ...prev, hero_image: response.data.image_url }));
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleSettingChange = (field, value) => {
+    setSettings(prev => ({ ...prev, [field]: value }));
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gold">Site Settings</h2>
+        <Button 
+          onClick={handleSaveSettings}
+          disabled={loading}
+          className="bg-gold text-black hover:bg-gold/90"
+        >
+          {loading ? 'Saving...' : 'Save Settings'}
+        </Button>
+      </div>
+
+      <Tabs defaultValue="general" className="space-y-6">
+        <TabsList className="bg-gray-900/50 border border-gold/20">
+          <TabsTrigger value="general" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+            <Globe className="h-4 w-4 mr-2" />
+            General
+          </TabsTrigger>
+          <TabsTrigger value="content" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+            <FileText className="h-4 w-4 mr-2" />
+            Homepage Content
+          </TabsTrigger>
+          <TabsTrigger value="payment" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+            <CreditCard className="h-4 w-4 mr-2" />
+            Payment Settings
+          </TabsTrigger>
+          <TabsTrigger value="email" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+            <Mail className="h-4 w-4 mr-2" />
+            Email Settings
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="general" className="space-y-6">
+          <Card className="bg-gray-900/50 border-gold/20">
+            <CardHeader>
+              <CardTitle className="text-gold">General Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="text-gold">Site Title</Label>
+                <Input
+                  value={settings.site_title}
+                  onChange={(e) => handleSettingChange('site_title', e.target.value)}
+                  className="bg-black/50 border-gold/30 text-white"
+                />
+              </div>
+              <div>
+                <Label className="text-gold">Site Description</Label>
+                <Input
+                  value={settings.site_description}
+                  onChange={(e) => handleSettingChange('site_description', e.target.value)}
+                  className="bg-black/50 border-gold/30 text-white"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-gold">Phone Number</Label>
+                  <Input
+                    value={settings.contact_phone}
+                    onChange={(e) => handleSettingChange('contact_phone', e.target.value)}
+                    className="bg-black/50 border-gold/30 text-white"
+                  />
+                </div>
+                <div>
+                  <Label className="text-gold">Email</Label>
+                  <Input
+                    value={settings.contact_email}
+                    onChange={(e) => handleSettingChange('contact_email', e.target.value)}
+                    className="bg-black/50 border-gold/30 text-white"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label className="text-gold">Address</Label>
+                <Input
+                  value={settings.address}
+                  onChange={(e) => handleSettingChange('address', e.target.value)}
+                  className="bg-black/50 border-gold/30 text-white"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="content" className="space-y-6">
+          <Card className="bg-gray-900/50 border-gold/20">
+            <CardHeader>
+              <CardTitle className="text-gold">Homepage Content</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="text-gold">Hero Title</Label>
+                <Input
+                  value={settings.hero_title}
+                  onChange={(e) => handleSettingChange('hero_title', e.target.value)}
+                  className="bg-black/50 border-gold/30 text-white"
+                />
+              </div>
+              <div>
+                <Label className="text-gold">Hero Subtitle</Label>
+                <Input
+                  value={settings.hero_subtitle}
+                  onChange={(e) => handleSettingChange('hero_subtitle', e.target.value)}
+                  className="bg-black/50 border-gold/30 text-white"
+                />
+              </div>
+              <div>
+                <Label className="text-gold">Hero Description</Label>
+                <Textarea
+                  value={settings.hero_description}
+                  onChange={(e) => handleSettingChange('hero_description', e.target.value)}
+                  className="bg-black/50 border-gold/30 text-white"
+                />
+              </div>
+              <div>
+                <Label className="text-gold">Hero Background Image</Label>
+                <div className="flex items-center space-x-4 mt-2">
+                  {settings.hero_image && (
+                    <img 
+                      src={settings.hero_image} 
+                      alt="Hero background" 
+                      className="w-24 h-16 rounded object-cover border-2 border-gold/30"
+                    />
+                  )}
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) handleImageUpload(file);
+                      }}
+                      className="hidden"
+                      id="hero-image-upload"
+                    />
+                    <label
+                      htmlFor="hero-image-upload"
+                      className="cursor-pointer inline-flex items-center px-3 py-2 border border-gold/50 rounded-md text-gold hover:bg-gold hover:text-black transition-colors"
+                    >
+                      {uploadingImage ? (
+                        <>Uploading...</>
+                      ) : (
+                        <>
+                          <Upload className="h-4 w-4 mr-2" />
+                          Upload Image
+                        </>
+                      )}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="payment" className="space-y-6">
+          <Card className="bg-gray-900/50 border-gold/20">
+            <CardHeader>
+              <CardTitle className="text-gold">PayPal Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-gold">PayPal Client ID</Label>
+                  <Input
+                    type="password"
+                    value={settings.paypal_client_id}
+                    onChange={(e) => handleSettingChange('paypal_client_id', e.target.value)}
+                    className="bg-black/50 border-gold/30 text-white"
+                    placeholder="Enter PayPal Client ID"
+                  />
+                </div>
+                <div>
+                  <Label className="text-gold">PayPal Client Secret</Label>
+                  <Input
+                    type="password"
+                    value={settings.paypal_client_secret}
+                    onChange={(e) => handleSettingChange('paypal_client_secret', e.target.value)}
+                    className="bg-black/50 border-gold/30 text-white"
+                    placeholder="Enter PayPal Client Secret"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  checked={settings.paypal_sandbox_mode}
+                  onCheckedChange={(checked) => handleSettingChange('paypal_sandbox_mode', checked)}
+                  className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                />
+                <Label className="text-gold">Sandbox Mode (for testing)</Label>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="email" className="space-y-6">
+          <Card className="bg-gray-900/50 border-gold/20">
+            <CardHeader>
+              <CardTitle className="text-gold">Email Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-gold">SMTP Server</Label>
+                  <Input
+                    value={settings.email_smtp_server}
+                    onChange={(e) => handleSettingChange('email_smtp_server', e.target.value)}
+                    className="bg-black/50 border-gold/30 text-white"
+                  />
+                </div>
+                <div>
+                  <Label className="text-gold">SMTP Port</Label>
+                  <Input
+                    type="number"
+                    value={settings.email_smtp_port}
+                    onChange={(e) => handleSettingChange('email_smtp_port', parseInt(e.target.value))}
+                    className="bg-black/50 border-gold/30 text-white"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label className="text-gold">Email Username</Label>
+                <Input
+                  value={settings.email_user}
+                  onChange={(e) => handleSettingChange('email_user', e.target.value)}
+                  className="bg-black/50 border-gold/30 text-white"
+                  placeholder="your-email@gmail.com"
+                />
+              </div>
+              <div>
+                <Label className="text-gold">Email Password</Label>
+                <Input
+                  type="password"
+                  value={settings.email_password}
+                  onChange={(e) => handleSettingChange('email_password', e.target.value)}
+                  className="bg-black/50 border-gold/30 text-white"
+                  placeholder="App password for Gmail"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};
+
 const AdminDashboard = ({ token, user, onLogout }) => {
   const [bookings, setBookings] = useState([]);
   const [staff, setStaff] = useState([]);
@@ -1108,6 +1816,14 @@ const AdminDashboard = ({ token, user, onLogout }) => {
               <Scissors className="h-4 w-4 mr-2" />
               Services
             </TabsTrigger>
+            <TabsTrigger value="content" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+              <FileText className="h-4 w-4 mr-2" />
+              Pages
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="bookings">
@@ -1128,6 +1844,20 @@ const AdminDashboard = ({ token, user, onLogout }) => {
 
           <TabsContent value="services">
             <ServiceManager 
+              token={token} 
+              onRefresh={fetchData} 
+            />
+          </TabsContent>
+
+          <TabsContent value="content">
+            <ContentManager 
+              token={token} 
+              onRefresh={fetchData} 
+            />
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <SettingsManager 
               token={token} 
               onRefresh={fetchData} 
             />
