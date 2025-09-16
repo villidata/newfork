@@ -596,20 +596,37 @@ const StaffManager = ({ token, onRefresh }) => {
         <div>
           <Label className="text-gold">Avatar</Label>
           <div className="flex items-center space-x-4 mt-2">
-            {staffData.avatar_url && (
-              <img 
-                src={staffData.avatar_url} 
-                alt="Avatar" 
-                className="w-16 h-16 rounded-full object-cover border-2 border-gold/30"
-              />
-            )}
+            <div className="w-16 h-16 rounded-full border-2 border-gold/30 overflow-hidden bg-gray-800 flex items-center justify-center">
+              {staffData.avatar_url ? (
+                <img 
+                  src={staffData.avatar_url} 
+                  alt="Avatar" 
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error('Avatar image failed to load:', staffData.avatar_url);
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+              ) : (
+                <Users className="h-8 w-8 text-gold" />
+              )}
+              {staffData.avatar_url && (
+                <div className="w-full h-full hidden items-center justify-center">
+                  <Users className="h-8 w-8 text-gold" />
+                </div>
+              )}
+            </div>
             <div>
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files[0];
-                  if (file) handleAvatarUpload(file, isEditing);
+                  if (file) {
+                    console.log('Avatar file selected:', file.name, file.type);
+                    handleAvatarUpload(file, isEditing);
+                  }
                 }}
                 className="hidden"
                 id={`avatar-upload-${isEditing ? 'edit' : 'new'}`}
@@ -627,6 +644,9 @@ const StaffManager = ({ token, onRefresh }) => {
                   </>
                 )}
               </label>
+              {staffData.avatar_url && (
+                <p className="text-xs text-gray-400 mt-1">Current: {staffData.avatar_url.split('/').pop()}</p>
+              )}
             </div>
           </div>
         </div>
