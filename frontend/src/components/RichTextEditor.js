@@ -94,16 +94,14 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
         }}
         init={{
           height: height,
-          // Disable API key validation for self-hosted mode (completely free)
-          promotion: false,
+          // Self-hosted configuration - no API key needed
           branding: false,
-          license_key: 'gpl',
+          promotion: false,
           menubar: 'file edit view insert format tools table help',
           plugins: [
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
             'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount',
-            'emoticons', 'codesample'
+            'insertdatetime', 'media', 'table', 'help', 'wordcount'
           ],
           toolbar: 'undo redo | blocks | ' +
             'bold italic forecolor | alignleft aligncenter ' +
