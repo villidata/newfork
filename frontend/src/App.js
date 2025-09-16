@@ -7,6 +7,26 @@ import { Card, CardContent } from "./components/ui/card";
 import { Badge } from "./components/ui/badge";
 import { Separator } from "./components/ui/separator";
 import { Clock, MapPin, Phone, Mail, Scissors, Users, Star } from "lucide-react";
+import { 
+  GiRazor,
+  GiComb,
+  GiMustache,
+  GiBeard,
+  GiCurlyHair,
+  GiHairStrands,
+  GiMirror,
+  GiScissors,
+  GiSpray,
+  GiHotSurface
+} from 'react-icons/gi';
+import { 
+  FaCut,
+  FaSprayCan,
+  FaPaintBrush,
+  FaUserTie,
+  FaMale,
+  FaChild
+} from 'react-icons/fa';
 import BookingSystem from "./components/BookingSystem";
 import AdminApp from "./components/AdminDashboard";
 import PublicPage from "./components/PublicPage";
