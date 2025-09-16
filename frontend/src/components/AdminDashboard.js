@@ -590,177 +590,181 @@ const StaffManager = ({ token, onRefresh }) => {
     sunday: 'Sunday'
   };
 
-  const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, isEditing = false }) => {
-    const handleFieldChange = (field, value) => {
-      onChange(field, value);
-    };
+// Extract StaffForm component outside of StaffManager to prevent re-creation on every render
+const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, isEditing = false, handleAvatarUpload, uploadingAvatar, days, dayLabels }) => {
+  const handleFieldChange = useCallback((field, value) => {
+    onChange(field, value);
+  }, [onChange]);
 
-    return (
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gold">{title}</h3>
-        
-        {/* Avatar Upload */}
-        <div>
-          <Label className="text-gold">Avatar</Label>
-          <div className="flex items-center space-x-4 mt-2">
-            <div className="w-16 h-16 rounded-full border-2 border-gold/30 overflow-hidden bg-gray-800 flex items-center justify-center">
-              {staffData.avatar_url ? (
-                <img 
-                  src={staffData.avatar_url} 
-                  alt="Avatar" 
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    console.error('Avatar image failed to load:', staffData.avatar_url);
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-              ) : (
-                <Users className="h-8 w-8 text-gold" />
-              )}
-              {staffData.avatar_url && (
-                <div className="w-full h-full hidden items-center justify-center">
-                  <Users className="h-8 w-8 text-gold" />
-                </div>
-              )}
-            </div>
-            <div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    console.log('Avatar file selected:', file.name, file.type);
-                    handleAvatarUpload(file, isEditing);
-                  }
+  return (
+    <div className="space-y-4">
+      <h3 className="text-lg font-semibold text-gold">{title}</h3>
+      
+      {/* Avatar Upload */}
+      <div>
+        <Label className="text-gold">Avatar</Label>
+        <div className="flex items-center space-x-4 mt-2">
+          <div className="w-16 h-16 rounded-full border-2 border-gold/30 overflow-hidden bg-gray-800 flex items-center justify-center">
+            {staffData.avatar_url ? (
+              <img 
+                src={staffData.avatar_url} 
+                alt="Avatar" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.error('Avatar image failed to load:', staffData.avatar_url);
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
                 }}
-                className="hidden"
-                id={`avatar-upload-${isEditing ? 'edit' : 'new'}`}
               />
-              <label
-                htmlFor={`avatar-upload-${isEditing ? 'edit' : 'new'}`}
-                className="cursor-pointer inline-flex items-center px-3 py-2 border border-gold/50 rounded-md text-gold hover:bg-gold hover:text-black transition-colors"
-              >
-                {uploadingAvatar === (isEditing ? 'editing' : 'new') ? (
-                  <>Uploading...</>
-                ) : (
-                  <>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload Avatar
-                  </>
-                )}
-              </label>
-              {staffData.avatar_url && (
-                <p className="text-xs text-gray-400 mt-1">Current: {staffData.avatar_url.split('/').pop()}</p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <Label className="text-gold">Name</Label>
-          <Input
-            value={staffData.name || ''}
-            onChange={(e) => handleFieldChange('name', e.target.value)}
-            className="bg-black/50 border-gold/30 text-white"
-            placeholder="Staff member name"
-          />
-        </div>
-        <div>
-          <Label className="text-gold">Specialty</Label>
-          <Input
-            value={staffData.specialty || ''}
-            onChange={(e) => handleFieldChange('specialty', e.target.value)}
-            className="bg-black/50 border-gold/30 text-white"
-            placeholder="e.g., Classic haircuts"
-          />
-        </div>
-        <div>
-          <Label className="text-gold">Experience</Label>
-          <Input
-            value={staffData.experience || ''}
-            onChange={(e) => handleFieldChange('experience', e.target.value)}
-            className="bg-black/50 border-gold/30 text-white"
-            placeholder="e.g., 5 years"
-          />
-        </div>
-        
-        <div>
-          <Label className="text-gold mb-3 block">Working Hours</Label>
-          <div className="space-y-3 max-h-60 overflow-y-auto">
-            {days.map(day => (
-              <div key={day} className="flex items-center space-x-3 p-2 rounded border border-gold/20">
-                <Checkbox
-                  checked={staffData.available_hours?.[day]?.enabled ?? false}
-                  onCheckedChange={(checked) => {
-                    const updatedHours = {
-                      ...staffData.available_hours,
-                      [day]: { 
-                        ...staffData.available_hours?.[day], 
-                        enabled: checked,
-                        start: staffData.available_hours?.[day]?.start || '09:00',
-                        end: staffData.available_hours?.[day]?.end || '18:00'
-                      }
-                    };
-                    handleFieldChange('available_hours', updatedHours);
-                  }}
-                  className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
-                />
-                <div className="w-20 text-gold text-sm">{dayLabels[day]}</div>
-                {staffData.available_hours?.[day]?.enabled && (
-                  <>
-                    <Input
-                      type="time"
-                      value={staffData.available_hours[day].start}
-                      onChange={(e) => {
-                        const updatedHours = {
-                          ...staffData.available_hours,
-                          [day]: { ...staffData.available_hours[day], start: e.target.value }
-                        };
-                        handleFieldChange('available_hours', updatedHours);
-                      }}
-                      className="w-24 bg-black/50 border-gold/30 text-white text-sm"
-                    />
-                    <span className="text-gold">to</span>
-                    <Input
-                      type="time"
-                      value={staffData.available_hours[day].end}
-                      onChange={(e) => {
-                        const updatedHours = {
-                          ...staffData.available_hours,
-                          [day]: { ...staffData.available_hours[day], end: e.target.value }
-                        };
-                        handleFieldChange('available_hours', updatedHours);
-                      }}
-                      className="w-24 bg-black/50 border-gold/30 text-white text-sm"
-                    />
-                  </>
-                )}
+            ) : (
+              <Users className="h-8 w-8 text-gold" />
+            )}
+            {staffData.avatar_url && (
+              <div className="w-full h-full hidden items-center justify-center">
+                <Users className="h-8 w-8 text-gold" />
               </div>
-            ))}
+            )}
           </div>
-        </div>
-        
-        <div className="flex justify-end space-x-2">
-          <Button 
-            variant="outline" 
-            onClick={onCancel}
-            className="border-gold/50 text-gold hover:bg-gold hover:text-black"
-          >
-            Cancel
-          </Button>
-          <Button 
-            onClick={onSubmit}
-            disabled={loading}
-            className="bg-gold text-black hover:bg-gold/90"
-          >
-            {loading ? 'Saving...' : 'Save'}
-          </Button>
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  console.log('Avatar file selected:', file.name, file.type);
+                  handleAvatarUpload(file, isEditing);
+                }
+              }}
+              className="hidden"
+              id={`avatar-upload-${isEditing ? 'edit' : 'new'}`}
+            />
+            <label
+              htmlFor={`avatar-upload-${isEditing ? 'edit' : 'new'}`}
+              className="cursor-pointer inline-flex items-center px-3 py-2 border border-gold/50 rounded-md text-gold hover:bg-gold hover:text-black transition-colors"
+            >
+              {uploadingAvatar === (isEditing ? 'editing' : 'new') ? (
+                <>Uploading...</>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Avatar
+                </>
+              )}
+            </label>
+            {staffData.avatar_url && (
+              <p className="text-xs text-gray-400 mt-1">Current: {staffData.avatar_url.split('/').pop()}</p>
+            )}
+          </div>
         </div>
       </div>
-    );
-  };
+
+      <div>
+        <Label className="text-gold">Name</Label>
+        <Input
+          key={`name-${isEditing ? 'edit' : 'new'}`}
+          value={staffData.name || ''}
+          onChange={(e) => handleFieldChange('name', e.target.value)}
+          className="bg-black/50 border-gold/30 text-white"
+          placeholder="Staff member name"
+        />
+      </div>
+      <div>
+        <Label className="text-gold">Specialty</Label>
+        <Input
+          key={`specialty-${isEditing ? 'edit' : 'new'}`}
+          value={staffData.specialty || ''}
+          onChange={(e) => handleFieldChange('specialty', e.target.value)}
+          className="bg-black/50 border-gold/30 text-white"
+          placeholder="e.g., Classic haircuts"
+        />
+      </div>
+      <div>
+        <Label className="text-gold">Experience</Label>
+        <Input
+          key={`experience-${isEditing ? 'edit' : 'new'}`}
+          value={staffData.experience || ''}
+          onChange={(e) => handleFieldChange('experience', e.target.value)}
+          className="bg-black/50 border-gold/30 text-white"
+          placeholder="e.g., 5 years"
+        />
+      </div>
+      
+      <div>
+        <Label className="text-gold mb-3 block">Working Hours</Label>
+        <div className="space-y-3 max-h-60 overflow-y-auto">
+          {days.map(day => (
+            <div key={day} className="flex items-center space-x-3 p-2 rounded border border-gold/20">
+              <Checkbox
+                checked={staffData.available_hours?.[day]?.enabled ?? false}
+                onCheckedChange={(checked) => {
+                  const updatedHours = {
+                    ...staffData.available_hours,
+                    [day]: { 
+                      ...staffData.available_hours?.[day], 
+                      enabled: checked,
+                      start: staffData.available_hours?.[day]?.start || '09:00',
+                      end: staffData.available_hours?.[day]?.end || '18:00'
+                    }
+                  };
+                  handleFieldChange('available_hours', updatedHours);
+                }}
+                className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+              />
+              <div className="w-20 text-gold text-sm">{dayLabels[day]}</div>
+              {staffData.available_hours?.[day]?.enabled && (
+                <>
+                  <Input
+                    type="time"
+                    value={staffData.available_hours[day].start}
+                    onChange={(e) => {
+                      const updatedHours = {
+                        ...staffData.available_hours,
+                        [day]: { ...staffData.available_hours[day], start: e.target.value }
+                      };
+                      handleFieldChange('available_hours', updatedHours);
+                    }}
+                    className="w-24 bg-black/50 border-gold/30 text-white text-sm"
+                  />
+                  <span className="text-gold">to</span>
+                  <Input
+                    type="time"
+                    value={staffData.available_hours[day].end}
+                    onChange={(e) => {
+                      const updatedHours = {
+                        ...staffData.available_hours,
+                        [day]: { ...staffData.available_hours[day], end: e.target.value }
+                      };
+                      handleFieldChange('available_hours', updatedHours);
+                    }}
+                    className="w-24 bg-black/50 border-gold/30 text-white text-sm"
+                  />
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <div className="flex justify-end space-x-2">
+        <Button 
+          variant="outline" 
+          onClick={onCancel}
+          className="border-gold/50 text-gold hover:bg-gold hover:text-black"
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={onSubmit}
+          disabled={loading}
+          className="bg-gold text-black hover:bg-gold/90"
+        >
+          {loading ? 'Saving...' : 'Save'}
+        </Button>
+      </div>
+    </div>
+  );
+};
 
   return (
     <div className="space-y-6">
