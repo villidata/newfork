@@ -287,6 +287,7 @@ class Service(BaseModel):
     price: float
     description: str = ""
     category: str = "general"
+    icon: str = "✨"  # Default emoji icon
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ServiceCreate(BaseModel):
@@ -295,6 +296,7 @@ class ServiceCreate(BaseModel):
     price: float
     description: str = ""
     category: str = "general"
+    icon: str = "✨"
 
 class ServiceUpdate(BaseModel):
     name: Optional[str] = None
