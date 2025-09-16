@@ -217,10 +217,18 @@ const Home = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {staff.map((member, index) => (
-              <Card key={index} className="bg-black/70 border-gold/20 hover:border-gold/50 transition-all duration-300">
+              <Card key={member.id || index} className="bg-black/70 border-gold/20 hover:border-gold/50 transition-all duration-300">
                 <CardContent className="p-6 text-center">
                   <div className="mb-4">
-                    <Users className="h-16 w-16 text-gold mx-auto mb-4" />
+                    {member.avatar_url ? (
+                      <img 
+                        src={member.avatar_url} 
+                        alt={member.name}
+                        className="w-16 h-16 rounded-full object-cover mx-auto mb-4 border-2 border-gold/30"
+                      />
+                    ) : (
+                      <Users className="h-16 w-16 text-gold mx-auto mb-4" />
+                    )}
                   </div>
                   <h3 className="text-xl font-semibold text-gold mb-2">{member.name}</h3>
                   <p className="text-gray-300 mb-2">{member.specialty}</p>
