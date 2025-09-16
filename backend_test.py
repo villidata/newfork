@@ -148,9 +148,360 @@ class FrisorLaFataAPITester:
             return False, {}
         return self.run_test("Get User Bookings", "GET", "bookings", 200)
 
-    def test_paypal_payment(self, booking_id="test_booking_123"):
-        """Test PayPal payment creation"""
-        return self.run_test("Create PayPal Payment", "POST", f"payments/paypal/create?booking_id={booking_id}", 200)
+    def test_admin_login(self):
+        """Test admin login"""
+        admin_credentials = {
+            "email": "admin@frisorlafata.dk",
+            "password": "admin123"
+        }
+        
+        success, response = self.run_test(
+            "Admin Login", 
+            "POST", 
+            "auth/login", 
+            200, 
+            data=admin_credentials
+        )
+        
+        if success and 'access_token' in response:
+            self.admin_token = response['access_token']
+            self.admin_user_id = response['user']['id']
+            print(f"   Admin User ID: {self.admin_user_id}")
+            return True, response
+        return False, {}
+
+    def test_create_staff_with_admin(self):
+        """Test creating staff (admin required)"""
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+            
+        # Temporarily switch to admin token
+        original_token = self.token
+        self.token = self.admin_token
+        
+        staff_data = {
+            "name": f"Test Staff {datetime.now().strftime('%H%M%S')}",
+            "specialty": "Test Specialty",
+            "experience": "5 år",
+            "avatar_url": "",
+            "available_hours": {
+                "monday": {"start": "09:00", "end": "17:00", "enabled": True},
+                "tuesday": {"start": "09:00", "end": "17:00", "enabled": True}
+            }
+        }
+        
+        success, response = self.run_test("Create Staff", "POST", "staff", 200, data=staff_data)
+        
+        if success and 'id' in response:
+            self.created_staff_id = response['id']
+            print(f"   Created Staff ID: {self.created_staff_id}")
+        
+        # Restore original token
+        self.token = original_token
+        return success, response
+
+    def test_update_staff(self):
+        """Test updating staff"""
+        if not self.admin_token or not self.created_staff_id:
+            print("❌ Skipped - No admin token or staff ID available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        update_data = {
+            "specialty": "Updated Specialty",
+            "experience": "10 år"
+        }
+        
+        success, response = self.run_test(
+            "Update Staff", 
+            "PUT", 
+            f"staff/{self.created_staff_id}", 
+            200, 
+            data=update_data
+        )
+        
+        self.token = original_token
+        return success, response
+
+    def test_delete_staff(self):
+        """Test deleting staff (NEW FEATURE)"""
+        if not self.admin_token or not self.created_staff_id:
+            print("❌ Skipped - No admin token or staff ID available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        success, response = self.run_test(
+            "Delete Staff", 
+            "DELETE", 
+            f"staff/{self.created_staff_id}", 
+            200
+        )
+        
+        self.token = original_token
+        return success, response
+
+    def test_create_service_with_admin(self):
+        """Test creating service (admin required)"""
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        service_data = {
+            "name": f"Test Service {datetime.now().strftime('%H%M%S')}",
+            "duration_minutes": 45,
+            "price": 500.0,
+            "description": "Test service description",
+            "category": "test"
+        }
+        
+        success, response = self.run_test("Create Service", "POST", "services", 200, data=service_data)
+        
+        if success and 'id' in response:
+            self.created_service_id = response['id']
+            print(f"   Created Service ID: {self.created_service_id}")
+        
+        self.token = original_token
+        return success, response
+
+    def test_update_service(self):
+        """Test updating service"""
+        if not self.admin_token or not self.created_service_id:
+            print("❌ Skipped - No admin token or service ID available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        update_data = {
+            "price": 600.0,
+            "description": "Updated service description"
+        }
+        
+        success, response = self.run_test(
+            "Update Service", 
+            "PUT", 
+            f"services/{self.created_service_id}", 
+            200, 
+            data=update_data
+        )
+        
+        self.token = original_token
+        return success, response
+
+    def test_delete_service(self):
+        """Test deleting service (NEW FEATURE)"""
+        if not self.admin_token or not self.created_service_id:
+            print("❌ Skipped - No admin token or service ID available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        success, response = self.run_test(
+            "Delete Service", 
+            "DELETE", 
+            f"services/{self.created_service_id}", 
+            200
+        )
+        
+        self.token = original_token
+        return success, response
+
+    def test_avatar_upload(self):
+        """Test avatar upload functionality (NEW FEATURE)"""
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+            
+        # Create a simple test image file
+        test_image_content = b"fake_image_content_for_testing"
+        
+        url = f"{self.api_url}/upload/avatar"
+        headers = {'Authorization': f'Bearer {self.admin_token}'}
+        
+        files = {'avatar': ('test_avatar.jpg', io.BytesIO(test_image_content), 'image/jpeg')}
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing Avatar Upload...")
+        print(f"   URL: {url}")
+        
+        try:
+            response = requests.post(url, headers=headers, files=files, timeout=10)
+            
+            success = response.status_code == 200
+            if success:
+                self.tests_passed += 1
+                print(f"✅ Passed - Status: {response.status_code}")
+                try:
+                    response_data = response.json()
+                    print(f"   Response: {response_data}")
+                    return True, response_data
+                except:
+                    return True, {}
+            else:
+                print(f"❌ Failed - Expected 200, got {response.status_code}")
+                try:
+                    error_data = response.json()
+                    print(f"   Error: {error_data}")
+                except:
+                    print(f"   Error: {response.text}")
+                return False, {}
+                
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False, {}
+
+    def test_create_page(self):
+        """Test creating page (NEW FEATURE - CMS)"""
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        page_data = {
+            "title": f"Test Page {datetime.now().strftime('%H%M%S')}",
+            "slug": f"test-page-{datetime.now().strftime('%H%M%S')}",
+            "content": "This is test page content",
+            "meta_description": "Test page meta description",
+            "is_published": True,
+            "images": []
+        }
+        
+        success, response = self.run_test("Create Page", "POST", "pages", 200, data=page_data)
+        
+        if success and 'id' in response:
+            self.created_page_id = response['id']
+            print(f"   Created Page ID: {self.created_page_id}")
+        
+        self.token = original_token
+        return success, response
+
+    def test_get_pages(self):
+        """Test getting pages (admin required)"""
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        success, response = self.run_test("Get Pages", "GET", "pages", 200)
+        
+        self.token = original_token
+        return success, response
+
+    def test_update_page(self):
+        """Test updating page"""
+        if not self.admin_token or not self.created_page_id:
+            print("❌ Skipped - No admin token or page ID available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        update_data = {
+            "title": "Updated Test Page",
+            "content": "Updated test page content"
+        }
+        
+        success, response = self.run_test(
+            "Update Page", 
+            "PUT", 
+            f"pages/{self.created_page_id}", 
+            200, 
+            data=update_data
+        )
+        
+        self.token = original_token
+        return success, response
+
+    def test_delete_page(self):
+        """Test deleting page"""
+        if not self.admin_token or not self.created_page_id:
+            print("❌ Skipped - No admin token or page ID available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        success, response = self.run_test(
+            "Delete Page", 
+            "DELETE", 
+            f"pages/{self.created_page_id}", 
+            200
+        )
+        
+        self.token = original_token
+        return success, response
+
+    def test_get_settings(self):
+        """Test getting site settings (NEW FEATURE)"""
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        success, response = self.run_test("Get Settings", "GET", "settings", 200)
+        
+        self.token = original_token
+        return success, response
+
+    def test_update_settings(self):
+        """Test updating site settings (NEW FEATURE)"""
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        settings_data = {
+            "site_title": "Updated Frisor LaFata",
+            "site_description": "Updated description",
+            "contact_phone": "+45 87 65 43 21",
+            "hero_title": "Updated Hero Title",
+            "paypal_sandbox_mode": True
+        }
+        
+        success, response = self.run_test("Update Settings", "PUT", "settings", 200, data=settings_data)
+        
+        self.token = original_token
+        return success, response
+
+    def test_get_public_settings(self):
+        """Test getting public settings (for frontend)"""
+        return self.run_test("Get Public Settings", "GET", "public/settings", 200)
+
+    def test_delete_booking(self):
+        """Test deleting booking (NEW FEATURE)"""
+        if not self.admin_token or not self.created_booking_id:
+            print("❌ Skipped - No admin token or booking ID available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        success, response = self.run_test(
+            "Delete Booking", 
+            "DELETE", 
+            f"bookings/{self.created_booking_id}", 
+            200
+        )
+        
+        self.token = original_token
+        return success, response
 
 def main():
     print("🚀 Starting Frisor LaFata API Tests")
