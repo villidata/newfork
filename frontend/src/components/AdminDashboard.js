@@ -1483,7 +1483,7 @@ const SettingsManager = ({ token, onRefresh }) => {
                   className="bg-black/50 border-gold/30 text-white"
                   placeholder="Booking Confirmation - {{business_name}}"
                 />
-                <p className="text-xs text-gray-400 mt-1">Available variables: {{customer_name}}, {{business_name}}, {{booking_date}}, {{booking_time}}</p>
+                <p className="text-xs text-gray-400 mt-1">Available variables: {'{'}{'{'}{'}'}customer_name{'{'}{'}'}{'}'}{'}'}, {'{'}{'{'}{'}'}business_name{'{'}{'}'}{'}'}{'}'}, {'{'}{'{'}{'}'}booking_date{'{'}{'}'}{'}'}{'}'}, {'{'}{'{'}{'}'}booking_time{'{'}{'}'}{'}'}{'}'}</p>
               </div>
               <div>
                 <Label className="text-gold">Email Body Template</Label>
