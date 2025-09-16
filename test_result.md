@@ -402,13 +402,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Customizable Service Icons Feature - IconSelector Component"
-    - "Service Creation with Custom Icon Selection"
-    - "Service Editing with Custom Icon Selection"
-    - "Custom Icons Display on Public Website"
-    - "Backend Service Model Icon Support"
-  stuck_tasks:
-    - "Fix input field focus loss in Staff editing form"
+    - "Social Media Settings Backend Implementation"
+    - "Admin Dashboard Social Media Settings Interface"
+    - "Public Website Social Media Section Display"
+    - "Social Media Navigation Link"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
