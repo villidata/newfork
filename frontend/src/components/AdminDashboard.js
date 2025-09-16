@@ -1539,6 +1539,20 @@ const AdminDashboard = ({ token, user, onLogout }) => {
             />
           </TabsContent>
 
+          <TabsContent value="gallery">
+            <GalleryManager 
+              token={token} 
+              onRefresh={fetchData} 
+            />
+          </TabsContent>
+
+          <TabsContent value="users">
+            <UserManager 
+              token={token} 
+              onRefresh={fetchData} 
+            />
+          </TabsContent>
+
           <TabsContent value="settings">
             <SettingsManager 
               token={token} 
