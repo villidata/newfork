@@ -272,7 +272,11 @@ const Home = () => {
           
           {galleryItems.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {galleryItems.filter(item => item.is_featured).slice(0, 6).map((item) => (
+              {/* Show featured items first, then regular items if needed */}
+              {(galleryItems.filter(item => item.is_featured).length > 0 
+                ? galleryItems.filter(item => item.is_featured) 
+                : galleryItems
+              ).slice(0, 6).map((item) => (
                 <Card key={item.id} className="bg-black/50 border-gold/20 hover:border-gold/50 transition-all duration-300 overflow-hidden">
                   <CardContent className="p-0">
                     <div className="grid grid-cols-2 h-48">
