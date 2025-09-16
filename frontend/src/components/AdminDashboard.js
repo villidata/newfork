@@ -883,6 +883,10 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
               loading={loading}
               title=""
               isEditing={true}
+              handleAvatarUpload={handleAvatarUpload}
+              uploadingAvatar={uploadingAvatar}
+              days={days}
+              dayLabels={dayLabels}
             />
           </DialogContent>
         </Dialog>
