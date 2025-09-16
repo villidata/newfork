@@ -19,6 +19,7 @@ const Home = () => {
   const [services, setServices] = useState([]);
   const [staff, setStaff] = useState([]);
   const [settings, setSettings] = useState({});
+  const [pages, setPages] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const helloWorldApi = async () => {
