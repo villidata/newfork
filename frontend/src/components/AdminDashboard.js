@@ -546,8 +546,13 @@ const StaffManager = ({ token, onRefresh }) => {
         });
         console.log('Delete response:', response);
         alert('Staff member deleted successfully!');
-        fetchStaff();
-        onRefresh();
+        
+        // Force refresh the staff list
+        await fetchStaff();
+        if (onRefresh) onRefresh();
+        
+        // Force page refresh if needed
+        window.location.reload();
       } catch (error) {
         console.error('Error deleting staff:', error);
         console.error('Error response:', error.response?.data);
