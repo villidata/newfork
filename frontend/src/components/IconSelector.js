@@ -52,7 +52,6 @@ const IconSelector = ({ selectedIcon, onIconSelect, className = "" }) => {
       { icon: <GiRazor className="h-6 w-6" />, value: "razor", name: "Razor" },
       { icon: <GiComb className="h-6 w-6" />, value: "comb", name: "Comb" },
       { icon: <GiScissors className="h-6 w-6" />, value: "barber-scissors", name: "Barber Scissors" },
-      { icon: <GiMirror className="h-6 w-6" />, value: "mirror", name: "Mirror" },
       { icon: <FaCut className="h-6 w-6" />, value: "cut", name: "Cut" }
     ],
     "Hair & Styling": [
