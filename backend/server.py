@@ -384,6 +384,30 @@ We look forward to seeing you!
 
 Best regards,
 {{business_name}} Team"""
+    # Booking Reminder Email Template
+    reminder_subject_template: str = "Appointment Reminder - {{business_name}}"
+    reminder_body_template: str = """Dear {{customer_name}},
+
+This is a friendly reminder about your upcoming appointment with {{business_name}}.
+
+Appointment Details:
+- Date: {{booking_date}}
+- Time: {{booking_time}}
+- Services: {{services}}
+- Staff: {{staff_name}}
+- Total Price: {{total_price}} DKK
+
+Location:
+{{business_address}}
+
+Phone: {{business_phone}}
+
+Please arrive 5 minutes early. If you need to cancel or reschedule, please contact us as soon as possible.
+
+We look forward to seeing you!
+
+Best regards,
+{{business_name}} Team"""
     # Booking Confirmation Email Template
     email_confirmation_subject: str = "Booking Confirmed - {{business_name}}"
     email_confirmation_body: str = """Dear {{customer_name}},
