@@ -52,7 +52,6 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
   return (
     <div className="rich-text-editor">
       <Editor
-        apiKey="no-api-key" // We'll use the free version
         onInit={(evt, editor) => editorRef.current = editor}
         value={value}
         onEditorChange={(content, editor) => {
