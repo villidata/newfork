@@ -568,21 +568,26 @@ async def upload_avatar(avatar: UploadFile = File(...), current_user: User = Dep
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
     
+    # Validate file type
+    if not avatar.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail="File must be an image")
+    
     # Create uploads directory if it doesn't exist
     upload_dir = Path("uploads/avatars")
     upload_dir.mkdir(parents=True, exist_ok=True)
     
     # Generate unique filename
-    file_extension = avatar.filename.split('.')[-1]
+    file_extension = avatar.filename.split('.')[-1] if '.' in avatar.filename else 'jpg'
     filename = f"{uuid.uuid4()}.{file_extension}"
     file_path = upload_dir / filename
     
     # Save file
     with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(avatar.file, buffer)
+        content = await avatar.read()
+        buffer.write(content)
     
-    # Return URL (in production, this would be a CDN URL)
-    avatar_url = f"/uploads/avatars/{filename}"
+    # Return full URL for the image
+    avatar_url = f"{BACKEND_URL}/uploads/avatars/{filename}"
     return {"avatar_url": avatar_url}
 
 @api_router.post("/upload/image")
@@ -590,21 +595,26 @@ async def upload_image(image: UploadFile = File(...), current_user: User = Depen
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
     
+    # Validate file type
+    if not image.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail="File must be an image")
+    
     # Create uploads directory if it doesn't exist
     upload_dir = Path("uploads/images")
     upload_dir.mkdir(parents=True, exist_ok=True)
     
     # Generate unique filename
-    file_extension = image.filename.split('.')[-1]
+    file_extension = image.filename.split('.')[-1] if '.' in image.filename else 'jpg'
     filename = f"{uuid.uuid4()}.{file_extension}"
     file_path = upload_dir / filename
     
     # Save file
     with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(image.file, buffer)
+        content = await image.read()
+        buffer.write(content)
     
-    # Return URL (in production, this would be a CDN URL)
-    image_url = f"/uploads/images/{filename}"
+    # Return full URL for the image
+    image_url = f"{BACKEND_URL}/uploads/images/{filename}"
     return {"image_url": image_url}
 
 # Page routes
