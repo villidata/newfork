@@ -83,7 +83,13 @@ const GalleryManager = ({ token, staff, onRefresh }) => {
   const handleAddItem = async () => {
     try {
       setLoading(true);
-      await axios.post(`${API}/gallery`, newItem, {
+      // Prepare data for backend - convert 'none' to null for staff_id
+      const itemData = {
+        ...newItem,
+        staff_id: newItem.staff_id === 'none' ? null : newItem.staff_id
+      };
+      
+      await axios.post(`${API}/gallery`, itemData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setNewItem({
