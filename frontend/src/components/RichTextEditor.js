@@ -1,5 +1,34 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
+// Import TinyMCE
+import tinymce from 'tinymce/tinymce';
+// Import TinyMCE theme
+import 'tinymce/themes/silver';
+// Import TinyMCE plugins
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/autolink';
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/image';
+import 'tinymce/plugins/charmap';
+import 'tinymce/plugins/preview';
+import 'tinymce/plugins/anchor';
+import 'tinymce/plugins/searchreplace';
+import 'tinymce/plugins/visualblocks';
+import 'tinymce/plugins/code';
+import 'tinymce/plugins/fullscreen';
+import 'tinymce/plugins/insertdatetime';
+import 'tinymce/plugins/media';
+import 'tinymce/plugins/table';
+import 'tinymce/plugins/help';
+import 'tinymce/plugins/wordcount';
+import 'tinymce/plugins/emoticons';
+import 'tinymce/plugins/codesample';
+// Import TinyMCE content styles
+import 'tinymce/skins/ui/oxide/skin.min.css';
+import 'tinymce/skins/ui/oxide-dark/skin.min.css';
+import 'tinymce/skins/content/default/content.min.css';
+import 'tinymce/skins/content/dark/content.min.css';
 import axios from 'axios';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
