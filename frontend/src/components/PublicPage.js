@@ -14,6 +14,7 @@ const PublicPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [settings, setSettings] = useState({});
+  const [pages, setPages] = useState([]);
 
   useEffect(() => {
     fetchPage();
