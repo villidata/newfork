@@ -332,7 +332,7 @@ const Home = () => {
             </div>
           )}
           
-          {galleryItems.filter(item => item.is_featured).length > 6 && (
+          {galleryItems.length > 6 && (
             <div className="text-center mt-12">
               <Button variant="outline" className="border-gold text-gold hover:bg-gold hover:text-black">
                 Se mere galleri
