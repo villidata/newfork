@@ -26,7 +26,6 @@ import {
   GiComb,
   GiMustache,
   GiBeard,
-  GiCurlyHair,
   GiHairStrands,
   GiScissors,
   GiSpray,
