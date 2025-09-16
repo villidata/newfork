@@ -296,17 +296,12 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Fix input field focus loss in Staff editing form"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     - agent: "main"
-      message: "Avatar display issue has been resolved. The problem was that existing avatar URLs in the database pointed to localhost:8000 instead of the production URL. Fixed by updating the database records to use correct HTTPS URLs. Ready for comprehensive testing."
-    - agent: "testing"
-      message: "Comprehensive avatar functionality testing completed. All backend avatar features are working correctly. Avatar upload endpoint accepts jpg/png/gif files, requires admin authentication, saves files to correct location, and returns proper URLs with production domain. Static file serving works correctly from backend (proper content-type), but external proxy/ingress is overriding content-type headers. Database consistency verified - no localhost URLs found. Staff avatar integration working properly."
-    - agent: "testing"
-      message: "COMPREHENSIVE FRONTEND AVATAR TESTING COMPLETED: ✅ Admin Dashboard: Staff avatars display correctly with circular styling and gold borders using production HTTPS URLs. Found 1 staff member (Kristofer Bruno la Fata) with working avatar, 2 staff without avatars showing fallback icons. ✅ Upload Interface: Add New Staff dialog has proper avatar upload button and preview area with fallback user icon. Form fields work correctly. ✅ Public Display: Staff avatars display perfectly on public homepage with proper circular styling, gold borders, and production URLs. ✅ Responsive Design: All avatar displays work correctly across desktop (1920x1080), tablet (768x1024), and mobile (390x844) viewports. ✅ URL Validation: All avatar URLs use correct HTTPS production domain (https://stylista-admin.preview.emergentagent.com). ✅ No Console Errors: No critical errors found during testing. Avatar functionality is working as expected across all tested scenarios."
-    - agent: "testing"
-      message: "COMPREHENSIVE ENHANCED PAGE MANAGEMENT SYSTEM TESTING COMPLETED: ✅ Enhanced Page Model: All new fields working perfectly - page_type (page, blog, about, service), categories arrays, tags arrays, excerpt, featured_image, navigation_order, show_in_navigation flags. Created and verified 4 different page types with all enhanced fields. ✅ Video Upload Endpoint: /api/upload/video fully functional - accepts all supported formats (mp4, webm, ogg, avi, mov), requires admin authentication, saves to uploads/videos/ directory, generates correct URLs. ✅ Public Pages API: /api/public/pages correctly filters published pages with show_in_navigation=true, orders by navigation_order, includes all enhanced fields. ✅ Page CRUD Enhanced: Complete CRUD operations with enhanced features - create, read, update, delete all working with categories, tags, excerpt, page_type, media arrays, navigation settings. ✅ Static File Serving: Videos and images properly served from respective directories with correct URL construction. All 65/65 tests passed with 100% success rate. Enhanced page management system is fully operational."
+      message: "Fixed React input field focus loss bug in Staff editing form. The issue was caused by the StaffForm component being re-created on every render because it was defined inside the StaffManager component. Fixed by: 1) Extracting StaffForm component outside StaffManager, 2) Using useCallback for handleEditStaffChange and handleNewStaffChange functions, 3) Adding stable key props to input fields. Ready for testing to verify the fix works correctly."
