@@ -473,6 +473,85 @@ async def login_user(credentials: UserLogin):
 async def get_current_user_info(current_user: User = Depends(get_current_user)):
     return current_user
 
+# User Management routes
+@api_router.post("/users", response_model=User)
+async def create_user(user_create: UserCreate, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Check if user already exists
+    existing_user = await db.users.find_one({"email": user_create.email})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="User with this email already exists")
+    
+    # Hash password
+    hashed_password = get_password_hash(user_create.password)
+    
+    user_dict = user_create.dict()
+    user_dict.pop('password')
+    
+    new_user = User(**user_dict)
+    await db.users.insert_one(prepare_for_mongo(new_user.dict()))
+    await db.user_passwords.insert_one({"user_id": new_user.id, "password": hashed_password})
+    
+    return new_user
+
+@api_router.get("/users", response_model=List[User])
+async def get_all_users(current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    users = await db.users.find().to_list(length=None)
+    return [User(**parse_from_mongo(user)) for user in users]
+
+@api_router.put("/users/{user_id}", response_model=User)
+async def update_user(user_id: str, user_update: UserUpdate, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    existing_user = await db.users.find_one({"id": user_id})
+    if not existing_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    update_data = {}
+    for field, value in user_update.dict(exclude_unset=True).items():
+        if value is not None:
+            if field == "password":
+                # Hash new password
+                value = get_password_hash(value)
+                # Update password in separate collection
+                await db.user_passwords.update_one(
+                    {"user_id": user_id}, 
+                    {"$set": {"password": value}},
+                    upsert=True
+                )
+                continue
+            update_data[field] = value
+    
+    if update_data:
+        await db.users.update_one({"id": user_id}, {"$set": update_data})
+    
+    updated_user_data = await db.users.find_one({"id": user_id})
+    return User(**parse_from_mongo(updated_user_data))
+
+@api_router.delete("/users/{user_id}")
+async def delete_user(user_id: str, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Prevent deletion of current user
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+    
+    result = await db.users.delete_one({"id": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Also delete password record
+    await db.user_passwords.delete_one({"user_id": user_id})
+    
+    return {"message": "User deleted successfully"}
+
 # Staff routes
 @api_router.post("/staff", response_model=Staff)
 async def create_staff(staff: StaffCreate, current_user: User = Depends(get_current_user)):
