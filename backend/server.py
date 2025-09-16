@@ -230,24 +230,52 @@ class UserLogin(BaseModel):
 class Staff(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
-    specialty: str
-    experience: str
+    bio: str = ""
+    experience_years: int = 0
+    specialties: List[str] = Field(default_factory=list)
+    phone: str = ""
+    email: str = ""
     avatar_url: str = ""
-    available_hours: dict = Field(default_factory=dict)  # {"monday": {"start": "09:00", "end": "17:00", "enabled": true}}
+    portfolio_images: List[str] = Field(default_factory=list)
+    available_hours: dict = Field(default_factory=lambda: {
+        "monday": {"start": "09:00", "end": "18:00", "enabled": True},
+        "tuesday": {"start": "09:00", "end": "18:00", "enabled": True},
+        "wednesday": {"start": "09:00", "end": "18:00", "enabled": True},
+        "thursday": {"start": "09:00", "end": "18:00", "enabled": True},
+        "friday": {"start": "09:00", "end": "18:00", "enabled": True},
+        "saturday": {"start": "10:00", "end": "16:00", "enabled": True},
+        "sunday": {"start": None, "end": None, "enabled": False}
+    })
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class StaffCreate(BaseModel):
     name: str
-    specialty: str
-    experience: str
+    bio: str = ""
+    experience_years: int = 0
+    specialties: List[str] = Field(default_factory=list)
+    phone: str = ""
+    email: str = ""
     avatar_url: str = ""
-    available_hours: dict = Field(default_factory=dict)
+    portfolio_images: List[str] = Field(default_factory=list)
+    available_hours: dict = Field(default_factory=lambda: {
+        "monday": {"start": "09:00", "end": "18:00", "enabled": True},
+        "tuesday": {"start": "09:00", "end": "18:00", "enabled": True},
+        "wednesday": {"start": "09:00", "end": "18:00", "enabled": True},
+        "thursday": {"start": "09:00", "end": "18:00", "enabled": True},
+        "friday": {"start": "09:00", "end": "18:00", "enabled": True},
+        "saturday": {"start": "10:00", "end": "16:00", "enabled": True},
+        "sunday": {"start": None, "end": None, "enabled": False}
+    })
 
 class StaffUpdate(BaseModel):
     name: Optional[str] = None
-    specialty: Optional[str] = None
-    experience: Optional[str] = None
+    bio: Optional[str] = None
+    experience_years: Optional[int] = None
+    specialties: Optional[List[str]] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
     avatar_url: Optional[str] = None
+    portfolio_images: Optional[List[str]] = None
     available_hours: Optional[dict] = None
 
 class Service(BaseModel):
