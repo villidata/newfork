@@ -59,11 +59,15 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
         }}
         init={{
           height: height,
-          // Use GPL license for self-hosted version - no API key needed
-          license_key: 'gpl',
-          // Disable cloud features and API key validation
+          // Disable all cloud features and API key validation
           promotion: false,
-          upgrade_source: false,
+          branding: false,
+          // Use minimal plugins to avoid cloud dependencies
+          plugins: [
+            'lists', 'link', 'image', 'charmap', 'anchor', 'searchreplace', 
+            'visualblocks', 'code', 'fullscreen', 'insertdatetime', 'media', 
+            'table', 'help', 'wordcount'
+          ],
           menubar: 'file edit view insert format tools table help',
           plugins: [
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
