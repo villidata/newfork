@@ -129,7 +129,7 @@ const Home = () => {
       <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1573586927918-3e6476da8395?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwzfHxyZXRybyUyMGJhcmJlcnxlbnwwfHx8fDE3NTc5NzcyODB8MA&ixlib=rb-4.1.0&q=85"
+            src={settings.hero_image || "https://images.unsplash.com/photo-1573586927918-3e6476da8395?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwzfHxyZXRybyUyMGJhcmJlcnxlbnwwfHx8fDE3NTc5NzcyODB8MA&ixlib=rb-4.1.0&q=85"}
             alt="Frisor LaFata barbershop"
             className="w-full h-full object-cover opacity-30"
           />
@@ -142,11 +142,11 @@ const Home = () => {
               Siden 2010
             </Badge>
             <h2 className="text-5xl md:text-7xl font-bold text-gold mb-6 font-serif leading-tight">
-              Klassisk Barbering
-              <span className="block text-4xl md:text-5xl text-gold/80 mt-2">i Hjertet af Byen</span>
+              {settings.hero_title}
+              <span className="block text-4xl md:text-5xl text-gold/80 mt-2">{settings.hero_subtitle}</span>
             </h2>
             <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Oplev den autentiske barber-oplevelse hos Frisor LaFata. Vi kombinerer traditionel håndværk med moderne teknikker.
+              {settings.hero_description}
             </p>
           </div>
           
