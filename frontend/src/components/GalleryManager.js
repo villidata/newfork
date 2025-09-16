@@ -142,7 +142,7 @@ const GalleryManager = ({ token, staff, onRefresh }) => {
   };
 
   const getStaffName = (staffId) => {
-    if (!staffId) return 'No staff assigned';
+    if (!staffId || staffId === 'none') return 'No staff assigned';
     const staffMember = staff.find(s => s.id === staffId);
     return staffMember ? staffMember.name : 'Unknown staff';
   };
