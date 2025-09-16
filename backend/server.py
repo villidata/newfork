@@ -341,6 +341,56 @@ We look forward to seeing you!
 
 Best regards,
 {{business_name}} Team"""
+    # Booking Confirmation Email Template
+    email_confirmation_subject: str = "Booking Confirmed - {{business_name}}"
+    email_confirmation_body: str = """Dear {{customer_name}},
+
+Great news! Your booking has been CONFIRMED.
+
+Confirmed Booking Details:
+- Date: {{booking_date}}
+- Time: {{booking_time}}
+- Services: {{services}}
+- Staff: {{staff_name}}
+- Total Price: {{total_price}} DKK
+
+Location:
+{{business_address}}
+
+Phone: {{business_phone}}
+Email: {{business_email}}
+
+We look forward to seeing you at the confirmed time!
+
+Best regards,
+{{business_name}} Team"""
+    # Booking Change Email Template
+    email_change_subject: str = "Booking Time Changed - {{business_name}}"
+    email_change_body: str = """Dear {{customer_name}},
+
+We need to inform you about a change to your booking.
+
+UPDATED Booking Details:
+- NEW Date: {{booking_date}}
+- NEW Time: {{booking_time}}
+- Services: {{services}} (unchanged)
+- Staff: {{staff_name}}
+- Total Price: {{total_price}} DKK (unchanged)
+
+{{#if admin_notes}}
+Reason for change: {{admin_notes}}
+{{/if}}
+
+Location:
+{{business_address}}
+
+Phone: {{business_phone}}
+Email: {{business_email}}
+
+We apologize for any inconvenience and look forward to seeing you at the new time!
+
+Best regards,
+{{business_name}} Team"""
 
 # Business hours configuration
 BUSINESS_HOURS = {
