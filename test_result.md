@@ -327,7 +327,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "TinyMCE editor fix for page creation"
+    - "Fix input field focus loss in Pages editing form (Content Management)"
   stuck_tasks:
     - "Fix input field focus loss in Staff editing form"
   test_all: false
