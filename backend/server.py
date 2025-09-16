@@ -1366,7 +1366,7 @@ async def upload_image(image: UploadFile = File(...), current_user: User = Depen
         buffer.write(content)
     
     # Return full URL for the image
-    image_url = f"{BACKEND_URL}/uploads/images/{filename}"
+    image_url = f"{BACKEND_URL}/api/uploads/images/{filename}"
     return {"image_url": image_url}
 
 @api_router.get("/uploads/{file_type}/{filename}")
