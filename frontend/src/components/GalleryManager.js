@@ -281,7 +281,7 @@ const GalleryManager = ({ token, staff, onRefresh }) => {
                       <SelectValue placeholder="Select staff member" />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-900 border-gold/20">
-                      <SelectItem value="">No staff assigned</SelectItem>
+                      <SelectItem value="none">No staff assigned</SelectItem>
                       {staff.map(member => (
                         <SelectItem key={member.id} value={member.id}>
                           {member.name}
