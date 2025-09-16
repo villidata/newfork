@@ -1369,6 +1369,45 @@ async def upload_image(image: UploadFile = File(...), current_user: User = Depen
     image_url = f"{BACKEND_URL}/uploads/images/{filename}"
     return {"image_url": image_url}
 
+@api_router.get("/uploads/{file_type}/{filename}")
+async def serve_uploaded_file(file_type: str, filename: str):
+    """Serve uploaded files with correct content-type headers"""
+    allowed_types = ["avatars", "images", "videos"]
+    if file_type not in allowed_types:
+        raise HTTPException(status_code=404, detail="File type not found")
+    
+    file_path = f"uploads/{file_type}/{filename}"
+    
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    # Determine the correct MIME type
+    content_type, _ = mimetypes.guess_type(file_path)
+    if content_type is None:
+        # Default content types based on file extension
+        if filename.lower().endswith('.jpg') or filename.lower().endswith('.jpeg'):
+            content_type = "image/jpeg"
+        elif filename.lower().endswith('.png'):
+            content_type = "image/png"
+        elif filename.lower().endswith('.gif'):
+            content_type = "image/gif"
+        elif filename.lower().endswith('.webp'):
+            content_type = "image/webp"
+        elif filename.lower().endswith('.mp4'):
+            content_type = "video/mp4"
+        elif filename.lower().endswith('.webm'):
+            content_type = "video/webm"
+        elif filename.lower().endswith('.ogg'):
+            content_type = "video/ogg"
+        else:
+            content_type = "application/octet-stream"
+    
+    return FileResponse(
+        file_path, 
+        media_type=content_type,
+        headers={"Cache-Control": "public, max-age=3600"}
+    )
+
 # Page routes
 @api_router.post("/pages", response_model=Page)
 async def create_page(page: PageCreate, current_user: User = Depends(get_current_user)):
