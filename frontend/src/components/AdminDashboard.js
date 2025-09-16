@@ -1542,6 +1542,7 @@ const AdminDashboard = ({ token, user, onLogout }) => {
           <TabsContent value="gallery">
             <GalleryManager 
               token={token} 
+              staff={staff}
               onRefresh={fetchData} 
             />
           </TabsContent>
