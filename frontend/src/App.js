@@ -273,7 +273,7 @@ const Home = () => {
             {services.map((service, index) => (
               <Card key={service.id || index} className="bg-black/50 border-gold/20 hover:border-gold/50 transition-all duration-300 hover:transform hover:scale-105">
                 <CardContent className="p-6 text-center">
-                  <div className="text-4xl mb-4">{getServiceIcon(service.category)}</div>
+                  <div className="text-4xl mb-4">{getServiceIcon(service.icon || service.category)}</div>
                   <h3 className="text-xl font-semibold text-gold mb-2">{service.name}</h3>
                   <div className="flex items-center justify-center text-gray-300 mb-3">
                     <Clock className="h-4 w-4 mr-1" />
