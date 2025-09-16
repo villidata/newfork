@@ -15,6 +15,308 @@ import RichTextEditor from './RichTextEditor';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
+// Extract PageForm component outside ContentManager to prevent re-creation on every render
+const PageForm = ({ 
+  pageData, 
+  setPageData, 
+  onSubmit, 
+  onCancel, 
+  loading, 
+  title, 
+  isEditing = false,
+  token,
+  uploadingImage,
+  handleImageUpload,
+  pageTypes,
+  commonCategories,
+  addCategory,
+  removeCategory,
+  handleTagsChange
+}) => {
+  const [newCategory, setNewCategory] = useState('');
+
+  const handleFieldChange = useCallback((field, value) => {
+    setPageData(field, value);
+  }, [setPageData]);
+
+  return (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gold">{title}</h3>
+      
+      <Tabs defaultValue="content" className="space-y-6">
+        <TabsList className="bg-gray-900/50 border border-gold/20">
+          <TabsTrigger value="content" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+            <FileText className="h-4 w-4 mr-2" />
+            Content
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+            <Globe className="h-4 w-4 mr-2" />
+            Settings
+          </TabsTrigger>
+          <TabsTrigger value="media" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+            <Image className="h-4 w-4 mr-2" />
+            Media
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="content" className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label className="text-gold">Page Title *</Label>
+              <Input
+                key={`title-${isEditing ? 'edit' : 'new'}`}
+                value={pageData.title}
+                onChange={(e) => handleFieldChange('title', e.target.value)}
+                className="bg-black/50 border-gold/30 text-white"
+                placeholder="e.g., About Us"
+              />
+            </div>
+            <div>
+              <Label className="text-gold">URL Slug *</Label>
+              <Input
+                key={`slug-${isEditing ? 'edit' : 'new'}`}
+                value={pageData.slug}
+                onChange={(e) => handleFieldChange('slug', e.target.value)}
+                className="bg-black/50 border-gold/30 text-white"
+                placeholder="e.g., about-us"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-gold">Excerpt (Short Description)</Label>
+            <Textarea
+              key={`excerpt-${isEditing ? 'edit' : 'new'}`}
+              value={pageData.excerpt}
+              onChange={(e) => handleFieldChange('excerpt', e.target.value)}
+              className="bg-black/50 border-gold/30 text-white"
+              placeholder="A brief description of this page..."
+              rows={2}
+            />
+          </div>
+
+          <div>
+            <Label className="text-gold">Content *</Label>
+            <div className="mt-2">
+              <RichTextEditor
+                value={pageData.content}
+                onChange={(content) => handleFieldChange('content', content)}
+                token={token}
+                height={400}
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-gold">Meta Description (SEO)</Label>
+            <Textarea
+              key={`meta-${isEditing ? 'edit' : 'new'}`}
+              value={pageData.meta_description}
+              onChange={(e) => handleFieldChange('meta_description', e.target.value)}
+              className="bg-black/50 border-gold/30 text-white"
+              placeholder="SEO meta description (max 160 characters)"
+              maxLength={160}
+              rows={2}
+            />
+            <p className="text-xs text-gray-400 mt-1">
+              {pageData.meta_description.length}/160 characters
+            </p>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="settings" className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label className="text-gold">Page Type</Label>
+              <Select value={pageData.page_type} onValueChange={(value) => handleFieldChange('page_type', value)}>
+                <SelectTrigger className="bg-black/50 border-gold/30 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-900 border-gold/20">
+                  {pageTypes.map(type => (
+                    <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-gold">Navigation Order</Label>
+              <Input
+                key={`nav-order-${isEditing ? 'edit' : 'new'}`}
+                type="number"
+                value={pageData.navigation_order}
+                onChange={(e) => handleFieldChange('navigation_order', parseInt(e.target.value) || 0)}
+                className="bg-black/50 border-gold/30 text-white"
+                placeholder="0"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                checked={pageData.is_published}
+                onCheckedChange={(checked) => handleFieldChange('is_published', checked)}
+                className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+              />
+              <Label className="text-gold">Published</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                checked={pageData.show_in_navigation}
+                onCheckedChange={(checked) => handleFieldChange('show_in_navigation', checked)}
+                className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+              />
+              <Label className="text-gold">Show in Navigation Menu</Label>
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-gold">Categories</Label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {pageData.categories.map((category, index) => (
+                <Badge 
+                  key={index} 
+                  variant="outline" 
+                  className="border-gold/50 text-gold cursor-pointer"
+                  onClick={() => removeCategory(category, pageData, setPageData)}
+                >
+                  {category} ×
+                </Badge>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Input
+                key={`new-category-${isEditing ? 'edit' : 'new'}`}
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                placeholder="Add new category..."
+                className="bg-black/50 border-gold/30 text-white"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    addCategory(newCategory, pageData, setPageData);
+                    setNewCategory('');
+                  }
+                }}
+              />
+              <Button
+                type="button"
+                onClick={() => {
+                  addCategory(newCategory, pageData, setPageData);
+                  setNewCategory('');
+                }}
+                className="bg-gold text-black hover:bg-gold/90"
+              >
+                Add
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {commonCategories.map(category => (
+                <Badge
+                  key={category}
+                  variant="outline"
+                  className="border-gold/30 text-gold cursor-pointer hover:bg-gold hover:text-black"
+                  onClick={() => addCategory(category, pageData, setPageData)}
+                >
+                  + {category}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-gold">Tags (comma-separated)</Label>
+            <Input
+              key={`tags-${isEditing ? 'edit' : 'new'}`}
+              value={pageData.tags.join(', ')}
+              onChange={(e) => handleTagsChange(e.target.value, pageData, setPageData)}
+              className="bg-black/50 border-gold/30 text-white"
+              placeholder="hair, beard, styling, tips..."
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="media" className="space-y-4">
+          <div>
+            <Label className="text-gold">Featured Image</Label>
+            <div className="flex items-center space-x-4 mt-2">
+              {pageData.featured_image && (
+                <img 
+                  src={pageData.featured_image} 
+                  alt="Featured" 
+                  className="w-24 h-16 rounded object-cover border-2 border-gold/30"
+                />
+              )}
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) handleImageUpload(file, pageData, setPageData);
+                  }}
+                  className="hidden"
+                  id={`featured-image-upload-${isEditing ? 'edit' : 'new'}`}
+                />
+                <label
+                  htmlFor={`featured-image-upload-${isEditing ? 'edit' : 'new'}`}
+                  className="cursor-pointer inline-flex items-center px-3 py-2 border border-gold/50 rounded-md text-gold hover:bg-gold hover:text-black transition-colors"
+                >
+                  {uploadingImage ? (
+                    <>Uploading...</>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload Featured Image
+                    </>
+                  )}
+                </label>
+                {pageData.featured_image && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => handleFieldChange('featured_image', '')}
+                    className="ml-2 border-red-500 text-red-400 hover:bg-red-500 hover:text-white"
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gray-900/30 p-4 rounded-lg">
+            <h4 className="text-gold font-semibold mb-2">Media Tips:</h4>
+            <ul className="text-gray-300 text-sm space-y-1">
+              <li>• Use the rich text editor to add images and videos directly to content</li>
+              <li>• Featured image will be displayed at the top of the page</li>
+              <li>• Supported video formats: MP4, WebM, OGG, AVI, MOV</li>
+              <li>• You can also embed YouTube and Vimeo videos using the media button in the editor</li>
+            </ul>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <div className="flex justify-end space-x-2">
+        <Button 
+          variant="outline" 
+          onClick={onCancel}
+          className="border-gold/50 text-gold hover:bg-gold hover:text-black"
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={onSubmit}
+          disabled={loading || !pageData.title || !pageData.slug}
+          className="bg-gold text-black hover:bg-gold/90"
+        >
+          {loading ? 'Saving...' : 'Save Page'}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const ContentManager = ({ token, onRefresh }) => {
   const [pages, setPages] = useState([]);
   const [editingPage, setEditingPage] = useState(null);
