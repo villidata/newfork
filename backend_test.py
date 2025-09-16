@@ -1257,6 +1257,342 @@ class FrisorLaFataAPITester:
         self.token = original_token
         return success, response
 
+    def test_gallery_comprehensive(self):
+        """Comprehensive gallery API testing - focus on image URLs and static serving"""
+        print("\n" + "🖼️ COMPREHENSIVE GALLERY TESTS" + "=" * 35)
+        
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+        
+        # Test 1: Upload images for gallery
+        uploaded_images = []
+        image_types = [
+            ('before_image.jpg', 'image/jpeg'),
+            ('after_image.png', 'image/png')
+        ]
+        
+        for filename, content_type in image_types:
+            success, response = self._test_image_upload(filename, content_type)
+            if success and 'image_url' in response:
+                uploaded_images.append(response['image_url'])
+        
+        if len(uploaded_images) < 2:
+            print("❌ Failed to upload required images for gallery test")
+            return False, {}
+        
+        # Test 2: Create gallery item with uploaded images
+        gallery_item_data = {
+            "title": f"Test Gallery Item {datetime.now().strftime('%H%M%S')}",
+            "description": "Test gallery item with before/after images",
+            "before_image": uploaded_images[0],
+            "after_image": uploaded_images[1],
+            "service_type": "haircut",
+            "is_featured": True
+        }
+        
+        original_token = self.token
+        self.token = self.admin_token
+        
+        success, gallery_response = self.run_test(
+            "Create Gallery Item", 
+            "POST", 
+            "gallery", 
+            200, 
+            data=gallery_item_data
+        )
+        
+        if not success:
+            self.token = original_token
+            return False, {}
+        
+        gallery_item_id = gallery_response.get('id')
+        
+        # Test 3: Get gallery items (public endpoint)
+        self.token = None  # Test public access
+        success, public_gallery = self.run_test(
+            "Get Gallery Items (Public)", 
+            "GET", 
+            "gallery?featured_only=false", 
+            200
+        )
+        
+        if success:
+            self._verify_gallery_image_urls(public_gallery, "Public Gallery")
+        
+        # Test 4: Get featured gallery items only
+        success, featured_gallery = self.run_test(
+            "Get Featured Gallery Items", 
+            "GET", 
+            "gallery?featured_only=true", 
+            200
+        )
+        
+        if success:
+            self._verify_gallery_image_urls(featured_gallery, "Featured Gallery")
+        
+        # Test 5: Get admin gallery (requires auth)
+        self.token = self.admin_token
+        success, admin_gallery = self.run_test(
+            "Get Admin Gallery Items", 
+            "GET", 
+            "admin/gallery", 
+            200
+        )
+        
+        if success:
+            self._verify_gallery_image_urls(admin_gallery, "Admin Gallery")
+        
+        # Test 6: Test static file serving for gallery images
+        for image_url in uploaded_images:
+            self._test_gallery_image_static_serving(image_url)
+        
+        # Test 7: Update gallery item
+        if gallery_item_id:
+            update_data = {
+                "title": "Updated Gallery Item",
+                "service_type": "beard",
+                "is_featured": False
+            }
+            
+            success, update_response = self.run_test(
+                "Update Gallery Item", 
+                "PUT", 
+                f"gallery/{gallery_item_id}", 
+                200, 
+                data=update_data
+            )
+            
+            if success:
+                print(f"   ✅ Gallery item updated successfully")
+        
+        # Test 8: Delete gallery item
+        if gallery_item_id:
+            success, delete_response = self.run_test(
+                "Delete Gallery Item", 
+                "DELETE", 
+                f"gallery/{gallery_item_id}", 
+                200
+            )
+        
+        self.token = original_token
+        return True, {"uploaded_images": uploaded_images, "gallery_item_id": gallery_item_id}
+
+    def _test_image_upload(self, filename, content_type):
+        """Test image upload for gallery"""
+        if not self.admin_token:
+            return False, {}
+            
+        # Create test image content
+        test_image_content = b"fake_image_content_for_gallery_testing_" + filename.encode()
+        
+        url = f"{self.api_url}/upload/image"
+        headers = {'Authorization': f'Bearer {self.admin_token}'}
+        files = {'image': (filename, io.BytesIO(test_image_content), content_type)}
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing Image Upload for Gallery - {filename}...")
+        
+        try:
+            response = requests.post(url, headers=headers, files=files, timeout=10)
+            
+            success = response.status_code == 200
+            if success:
+                self.tests_passed += 1
+                response_data = response.json()
+                image_url = response_data.get('image_url', '')
+                
+                # Verify URL format
+                expected_domain = "https://stylista-admin.preview.emergentagent.com"
+                expected_path = "/uploads/images/"
+                
+                if image_url.startswith(expected_domain) and expected_path in image_url:
+                    print(f"✅ Passed - Correct URL format: {image_url}")
+                else:
+                    print(f"❌ URL format issue - Expected {expected_domain}{expected_path}, got: {image_url}")
+                    success = False
+                
+                return success, response_data
+            else:
+                print(f"❌ Failed - Status: {response.status_code}")
+                try:
+                    error_data = response.json()
+                    print(f"   Error: {error_data}")
+                except:
+                    print(f"   Error: {response.text}")
+                return False, {}
+                
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False, {}
+
+    def _verify_gallery_image_urls(self, gallery_items, context):
+        """Verify gallery image URLs are correctly formatted"""
+        self.tests_run += 1
+        print(f"\n🔍 Verifying Gallery Image URLs - {context}...")
+        
+        if not isinstance(gallery_items, list):
+            print(f"❌ Failed - Expected list, got: {type(gallery_items)}")
+            return False
+        
+        print(f"   Found {len(gallery_items)} gallery items")
+        
+        url_issues = []
+        correct_urls = []
+        expected_domain = "https://stylista-admin.preview.emergentagent.com"
+        
+        for item in gallery_items:
+            title = item.get('title', 'Unknown')
+            before_image = item.get('before_image', '')
+            after_image = item.get('after_image', '')
+            
+            # Check before_image URL
+            if before_image:
+                if not before_image.startswith(expected_domain):
+                    url_issues.append({
+                        'item': title,
+                        'field': 'before_image',
+                        'url': before_image,
+                        'issue': 'Incorrect domain'
+                    })
+                elif '/uploads/images/' not in before_image:
+                    url_issues.append({
+                        'item': title,
+                        'field': 'before_image',
+                        'url': before_image,
+                        'issue': 'Incorrect path'
+                    })
+                else:
+                    correct_urls.append(before_image)
+            
+            # Check after_image URL
+            if after_image:
+                if not after_image.startswith(expected_domain):
+                    url_issues.append({
+                        'item': title,
+                        'field': 'after_image',
+                        'url': after_image,
+                        'issue': 'Incorrect domain'
+                    })
+                elif '/uploads/images/' not in after_image:
+                    url_issues.append({
+                        'item': title,
+                        'field': 'after_image',
+                        'url': after_image,
+                        'issue': 'Incorrect path'
+                    })
+                else:
+                    correct_urls.append(after_image)
+        
+        if len(url_issues) == 0:
+            self.tests_passed += 1
+            print(f"✅ Passed - All gallery image URLs correctly formatted")
+            print(f"   Correct URLs found: {len(correct_urls)}")
+            return True
+        else:
+            print(f"❌ Failed - Found {len(url_issues)} URL issues:")
+            for issue in url_issues:
+                print(f"   - {issue['item']} ({issue['field']}): {issue['issue']} - {issue['url']}")
+            return False
+
+    def _test_gallery_image_static_serving(self, image_url):
+        """Test that gallery images are accessible via static file serving"""
+        self.tests_run += 1
+        print(f"\n🔍 Testing Gallery Image Static Serving...")
+        print(f"   URL: {image_url}")
+        
+        try:
+            response = requests.get(image_url, timeout=10)
+            
+            if response.status_code == 200:
+                self.tests_passed += 1
+                content_type = response.headers.get('content-type', '')
+                content_length = response.headers.get('content-length', 'Unknown')
+                print(f"✅ Passed - Gallery image accessible")
+                print(f"   Content-Type: {content_type}")
+                print(f"   Content-Length: {content_length}")
+                
+                # Verify it's accessible content
+                if len(response.content) > 0:
+                    print(f"   ✅ Image content received ({len(response.content)} bytes)")
+                else:
+                    print(f"   ⚠️  Warning: Empty content received")
+                
+                return True
+            else:
+                print(f"❌ Failed - Gallery image not accessible: {response.status_code}")
+                if response.status_code == 404:
+                    print(f"   This indicates the static file serving is not working properly")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Failed - Error accessing gallery image: {str(e)}")
+            return False
+
+    def test_gallery_url_construction_analysis(self):
+        """Analyze how gallery URLs are constructed and stored"""
+        print("\n" + "🔍 GALLERY URL CONSTRUCTION ANALYSIS" + "=" * 30)
+        
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+        
+        # Get current gallery items to analyze existing URLs
+        original_token = self.token
+        self.token = None  # Test public access
+        
+        success, gallery_items = self.run_test(
+            "Get Gallery for URL Analysis", 
+            "GET", 
+            "gallery?featured_only=false", 
+            200
+        )
+        
+        if success and gallery_items:
+            print(f"\n📊 Analyzing {len(gallery_items)} existing gallery items:")
+            
+            for i, item in enumerate(gallery_items, 1):
+                title = item.get('title', f'Item {i}')
+                before_image = item.get('before_image', '')
+                after_image = item.get('after_image', '')
+                
+                print(f"\n   Gallery Item {i}: {title}")
+                print(f"   Before Image: {before_image}")
+                print(f"   After Image: {after_image}")
+                
+                # Analyze URL patterns
+                if before_image:
+                    self._analyze_image_url(before_image, "Before Image")
+                if after_image:
+                    self._analyze_image_url(after_image, "After Image")
+        else:
+            print("   No existing gallery items found for analysis")
+        
+        self.token = original_token
+        return success, gallery_items
+
+    def _analyze_image_url(self, url, context):
+        """Analyze individual image URL for issues"""
+        issues = []
+        
+        if 'localhost' in url:
+            issues.append("Contains 'localhost'")
+        if '127.0.0.1' in url:
+            issues.append("Contains '127.0.0.1'")
+        if ':8000' in url or ':8001' in url:
+            issues.append("Contains development port")
+        if not url.startswith('https://'):
+            issues.append("Not using HTTPS")
+        if '/uploads/images/' not in url:
+            issues.append("Incorrect upload path")
+        if not url.startswith('https://stylista-admin.preview.emergentagent.com'):
+            issues.append("Incorrect production domain")
+        
+        if issues:
+            print(f"     ❌ {context} Issues: {', '.join(issues)}")
+        else:
+            print(f"     ✅ {context} URL format correct")
+
 def main():
     print("🚀 Starting Frisor LaFata API Tests - COMPREHENSIVE NEW FEATURES TEST")
     print("=" * 70)
