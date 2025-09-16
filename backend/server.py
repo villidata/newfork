@@ -629,7 +629,7 @@ async def send_booking_email(booking: Booking, email_type: str):
         
         # Prepare template variables
         template_vars = {
-            'customer_name': booking.customer_name,
+            'customer_name': booking.customer_name or 'Valued Customer',
             'business_name': settings.get('site_title', 'Frisor LaFata'),
             'booking_date': booking.booking_date.strftime('%d/%m/%Y'),
             'booking_time': booking.booking_time.strftime('%H:%M'),
