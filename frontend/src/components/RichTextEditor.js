@@ -65,7 +65,7 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
             'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
             'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount',
-            'emoticons', 'template', 'codesample'
+            'emoticons', 'codesample'
           ],
           toolbar: 'undo redo | blocks | ' +
             'bold italic forecolor | alignleft aligncenter ' +
