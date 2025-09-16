@@ -412,6 +412,55 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+frontend:
+  - task: "Social Media Settings Backend Implementation"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Backend social media settings implemented in SiteSettings model (lines 459-483) with comprehensive fields for all platforms: Instagram, Facebook, TikTok, Twitter/X, YouTube. Each platform has enable/disable toggles, usernames, URLs, hashtags, and embed code fields. General social media section controls (enabled, title, description) also implemented. Ready for testing."
+
+  - task: "Admin Dashboard Social Media Settings Interface"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/AdminDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Admin dashboard has comprehensive Social Media tab in settings (lines 1449-1700+). Interface includes: 1) General settings (enable/disable section, title, description), 2) Platform-specific settings for Instagram (username, hashtag, embed code), Facebook (page URL, embed code), TikTok (username, embed code), Twitter/X (username, embed code), YouTube (channel URL, embed code). Each platform has individual enable/disable toggles with conditional field display. Ready for testing."
+
+  - task: "Public Website Social Media Section Display"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Public website social media section implemented (lines 422-606) with platform-specific cards for Instagram, Facebook, TikTok, Twitter/X, and YouTube. Each platform has proper branding (Instagram gradient, Facebook blue, etc.), conditional display based on settings, support for both embed codes and direct links, and proper external link handling. Section appears before Contact section when enabled. Ready for testing."
+
+  - task: "Social Media Navigation Link"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Conditional Social Media navigation link implemented (lines 197-199) that appears in main navigation when settings.social_media_enabled is true. Link scrolls to #social section. Ready for testing."
+
   - task: "Gallery Manager SelectItem empty value error fix"
     implemented: true
     working: true
