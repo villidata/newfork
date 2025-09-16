@@ -104,16 +104,73 @@ const Home = () => {
     fetchData();
   }, []);
 
-  const getServiceIcon = (category) => {
-    const icons = {
+  const getServiceIcon = (iconValue) => {
+    // First check emoji icons
+    const emojiIcons = {
+      "scissors-emoji": "✂️",
+      "razor-emoji": "🪒",
+      "haircut-man": "💇‍♂️",
+      "haircut-woman": "💇‍♀️",
+      "massage-man": "💆‍♂️",
+      "massage-woman": "💆‍♀️",
+      "beard-emoji": "🧔",
+      "bald-man": "👨‍🦲",
+      "makeup": "💄",
+      "star-emoji": "🌟",
+      "star-filled": "⭐",
+      "sparkles-emoji": "✨",
+      "diamond-emoji": "💎",
+      "crown-emoji": "👑",
+      "fire-emoji": "🔥",
+      "lightning": "⚡",
+      "water-drop": "💧",
+      "art": "🎨",
+      "hundred": "💯",
+      "heart-emoji": "❤️"
+    };
+
+    if (emojiIcons[iconValue]) {
+      return emojiIcons[iconValue];
+    }
+
+    // Component icons mapping
+    const componentIcons = {
+      "scissors": <Scissors className="h-8 w-8 text-gold" />,
+      "razor": <GiRazor className="h-8 w-8 text-gold" />,
+      "comb": <GiComb className="h-8 w-8 text-gold" />,
+      "barber-scissors": <GiScissors className="h-8 w-8 text-gold" />,
+      "mirror": <GiMirror className="h-8 w-8 text-gold" />,
+      "cut": <FaCut className="h-8 w-8 text-gold" />,
+      "curly-hair": <GiCurlyHair className="h-8 w-8 text-gold" />,
+      "hair-strands": <GiHairStrands className="h-8 w-8 text-gold" />,
+      "spray": <GiSpray className="h-8 w-8 text-gold" />,
+      "spray-can": <FaSprayCan className="h-8 w-8 text-gold" />,
+      "paint-brush": <FaPaintBrush className="h-8 w-8 text-gold" />,
+      "mustache": <GiMustache className="h-8 w-8 text-gold" />,
+      "beard": <GiBeard className="h-8 w-8 text-gold" />,
+      "user": <Users className="h-8 w-8 text-gold" />,
+      "male": <FaMale className="h-8 w-8 text-gold" />,
+      "child": <FaChild className="h-8 w-8 text-gold" />,
+      "user-tie": <FaUserTie className="h-8 w-8 text-gold" />,
+      "star": <Star className="h-8 w-8 text-gold" />,
+      "clock": <Clock className="h-8 w-8 text-gold" />
+    };
+
+    if (componentIcons[iconValue]) {
+      return componentIcons[iconValue];
+    }
+
+    // Legacy category mapping for backward compatibility
+    const categoryIcons = {
       haircut: "✂️",
-      beard: "🪒",
+      beard: "🧔", 
       styling: "💧",
       coloring: "🎨",
-      premium: "⭐",
+      premium: "👑",
       general: "✨"
     };
-    return icons[category] || "✨";
+
+    return categoryIcons[iconValue] || "✨";
   };
 
   if (loading) {
