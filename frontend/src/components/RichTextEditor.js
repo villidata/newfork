@@ -60,6 +60,8 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
         }}
         init={{
           height: height,
+          // Use GPL license for open source usage
+          license_key: 'gpl',
           // Disable all cloud features and API key validation
           promotion: false,
           branding: false,
