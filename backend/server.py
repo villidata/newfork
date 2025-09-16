@@ -551,7 +551,178 @@ async def get_available_slots(staff_id: str, date_param: str):
     
     return {"available_slots": slots}
 
-# PayPal integration routes
+# File upload routes
+@api_router.post("/upload/avatar")
+async def upload_avatar(avatar: UploadFile = File(...), current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Create uploads directory if it doesn't exist
+    upload_dir = Path("uploads/avatars")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate unique filename
+    file_extension = avatar.filename.split('.')[-1]
+    filename = f"{uuid.uuid4()}.{file_extension}"
+    file_path = upload_dir / filename
+    
+    # Save file
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(avatar.file, buffer)
+    
+    # Return URL (in production, this would be a CDN URL)
+    avatar_url = f"/uploads/avatars/{filename}"
+    return {"avatar_url": avatar_url}
+
+@api_router.post("/upload/image")
+async def upload_image(image: UploadFile = File(...), current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Create uploads directory if it doesn't exist
+    upload_dir = Path("uploads/images")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate unique filename
+    file_extension = image.filename.split('.')[-1]
+    filename = f"{uuid.uuid4()}.{file_extension}"
+    file_path = upload_dir / filename
+    
+    # Save file
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(image.file, buffer)
+    
+    # Return URL (in production, this would be a CDN URL)
+    image_url = f"/uploads/images/{filename}"
+    return {"image_url": image_url}
+
+# Page routes
+@api_router.post("/pages", response_model=Page)
+async def create_page(page: PageCreate, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Check if slug already exists
+    existing_page = await db.pages.find_one({"slug": page.slug})
+    if existing_page:
+        raise HTTPException(status_code=400, detail="Page with this slug already exists")
+    
+    page_obj = Page(**page.dict())
+    await db.pages.insert_one(prepare_for_mongo(page_obj.dict()))
+    return page_obj
+
+@api_router.get("/pages", response_model=List[Page])
+async def get_pages(current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    pages = await db.pages.find().to_list(length=None)
+    return [Page(**parse_from_mongo(page)) for page in pages]
+
+@api_router.get("/pages/{slug}", response_model=Page)
+async def get_page_by_slug(slug: str):
+    page = await db.pages.find_one({"slug": slug, "is_published": True})
+    if not page:
+        raise HTTPException(status_code=404, detail="Page not found")
+    return Page(**parse_from_mongo(page))
+
+@api_router.put("/pages/{page_id}", response_model=Page)
+async def update_page(page_id: str, page_update: PageUpdate, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    update_data = {k: v for k, v in page_update.dict().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.pages.update_one({"id": page_id}, {"$set": update_data})
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Page not found")
+    
+    updated_page = await db.pages.find_one({"id": page_id})
+    return Page(**parse_from_mongo(updated_page))
+
+@api_router.delete("/pages/{page_id}")
+async def delete_page(page_id: str, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    result = await db.pages.delete_one({"id": page_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Page not found")
+    
+    return {"message": "Page deleted successfully"}
+
+# Settings routes
+@api_router.get("/settings")
+async def get_settings(current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    settings = await db.settings.find_one({"type": "site_settings"})
+    if not settings:
+        # Return default settings
+        default_settings = SiteSettings()
+        return default_settings.dict()
+    
+    # Remove MongoDB _id and type fields
+    settings.pop("_id", None)
+    settings.pop("type", None)
+    return settings
+
+@api_router.put("/settings")
+async def update_settings(settings: Dict[str, Any], current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    settings_data = {
+        "type": "site_settings",
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        **settings
+    }
+    
+    await db.settings.update_one(
+        {"type": "site_settings"},
+        {"$set": settings_data},
+        upsert=True
+    )
+    
+    return {"message": "Settings updated successfully"}
+
+# Public settings endpoint for frontend
+@api_router.get("/public/settings")
+async def get_public_settings():
+    settings = await db.settings.find_one({"type": "site_settings"})
+    if not settings:
+        # Return default public settings
+        return {
+            "site_title": "Frisor LaFata",
+            "site_description": "Klassisk barbering siden 2010",
+            "contact_phone": "+45 12 34 56 78",
+            "contact_email": "info@frisorlafata.dk",
+            "address": "Hovedgaden 123, 1000 København",
+            "hero_title": "Klassisk Barbering",
+            "hero_subtitle": "i Hjertet af Byen",
+            "hero_description": "Oplev den autentiske barber-oplevelse hos Frisor LaFata.",
+            "hero_image": ""
+        }
+    
+    # Return only public settings (exclude sensitive data)
+    public_settings = {
+        "site_title": settings.get("site_title", "Frisor LaFata"),
+        "site_description": settings.get("site_description", "Klassisk barbering siden 2010"),
+        "contact_phone": settings.get("contact_phone", "+45 12 34 56 78"),
+        "contact_email": settings.get("contact_email", "info@frisorlafata.dk"),
+        "address": settings.get("address", "Hovedgaden 123, 1000 København"),
+        "hero_title": settings.get("hero_title", "Klassisk Barbering"),
+        "hero_subtitle": settings.get("hero_subtitle", "i Hjertet af Byen"),
+        "hero_description": settings.get("hero_description", "Oplev den autentiske barber-oplevelse hos Frisor LaFata."),
+        "hero_image": settings.get("hero_image", "")
+    }
+    
+    return public_settings
 @api_router.post("/payments/paypal/create")
 async def create_paypal_payment(booking_id: str, amount: float = None):
     """Create PayPal payment for a booking"""
