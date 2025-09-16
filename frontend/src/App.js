@@ -20,6 +20,7 @@ const Home = () => {
   const [staff, setStaff] = useState([]);
   const [settings, setSettings] = useState({});
   const [pages, setPages] = useState([]);
+  const [galleryItems, setGalleryItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const helloWorldApi = async () => {
