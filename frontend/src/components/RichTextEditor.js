@@ -52,6 +52,7 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
   return (
     <div className="rich-text-editor">
       <Editor
+        tinymceScriptSrc="https://cdn.jsdelivr.net/npm/tinymce@8/tinymce.min.js"
         onInit={(evt, editor) => editorRef.current = editor}
         value={value}
         onEditorChange={(content, editor) => {
