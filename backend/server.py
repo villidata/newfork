@@ -456,6 +456,31 @@ We look forward to seeing you!
 
 Best regards,
 {{business_name}} Team"""
+    # Social Media Settings
+    social_media_enabled: bool = True
+    social_media_title: str = "Follow Us"
+    social_media_description: str = "Se vores seneste arbejde og tilbud på sociale medier"
+    # Instagram
+    instagram_enabled: bool = True
+    instagram_username: str = ""
+    instagram_hashtag: str = ""
+    instagram_embed_code: str = ""
+    # Facebook
+    facebook_enabled: bool = True
+    facebook_page_url: str = ""
+    facebook_embed_code: str = ""
+    # TikTok
+    tiktok_enabled: bool = False
+    tiktok_username: str = ""
+    tiktok_embed_code: str = ""
+    # Twitter/X
+    twitter_enabled: bool = False
+    twitter_username: str = ""
+    twitter_embed_code: str = ""
+    # YouTube
+    youtube_enabled: bool = False
+    youtube_channel_url: str = ""
+    youtube_embed_code: str = ""
     # Booking Reminder Email Template
     reminder_subject_template: str = "Appointment Reminder - {{business_name}}"
     reminder_body_template: str = """Dear {{customer_name}},
