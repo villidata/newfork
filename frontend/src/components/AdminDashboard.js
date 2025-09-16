@@ -732,7 +732,7 @@ const StaffManager = ({ token, onRefresh }) => {
             </DialogHeader>
             <StaffForm
               staffData={editingStaff}
-              onChange={setEditingStaff}
+              onChange={handleEditStaffChange}
               onSubmit={() => handleUpdateStaff(editingStaff.id, editingStaff)}
               onCancel={() => setEditingStaff(null)}
               loading={loading}
