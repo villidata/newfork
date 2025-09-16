@@ -345,6 +345,18 @@ test_plan:
           agent: "testing"
           comment: "COMPREHENSIVE TESTING COMPLETED: ✅ Gallery Manager SelectItem fix successful! Fixed the 'A <Select.Item /> must have a value prop that is not an empty string' error by changing SelectItem value from empty string to 'none'. Verified: 1) Staff Member dropdown shows 'No staff assigned' option correctly, 2) SelectItem uses 'none' value instead of empty string (lines 296, 502), 3) Form submission converts 'none' to null for backend (lines 89, 122), 4) getStaffName function handles 'none' value properly (line 157), 5) Edit dialog uses 'none' as default for null staff_id values (line 495). NO SelectItem validation errors detected in console. Gallery item creation form works without errors. Admin login successful, Gallery Management tab accessible, Add Gallery Item dialog functional."
 
+  - task: "Gallery API endpoints and image URL verification"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "COMPREHENSIVE TESTING COMPLETED: ✅ Gallery API endpoints and image URL construction working correctly! VERIFIED FUNCTIONALITY: 1) GET /api/gallery?featured_only=false returns gallery items with correct image URLs using production domain (https://stylista-admin.preview.emergentagent.com), 2) Image upload endpoint /api/upload/image generates proper URLs with /uploads/images/ path, 3) Gallery CRUD operations (CREATE, READ, UPDATE, DELETE) all working correctly, 4) Static file serving configured properly - backend serves images with correct content-type (image/jpeg), 5) All gallery image URLs use correct production domain, no localhost URLs found, 6) Gallery items store before_image and after_image URLs correctly in database. ISSUE IDENTIFIED: External proxy/ingress overrides content-type to text/html but images are accessible. Backend implementation is correct - the issue is infrastructure-level, not code-level."
+
   - task: "Gallery display functionality on public website"
     implemented: true
     working: true
