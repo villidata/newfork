@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Fix React input field focus loss bug in Staff editing form AND resolve TinyMCE editor API key validation error preventing page creation functionality."
+user_problem_statement: "Test the new customizable service icons feature in the Frisor LaFata admin dashboard - Added ability to select custom icons for services from a comprehensive icon library with barber/salon related icons."
 
 backend:
   - task: "Enhanced Page Model with new fields"
