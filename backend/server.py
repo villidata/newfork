@@ -131,6 +131,41 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise HTTPException(status_code=401, detail="Invalid token")
 
 # Models
+class StaffBreak(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    staff_id: str
+    start_date: date
+    end_date: date
+    start_time: time
+    end_time: time
+    break_type: str = "break"  # "break", "lunch", "meeting", "vacation", "sick", "other"
+    reason: str = ""
+    is_recurring: bool = False
+    recurring_days: List[str] = Field(default_factory=list)  # ["monday", "tuesday", etc.]
+    created_by: str  # user_id who created the break
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class StaffBreakCreate(BaseModel):
+    staff_id: str
+    start_date: date
+    end_date: date
+    start_time: time
+    end_time: time
+    break_type: str = "break"
+    reason: str = ""
+    is_recurring: bool = False
+    recurring_days: List[str] = Field(default_factory=list)
+
+class StaffBreakUpdate(BaseModel):
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    start_time: Optional[time] = None
+    end_time: Optional[time] = None
+    break_type: Optional[str] = None
+    reason: Optional[str] = None
+    is_recurring: Optional[bool] = None
+    recurring_days: Optional[List[str]] = None
+
 class GalleryItem(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str
