@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Scissors, ArrowLeft, Calendar, Tag, User, Clock } from 'lucide-react';
 import { format } from 'date-fns';
+import BookingSystem from './BookingSystem';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
