@@ -244,7 +244,15 @@ class Page(BaseModel):
     content: str
     meta_description: str = ""
     is_published: bool = True
+    show_in_navigation: bool = True
+    navigation_order: int = 0
+    page_type: str = "page"  # "page", "blog", "about", "service"
+    featured_image: str = ""
     images: List[str] = Field(default_factory=list)
+    videos: List[str] = Field(default_factory=list)
+    categories: List[str] = Field(default_factory=list)
+    tags: List[str] = Field(default_factory=list)
+    excerpt: str = ""
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -254,7 +262,15 @@ class PageCreate(BaseModel):
     content: str
     meta_description: str = ""
     is_published: bool = True
+    show_in_navigation: bool = True
+    navigation_order: int = 0
+    page_type: str = "page"
+    featured_image: str = ""
     images: List[str] = Field(default_factory=list)
+    videos: List[str] = Field(default_factory=list)
+    categories: List[str] = Field(default_factory=list)
+    tags: List[str] = Field(default_factory=list)
+    excerpt: str = ""
 
 class PageUpdate(BaseModel):
     title: Optional[str] = None
@@ -262,7 +278,15 @@ class PageUpdate(BaseModel):
     content: Optional[str] = None
     meta_description: Optional[str] = None
     is_published: Optional[bool] = None
+    show_in_navigation: Optional[bool] = None
+    navigation_order: Optional[int] = None
+    page_type: Optional[str] = None
+    featured_image: Optional[str] = None
     images: Optional[List[str]] = None
+    videos: Optional[List[str]] = None
+    categories: Optional[List[str]] = None
+    tags: Optional[List[str]] = None
+    excerpt: Optional[str] = None
 
 class SiteSettings(BaseModel):
     site_title: str = "Frisor LaFata"
