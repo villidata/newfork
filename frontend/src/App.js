@@ -177,15 +177,18 @@ const Home = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <Card key={index} className="bg-black/50 border-gold/20 hover:border-gold/50 transition-all duration-300 hover:transform hover:scale-105">
+              <Card key={service.id || index} className="bg-black/50 border-gold/20 hover:border-gold/50 transition-all duration-300 hover:transform hover:scale-105">
                 <CardContent className="p-6 text-center">
-                  <div className="text-4xl mb-4">{service.icon}</div>
+                  <div className="text-4xl mb-4">{getServiceIcon(service.category)}</div>
                   <h3 className="text-xl font-semibold text-gold mb-2">{service.name}</h3>
                   <div className="flex items-center justify-center text-gray-300 mb-3">
                     <Clock className="h-4 w-4 mr-1" />
-                    <span className="text-sm">{service.duration}</span>
+                    <span className="text-sm">{service.duration_minutes} min</span>
                   </div>
-                  <div className="text-2xl font-bold text-gold">{service.price}</div>
+                  <div className="text-2xl font-bold text-gold">{service.price} DKK</div>
+                  {service.description && (
+                    <p className="text-gray-300 text-sm mt-2">{service.description}</p>
+                  )}
                 </CardContent>
               </Card>
             ))}
