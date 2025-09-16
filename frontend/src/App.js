@@ -260,6 +260,84 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Gallery Section */}
+      <section id="gallery" className="py-20 bg-gray-900/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gold mb-4 font-serif">Vores Arbejde</h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Se før og efter fotos af vores fantastiske transformationer
+            </p>
+          </div>
+          
+          {galleryItems.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {galleryItems.filter(item => item.is_featured).slice(0, 6).map((item) => (
+                <Card key={item.id} className="bg-black/50 border-gold/20 hover:border-gold/50 transition-all duration-300 overflow-hidden">
+                  <CardContent className="p-0">
+                    <div className="grid grid-cols-2 h-48">
+                      <div className="relative">
+                        <img 
+                          src={item.before_image} 
+                          alt="Before"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute top-2 left-2">
+                          <Badge className="bg-red-500 text-white text-xs">Før</Badge>
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <img 
+                          src={item.after_image} 
+                          alt="After"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute top-2 right-2">
+                          <Badge className="bg-green-500 text-white text-xs">Efter</Badge>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold text-gold mb-2">{item.title}</h3>
+                      {item.description && (
+                        <p className="text-gray-300 text-sm mb-2">{item.description}</p>
+                      )}
+                      <div className="flex items-center justify-between text-xs text-gray-400">
+                        {item.service_type && (
+                          <Badge variant="outline" className="border-gold/50 text-gold">
+                            {item.service_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                          </Badge>
+                        )}
+                        {item.is_featured && (
+                          <Badge className="bg-yellow-500 text-black flex items-center gap-1">
+                            <Star className="h-3 w-3" />
+                            Featured
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">📸</div>
+              <h3 className="text-xl font-semibold text-gray-300 mb-2">Galleri kommer snart</h3>
+              <p className="text-gray-400">Vi arbejder på at uploade vores seneste arbejde</p>
+            </div>
+          )}
+          
+          {galleryItems.filter(item => item.is_featured).length > 6 && (
+            <div className="text-center mt-12">
+              <Button variant="outline" className="border-gold text-gold hover:bg-gold hover:text-black">
+                Se mere galleri
+              </Button>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Contact Section */}
       <section id="contact" className="py-20 bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
