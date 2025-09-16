@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the new customizable service icons feature in the Frisor LaFata admin dashboard - Added ability to select custom icons for services from a comprehensive icon library with barber/salon related icons."
+user_problem_statement: "Test the new social media feed feature in the Frisor LaFata website and admin dashboard - Added comprehensive social media functionality that can be configured through admin settings and displayed on the main page."
 
 backend:
   - task: "Enhanced Page Model with new fields"
