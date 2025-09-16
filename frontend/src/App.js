@@ -260,8 +260,8 @@ const Home = () => {
                   <MapPin className="h-6 w-6 text-gold" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gold">Adresse</h3>
-                  <p className="text-gray-300">Hovedgaden 123, 1000 København</p>
+                  <h3 className="text-lg font-semibold text-gold">Address</h3>
+                  <p className="text-gray-300">{settings.address}</p>
                 </div>
               </div>
               
@@ -271,7 +271,7 @@ const Home = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gold">Telefon</h3>
-                  <p className="text-gray-300">+45 12 34 56 78</p>
+                  <p className="text-gray-300">{settings.contact_phone}</p>
                 </div>
               </div>
               
@@ -281,7 +281,7 @@ const Home = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gold">Email</h3>
-                  <p className="text-gray-300">info@frisorlafata.dk</p>
+                  <p className="text-gray-300">{settings.contact_email}</p>
                 </div>
               </div>
               
