@@ -513,6 +513,14 @@ const ContentManager = ({ token, onRefresh }) => {
               loading={loading}
               title=""
               isEditing={false}
+              token={token}
+              uploadingImage={uploadingImage}
+              handleImageUpload={handleImageUpload}
+              pageTypes={pageTypes}
+              commonCategories={commonCategories}
+              addCategory={addCategory}
+              removeCategory={removeCategory}
+              handleTagsChange={handleTagsChange}
             />
           </DialogContent>
         </Dialog>
