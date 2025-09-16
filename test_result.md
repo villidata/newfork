@@ -301,10 +301,13 @@ metadata:
 test_plan:
   current_focus:
     - "Fix input field focus loss in Staff editing form"
-  stuck_tasks: []
+  stuck_tasks:
+    - "Fix input field focus loss in Staff editing form"
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     - agent: "main"
       message: "Fixed React input field focus loss bug in Staff editing form. The issue was caused by the StaffForm component being re-created on every render because it was defined inside the StaffManager component. Fixed by: 1) Extracting StaffForm component outside StaffManager, 2) Using useCallback for handleEditStaffChange and handleNewStaffChange functions, 3) Adding stable key props to input fields. Ready for testing to verify the fix works correctly."
+    - agent: "testing"
+      message: "CRITICAL ISSUE: Unable to test Staff editing form focus fix due to admin dashboard access problems. Admin page (https://stylista-admin.preview.emergentagent.com/admin) redirects to public homepage instead of showing admin login. This prevents testing of the implemented fix. Code review confirms the fix is properly implemented with correct React patterns. RECOMMENDATION: Main agent should investigate and fix admin routing/access issues before retesting the focus fix."
