@@ -2,15 +2,22 @@ import requests
 import sys
 import json
 from datetime import datetime, date, timedelta
+import io
 
 class FrisorLaFataAPITester:
     def __init__(self, base_url="https://trim-time-49.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.token = None
+        self.admin_token = None
         self.tests_run = 0
         self.tests_passed = 0
         self.user_id = None
+        self.admin_user_id = None
+        self.created_staff_id = None
+        self.created_service_id = None
+        self.created_booking_id = None
+        self.created_page_id = None
 
     def run_test(self, name, method, endpoint, expected_status, data=None, headers=None):
         """Run a single API test"""
