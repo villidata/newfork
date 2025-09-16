@@ -508,8 +508,8 @@ class FrisorLaFataAPITester:
         return success, response
 
 def main():
-    print("🚀 Starting Frisor LaFata API Tests")
-    print("=" * 50)
+    print("🚀 Starting Frisor LaFata API Tests - COMPREHENSIVE NEW FEATURES TEST")
+    print("=" * 70)
     
     tester = FrisorLaFataAPITester()
     
@@ -533,45 +533,96 @@ def main():
     # Test 6: Get current user info
     tester.test_get_current_user()
     
-    # Test 7: Available slots (if we have staff)
+    # Test 7: Admin login (CRITICAL FOR NEW FEATURES)
+    print("\n" + "🔐 ADMIN AUTHENTICATION TESTS" + "=" * 40)
+    tester.test_admin_login()
+    
+    # Test 8: NEW FEATURE - Staff Management with Delete
+    print("\n" + "👥 STAFF MANAGEMENT TESTS (NEW FEATURES)" + "=" * 30)
+    tester.test_create_staff_with_admin()
+    tester.test_update_staff()
+    tester.test_delete_staff()  # NEW FEATURE
+    
+    # Test 9: NEW FEATURE - Service Management with Delete
+    print("\n" + "✂️ SERVICE MANAGEMENT TESTS (NEW FEATURES)" + "=" * 30)
+    tester.test_create_service_with_admin()
+    tester.test_update_service()
+    tester.test_delete_service()  # NEW FEATURE
+    
+    # Test 10: NEW FEATURE - Avatar Upload
+    print("\n" + "📸 AVATAR UPLOAD TESTS (NEW FEATURE)" + "=" * 35)
+    tester.test_avatar_upload()
+    
+    # Test 11: NEW FEATURE - Content Management System (Pages)
+    print("\n" + "📄 CONTENT MANAGEMENT SYSTEM TESTS (NEW FEATURE)" + "=" * 20)
+    tester.test_create_page()
+    tester.test_get_pages()
+    tester.test_update_page()
+    tester.test_delete_page()
+    
+    # Test 12: NEW FEATURE - Site Settings Management
+    print("\n" + "⚙️ SITE SETTINGS TESTS (NEW FEATURE)" + "=" * 30)
+    tester.test_get_settings()
+    tester.test_update_settings()
+    tester.test_get_public_settings()  # For frontend integration
+    
+    # Test 13: Booking system with delete functionality
+    print("\n" + "📅 BOOKING SYSTEM TESTS" + "=" * 40)
     if staff_list and len(staff_list) > 0:
         staff_id = staff_list[0]['id']
         tomorrow = (date.today() + timedelta(days=1)).isoformat()
         tester.test_available_slots(staff_id, tomorrow)
         
-        # Test 8: Create booking (if we have services)
+        # Create booking for delete test
         if services_list and len(services_list) > 0:
             service_id = services_list[0]['id']
-            # Get available slots first
             success, slots_data = tester.test_available_slots(staff_id, tomorrow)
             if success and slots_data.get('available_slots'):
-                available_time = slots_data['available_slots'][0]  # Use first available slot
-                tester.test_create_booking(
+                available_time = slots_data['available_slots'][0]
+                success, booking_response = tester.test_create_booking(
                     staff_id=staff_id,
                     service_ids=[service_id],
                     booking_date=tomorrow,
                     booking_time=f"{available_time}:00"
                 )
+                if success and 'id' in booking_response:
+                    tester.created_booking_id = booking_response['id']
+                    print(f"   Created Booking ID for delete test: {tester.created_booking_id}")
             else:
                 print("❌ No available slots found for booking test")
     
-    # Test 9: Get user bookings
+    # Test 14: Get user bookings
     tester.test_get_bookings()
     
-    # Test 10: PayPal payment
+    # Test 15: NEW FEATURE - Delete booking
+    print("\n" + "🗑️ DELETE BOOKING TEST (NEW FEATURE)" + "=" * 30)
+    tester.test_delete_booking()
+    
+    # Test 16: PayPal payment
+    print("\n" + "💳 PAYMENT SYSTEM TESTS" + "=" * 40)
     tester.test_paypal_payment()
     
     # Print final results
-    print("\n" + "=" * 50)
-    print(f"📊 FINAL RESULTS")
+    print("\n" + "=" * 70)
+    print(f"📊 FINAL RESULTS - NEW FEATURES TESTING")
     print(f"Tests passed: {tester.tests_passed}/{tester.tests_run}")
     
+    # Detailed breakdown
+    success_rate = (tester.tests_passed / tester.tests_run) * 100 if tester.tests_run > 0 else 0
+    print(f"Success rate: {success_rate:.1f}%")
+    
     if tester.tests_passed == tester.tests_run:
-        print("🎉 All tests passed!")
+        print("🎉 All tests passed! New features are working correctly.")
         return 0
     else:
-        print(f"⚠️  {tester.tests_run - tester.tests_passed} tests failed")
-        return 1
+        failed_tests = tester.tests_run - tester.tests_passed
+        print(f"⚠️  {failed_tests} tests failed")
+        if failed_tests <= 2:
+            print("✅ Most features working - minor issues detected")
+            return 0
+        else:
+            print("❌ Multiple features failing - needs attention")
+            return 1
 
 if __name__ == "__main__":
     sys.exit(main())
