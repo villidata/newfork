@@ -481,6 +481,73 @@ async def delete_service(service_id: str, current_user: User = Depends(get_curre
     
     return {"message": "Service deleted successfully"}
 
+async def send_booking_confirmation(booking: Booking):
+    """Send booking confirmation email to customer"""
+    try:
+        # Get settings for email configuration and templates
+        settings = await db.settings.find_one({"type": "site_settings"})
+        if not settings:
+            settings = SiteSettings().dict()
+        
+        # Check if email is configured
+        if not settings.get('email_user') or not settings.get('email_password'):
+            print("Email not configured, skipping confirmation email")
+            return
+        
+        # Get staff and services details for the email
+        staff = await db.staff.find_one({"id": booking.staff_id})
+        services = await db.services.find({"id": {"$in": booking.services}}).to_list(length=None)
+        
+        # Prepare template variables
+        template_vars = {
+            'customer_name': booking.customer_name,
+            'business_name': settings.get('site_title', 'Frisor LaFata'),
+            'booking_date': booking.booking_date.strftime('%d/%m/%Y'),
+            'booking_time': booking.booking_time.strftime('%H:%M'),
+            'services': ', '.join([service['name'] for service in services]),
+            'staff_name': staff.get('name', 'Our team') if staff else 'Our team',
+            'total_price': str(booking.total_price),
+            'business_address': settings.get('address', ''),
+            'business_phone': settings.get('contact_phone', ''),
+            'business_email': settings.get('contact_email', '')
+        }
+        
+        # Replace template variables in subject and body
+        subject_template = settings.get('email_subject_template', 'Booking Confirmation - {{business_name}}')
+        body_template = settings.get('email_body_template', 'Your booking has been confirmed.')
+        
+        # Simple template replacement
+        subject = subject_template
+        body = body_template
+        
+        for var, value in template_vars.items():
+            subject = subject.replace(f'{{{{{var}}}}}', str(value))
+            body = body.replace(f'{{{{{var}}}}}', str(value))
+        
+        # Create email message
+        msg = MIMEMultipart()
+        msg['From'] = settings.get('email_user')
+        msg['To'] = booking.customer_email
+        msg['Subject'] = subject
+        
+        # Add body to email
+        msg.attach(MIMEText(body, 'plain'))
+        
+        # Send email
+        server = smtplib.SMTP(settings.get('email_smtp_server', 'smtp.gmail.com'), settings.get('email_smtp_port', 587))
+        server.starttls()
+        server.login(settings.get('email_user'), settings.get('email_password'))
+        
+        text = msg.as_string()
+        server.sendmail(settings.get('email_user'), booking.customer_email, text)
+        server.quit()
+        
+        print(f"Confirmation email sent to {booking.customer_email}")
+        
+    except Exception as e:
+        print(f"Failed to send confirmation email: {e}")
+        # Don't raise the exception - booking should still be created even if email fails
+
 # Booking routes
 @api_router.post("/bookings", response_model=Booking)
 async def create_booking(booking: BookingCreate):
