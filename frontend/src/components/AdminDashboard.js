@@ -1110,6 +1110,10 @@ Best regards,
             <Mail className="h-4 w-4 mr-2" />
             Email Settings
           </TabsTrigger>
+          <TabsTrigger value="social" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+            <Users className="h-4 w-4 mr-2" />
+            Social Media
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="space-y-6">
