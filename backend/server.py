@@ -198,6 +198,9 @@ class ServiceUpdate(BaseModel):
 class Booking(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     customer_id: str
+    customer_name: str
+    customer_email: str
+    customer_phone: str
     staff_id: str
     services: List[str]  # List of service IDs
     booking_date: date
@@ -206,12 +209,17 @@ class Booking(BaseModel):
     total_price: float
     payment_method: str = "cash"  # "cash", "paypal"
     payment_status: str = "pending"  # "pending", "paid", "cancelled"
-    status: str = "confirmed"  # "confirmed", "cancelled", "completed"
+    status: str = "pending"  # "pending", "confirmed", "cancelled", "completed", "rescheduled"
     notes: str = ""
+    admin_notes: str = ""
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class BookingCreate(BaseModel):
     customer_id: str
+    customer_name: str
+    customer_email: str
+    customer_phone: str
     staff_id: str
     services: List[str]
     booking_date: date
@@ -220,9 +228,13 @@ class BookingCreate(BaseModel):
     notes: str = ""
 
 class BookingUpdate(BaseModel):
+    booking_date: Optional[date] = None
+    booking_time: Optional[time] = None
+    staff_id: Optional[str] = None
     status: Optional[str] = None
     payment_status: Optional[str] = None
     notes: Optional[str] = None
+    admin_notes: Optional[str] = None
 
 class EmailTemplate(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
