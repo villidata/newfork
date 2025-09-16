@@ -304,6 +304,11 @@ class ServiceUpdate(BaseModel):
     price: Optional[float] = None
     description: Optional[str] = None
     category: Optional[str] = None
+    icon: Optional[str] = None
+    duration_minutes: Optional[int] = None
+    price: Optional[float] = None
+    description: Optional[str] = None
+    category: Optional[str] = None
 
 class Booking(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
