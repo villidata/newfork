@@ -732,7 +732,159 @@ async def send_booking_confirmation(booking: Booking):
         print(f"Failed to send confirmation email: {e}")
         # Don't raise the exception - booking should still be created even if email fails
 
-async def send_booking_email(booking: Booking, email_type: str):
+async def send_booking_reminder(booking: Booking):
+    """Send booking reminder email 24h before appointment"""
+    try:
+        # Get settings for email configuration
+        settings = await db.settings.find_one({"type": "site_settings"})
+        if not settings:
+            settings = SiteSettings().dict()
+        
+        # Check if email is configured and customer has email
+        if not settings.get('email_user') or not settings.get('email_password'):
+            print("Email not configured, skipping booking reminder")
+            return
+            
+        if not booking.customer_email:
+            print("Customer email not available, skipping booking reminder")
+            return
+
+        # Get staff and services details for the email
+        staff = await db.staff.find_one({"id": booking.staff_id})
+        services = await db.services.find({"id": {"$in": booking.services}}).to_list(length=None)
+        
+        # Prepare template variables
+        template_vars = {
+            'customer_name': booking.customer_name or 'Valued Customer',
+            'business_name': settings.get('site_title', 'Frisor LaFata'),
+            'booking_date': booking.booking_date.strftime('%d/%m/%Y'),
+            'booking_time': booking.booking_time.strftime('%H:%M'),
+            'services': ', '.join([service['name'] for service in services]),
+            'staff_name': staff.get('name', 'Our team') if staff else 'Our team',
+            'total_price': str(booking.total_price),
+            'business_address': settings.get('address', ''),
+            'business_phone': settings.get('contact_phone', ''),
+            'business_email': settings.get('contact_email', '')
+        }
+        
+        # Reminder email templates
+        subject_template = settings.get('reminder_subject_template', 'Appointment Reminder - {{business_name}}')
+        body_template = settings.get('reminder_body_template', '''Dear {{customer_name}},
+
+This is a friendly reminder about your upcoming appointment with {{business_name}}.
+
+Appointment Details:
+- Date: {{booking_date}}
+- Time: {{booking_time}}
+- Services: {{services}}
+- Staff: {{staff_name}}
+- Total Price: {{total_price}} DKK
+
+Location:
+{{business_address}}
+
+Phone: {{business_phone}}
+
+Please arrive 5 minutes early. If you need to cancel or reschedule, please contact us as soon as possible.
+
+We look forward to seeing you!
+
+Best regards,
+{{business_name}} Team''')
+        
+        # Replace template variables
+        subject = subject_template
+        body = body_template
+        
+        for var, value in template_vars.items():
+            subject = subject.replace(f'{{{{{var}}}}}', str(value))
+            body = body.replace(f'{{{{{var}}}}}', str(value))
+        
+        # Create email message
+        msg = MIMEMultipart()
+        msg['From'] = settings.get('email_user')
+        msg['To'] = booking.customer_email
+        msg['Subject'] = subject
+        
+        # Add body to email
+        msg.attach(MIMEText(body, 'plain'))
+        
+        # Send email
+        server = smtplib.SMTP(settings.get('email_smtp_server', 'smtp.gmail.com'), settings.get('email_smtp_port', 587))
+        server.starttls()
+        server.login(settings.get('email_user'), settings.get('email_password'))
+        
+        text = msg.as_string()
+        server.sendmail(settings.get('email_user'), booking.customer_email, text)
+        server.quit()
+        
+        print(f"Booking reminder sent to {booking.customer_email}")
+        
+        # Mark reminder as sent
+        await db.bookings.update_one(
+            {"id": booking.id}, 
+            {"$set": {"reminder_sent": True}}
+        )
+        
+    except Exception as e:
+        print(f"Failed to send booking reminder: {e}")
+
+@api_router.post("/admin/send-reminders")
+async def send_booking_reminders(current_user: User = Depends(get_current_user)):
+    """Manual trigger for sending booking reminders"""
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    try:
+        # Get bookings for tomorrow (24h from now)
+        tomorrow = datetime.now(timezone.utc) + timedelta(days=1)
+        tomorrow_date = tomorrow.date()
+        
+        # Find bookings for tomorrow that haven't had reminders sent
+        bookings = await db.bookings.find({
+            "booking_date": tomorrow_date.isoformat(),
+            "status": {"$in": ["pending", "confirmed"]},
+            "reminder_sent": {"$ne": True}
+        }).to_list(length=None)
+        
+        reminders_sent = 0
+        for booking_data in bookings:
+            booking = Booking(**parse_from_mongo(booking_data))
+            await send_booking_reminder(booking)
+            reminders_sent += 1
+        
+        return {"message": f"Sent {reminders_sent} booking reminders"}
+        
+    except Exception as e:
+        print(f"Error sending reminders: {e}")
+        raise HTTPException(status_code=500, detail="Failed to send reminders")
+
+# Automatic reminder checking (to be called by a cron job or scheduler)
+async def check_and_send_reminders():
+    """Check for bookings that need reminders and send them"""
+    try:
+        # Get bookings for tomorrow (24h from now)
+        tomorrow = datetime.now(timezone.utc) + timedelta(days=1)
+        tomorrow_date = tomorrow.date()
+        
+        # Find bookings for tomorrow that haven't had reminders sent
+        bookings = await db.bookings.find({
+            "booking_date": tomorrow_date.isoformat(),
+            "status": {"$in": ["pending", "confirmed"]},
+            "reminder_sent": {"$ne": True}
+        }).to_list(length=None)
+        
+        for booking_data in bookings:
+            booking = Booking(**parse_from_mongo(booking_data))
+            await send_booking_reminder(booking)
+        
+        print(f"Processed {len(bookings)} booking reminders")
+        
+    except Exception as e:
+        print(f"Error in automatic reminder checking: {e}")
+
+# Existing email function
+async def send_booking_email(booking: Booking, email_type: str = "created"):
     """Send booking email based on type (created, confirmed, changed, cancelled)"""
     try:
         # Get settings for email configuration and templates
