@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Fix React input field focus loss bug in Staff editing form within the Admin Dashboard. The input fields lose focus after a single character input due to React re-rendering issues."
+user_problem_statement: "Fix React input field focus loss bug in Staff editing form AND resolve TinyMCE editor API key validation error preventing page creation functionality."
 
 backend:
   - task: "Enhanced Page Model with new fields"
