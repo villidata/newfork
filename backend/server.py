@@ -615,6 +615,34 @@ async def upload_avatar(avatar: UploadFile = File(...), current_user: User = Dep
     avatar_url = f"{BACKEND_URL}/uploads/avatars/{filename}"
     return {"avatar_url": avatar_url}
 
+@api_router.post("/upload/video")
+async def upload_video(video: UploadFile = File(...), current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Validate file type
+    allowed_video_types = ['video/mp4', 'video/webm', 'video/ogg', 'video/avi', 'video/mov']
+    if video.content_type not in allowed_video_types:
+        raise HTTPException(status_code=400, detail="File must be a supported video format (mp4, webm, ogg, avi, mov)")
+    
+    # Create uploads directory if it doesn't exist
+    upload_dir = Path("uploads/videos")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate unique filename
+    file_extension = video.filename.split('.')[-1] if '.' in video.filename else 'mp4'
+    filename = f"{uuid.uuid4()}.{file_extension}"
+    file_path = upload_dir / filename
+    
+    # Save file
+    with open(file_path, "wb") as buffer:
+        content = await video.read()
+        buffer.write(content)
+    
+    # Return full URL for the video
+    video_url = f"{BACKEND_URL}/uploads/videos/{filename}"
+    return {"video_url": video_url}
+
 @api_router.post("/upload/image")
 async def upload_image(image: UploadFile = File(...), current_user: User = Depends(get_current_user)):
     if not current_user.is_admin:
