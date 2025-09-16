@@ -992,7 +992,32 @@ Email: {{business_email}}
 We apologize for any inconvenience and look forward to seeing you at the new time!
 
 Best regards,
-{{business_name}} Team`
+{{business_name}} Team`,
+    // Social Media Settings
+    social_media_enabled: true,
+    social_media_title: 'Follow Us',
+    social_media_description: 'Se vores seneste arbejde og tilbud på sociale medier',
+    // Instagram
+    instagram_enabled: true,
+    instagram_username: '',
+    instagram_hashtag: '',
+    instagram_embed_code: '',
+    // Facebook
+    facebook_enabled: true,
+    facebook_page_url: '',
+    facebook_embed_code: '',
+    // TikTok
+    tiktok_enabled: false,
+    tiktok_username: '',
+    tiktok_embed_code: '',
+    // Twitter/X
+    twitter_enabled: false,
+    twitter_username: '',
+    twitter_embed_code: '',
+    // YouTube
+    youtube_enabled: false,
+    youtube_channel_url: '',
+    youtube_embed_code: ''
   });
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
