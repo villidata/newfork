@@ -571,13 +571,13 @@ const StaffManager = ({ token, onRefresh }) => {
     }
   };
 
-  const handleNewStaffChange = (field, value) => {
+  const handleNewStaffChange = useCallback((field, value) => {
     setNewStaff(prev => ({ ...prev, [field]: value }));
-  };
+  }, []);
 
-  const handleEditStaffChange = (field, value) => {
+  const handleEditStaffChange = useCallback((field, value) => {
     setEditingStaff(prev => ({ ...prev, [field]: value }));
-  };
+  }, []);
 
   const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
   const dayLabels = {
