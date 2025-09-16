@@ -32,8 +32,8 @@ security = HTTPBearer()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
 ALGORITHM = "HS256"
-BACKEND_URL = os.environ.get('BACKEND_URL', 'https://frisor-admin.preview.emergentagent.com')
-BACKEND_URL = os.environ.get('BACKEND_URL', 'http://localhost:8000')
+# Use the frontend's backend URL for constructing image URLs
+BACKEND_URL = 'https://frisor-admin.preview.emergentagent.com'
 
 # Email configuration (will be configurable from admin)
 EMAIL_CONFIG = {
