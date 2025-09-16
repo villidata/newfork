@@ -105,7 +105,7 @@ const Home = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <Scissors className="h-8 w-8 text-gold mr-3" />
-              <h1 className="text-2xl font-bold text-gold font-serif">Frisor LaFata</h1>
+              <h1 className="text-2xl font-bold text-gold font-serif">{settings.site_title}</h1>
             </div>
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-8">
