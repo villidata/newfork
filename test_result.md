@@ -292,6 +292,18 @@ frontend:
           agent: "testing"
           comment: "COMPREHENSIVE TESTING COMPLETED: ✅ Public homepage staff section displays avatars perfectly with proper circular styling (w-16 h-16 rounded-full object-cover mx-auto mb-4 border-2 border-gold/30). Staff member with avatar shows image correctly using production HTTPS URL. Staff without avatars show fallback user icons. Responsive design works flawlessly across desktop, tablet, and mobile viewports. No console errors or loading issues found."
 
+  - task: "TinyMCE editor fix for page creation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/RichTextEditor.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "TINYMCE EDITOR FIX IMPLEMENTED: Fixed TinyMCE API key validation error by configuring editor to work without cloud API key validation. Added apiKey='no-api-key' with promotion: false and upgrade_source: false. Simplified plugins to avoid cloud dependencies and added self-hosted TinyMCE package. Editor should now load without 'api key could not be validated' error and work in offline/self-hosted mode."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
