@@ -324,9 +324,9 @@ const Home = () => {
           <div className="text-center">
             <div className="flex items-center justify-center mb-4">
               <Scissors className="h-8 w-8 text-gold mr-3" />
-              <h2 className="text-2xl font-bold text-gold font-serif">Frisor LaFata</h2>
+              <h2 className="text-2xl font-bold text-gold font-serif">{settings.site_title}</h2>
             </div>
-            <p className="text-gray-300 mb-4">Klassisk barbering siden 2010</p>
+            <p className="text-gray-300 mb-4">{settings.site_description}</p>
             <p className="text-gray-400 text-sm mb-2">
               © 2024 Frisor LaFata. Alle rettigheder forbeholdes.
             </p>
