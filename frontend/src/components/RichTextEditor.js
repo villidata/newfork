@@ -84,7 +84,7 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
         init={{
           height: height,
           // Use GPL license for self-hosted version - no API key needed
-          licenseKey: 'gpl',
+          license_key: 'gpl',
           // Disable cloud features and API key validation
           promotion: false,
           upgrade_source: false,
