@@ -229,6 +229,66 @@ backend:
           comment: "Avatar upload properly requires admin authentication (returns 403 for unauthorized, 403 for non-admin users). File type validation working (returns 400 for non-image files). All security measures in place."
 
 frontend:
+  - task: "Customizable Service Icons Feature - IconSelector Component"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/IconSelector.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "New feature implemented: IconSelector component with comprehensive icon library including emoji icons and React component icons organized into categories (Barbershop Essentials, Hair & Styling, Facial Hair, Client Types, Premium & Special, Service Quality, Business). Component integrated into service creation and editing forms. Ready for comprehensive testing."
+
+  - task: "Service Creation with Custom Icon Selection"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/AdminDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Service creation form integrated with IconSelector component (lines 285-289). Users can select from emoji icons (✂️, 🪒, 💇‍♂️, etc.) and component icons (scissors, razor, beard, etc.) organized in categories. Default icon set to 'sparkles-emoji'. Ready for testing."
+
+  - task: "Service Editing with Custom Icon Selection"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/AdminDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Service editing form integrated with IconSelector component (lines 423-427). Edit dialog shows current selected icon and allows changing to different icons from the comprehensive library. Ready for testing."
+
+  - task: "Custom Icons Display on Public Website"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Public website updated with getServiceIcon function (lines 107-174) that handles both emoji icons and component icons. Function maps icon values to proper display elements with fallback to category-based icons for backward compatibility. Services section displays selected custom icons instead of generic category icons. Ready for testing."
+
+  - task: "Backend Service Model Icon Support"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Backend Service model includes icon field (line 290) with default value '✨'. ServiceCreate and ServiceUpdate models support icon field. Backend ready to store and retrieve custom icon selections. Ready for testing."
+
   - task: "Fix input field focus loss in Staff editing form"
     implemented: true
     working: false
