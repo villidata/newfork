@@ -32,6 +32,7 @@ security = HTTPBearer()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
 ALGORITHM = "HS256"
+BACKEND_URL = os.environ.get('BACKEND_URL', 'http://localhost:8000')
 
 # Email configuration (will be configurable from admin)
 EMAIL_CONFIG = {
