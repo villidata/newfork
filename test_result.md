@@ -229,6 +229,21 @@ backend:
           comment: "Avatar upload properly requires admin authentication (returns 403 for unauthorized, 403 for non-admin users). File type validation working (returns 400 for non-image files). All security measures in place."
 
 frontend:
+  - task: "Fix input field focus loss in Staff editing form"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/AdminDashboard.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Input fields in Staff editing form lose focus after single character input due to React re-rendering issues."
+        - working: "NA"
+          agent: "main"
+          comment: "Fixed by extracting StaffForm component outside StaffManager to prevent re-creation on every render. Added useCallback for handleEditStaffChange and handleNewStaffChange functions. Added stable key props to input fields. This should resolve the focus loss issue."
+
   - task: "Staff avatar display in admin dashboard"
     implemented: true
     working: true
