@@ -139,7 +139,6 @@ const Home = () => {
       "razor": <GiRazor className="h-8 w-8 text-gold" />,
       "comb": <GiComb className="h-8 w-8 text-gold" />,
       "barber-scissors": <GiScissors className="h-8 w-8 text-gold" />,
-      "mirror": <GiMirror className="h-8 w-8 text-gold" />,
       "cut": <FaCut className="h-8 w-8 text-gold" />,
       "curly-hair": <GiCurlyHair className="h-8 w-8 text-gold" />,
       "hair-strands": <GiHairStrands className="h-8 w-8 text-gold" />,
