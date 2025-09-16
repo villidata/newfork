@@ -52,7 +52,6 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
   return (
     <div className="rich-text-editor">
       <Editor
-        apiKey='no-api-key'
         onInit={(evt, editor) => editorRef.current = editor}
         value={value}
         onEditorChange={(content, editor) => {
@@ -60,7 +59,9 @@ const RichTextEditor = ({ value, onChange, token, height = 400 }) => {
         }}
         init={{
           height: height,
-          // Configure for free usage without premium features
+          // Use GPL license for self-hosted version - no API key needed
+          licenseKey: 'gpl',
+          // Disable cloud features and API key validation
           promotion: false,
           upgrade_source: false,
           menubar: 'file edit view insert format tools table help',
