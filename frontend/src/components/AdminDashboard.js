@@ -478,15 +478,18 @@ const StaffManager = ({ token, onRefresh }) => {
       });
       
       const avatarUrl = response.data.avatar_url;
+      console.log('Avatar uploaded successfully:', avatarUrl);
       
       if (isEditing) {
         handleEditStaffChange('avatar_url', avatarUrl);
       } else {
         handleNewStaffChange('avatar_url', avatarUrl);
       }
+      
+      alert('Avatar uploaded successfully!');
     } catch (error) {
       console.error('Error uploading avatar:', error);
-      alert('Failed to upload avatar. Please try again.');
+      alert(`Failed to upload avatar: ${error.response?.data?.detail || error.message}`);
     } finally {
       setUploadingAvatar(null);
     }
