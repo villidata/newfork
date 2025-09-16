@@ -9,6 +9,7 @@ import { Separator } from "./components/ui/separator";
 import { Clock, MapPin, Phone, Mail, Scissors, Users, Star } from "lucide-react";
 import BookingSystem from "./components/BookingSystem";
 import AdminApp from "./components/AdminDashboard";
+import PublicPage from "./components/PublicPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
