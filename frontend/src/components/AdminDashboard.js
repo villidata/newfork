@@ -19,6 +19,8 @@ import EnhancedBookingManager from './EnhancedBookingManager';
 import ContentManager from './ContentManager';
 import UserManager from './UserManager';
 import GalleryManager from './GalleryManager';
+import RevenueDashboard from './RevenueDashboard';
+import BreakManager from './BreakManager';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
