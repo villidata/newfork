@@ -694,6 +694,15 @@ async def get_pages(current_user: User = Depends(get_current_user)):
     pages = await db.pages.find().to_list(length=None)
     return [Page(**parse_from_mongo(page)) for page in pages]
 
+@api_router.get("/public/pages", response_model=List[Page])
+async def get_public_pages():
+    """Get published pages for public navigation"""
+    pages = await db.pages.find({
+        "is_published": True,
+        "show_in_navigation": True
+    }).sort("navigation_order", 1).to_list(length=None)
+    return [Page(**parse_from_mongo(page)) for page in pages]
+
 @api_router.get("/pages/{slug}", response_model=Page)
 async def get_page_by_slug(slug: str):
     page = await db.pages.find_one({"slug": slug, "is_published": True})
