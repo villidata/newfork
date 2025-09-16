@@ -28,7 +28,7 @@ const GalleryManager = ({ token, staff, onRefresh }) => {
     before_image: '',
     after_image: '',
     service_type: '',
-    staff_id: '',
+    staff_id: 'none',
     is_featured: false
   });
 
