@@ -1445,6 +1445,264 @@ Best regards,
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="social" className="space-y-6">
+          <Card className="bg-gray-900/50 border-gold/20">
+            <CardHeader>
+              <CardTitle className="text-gold">Social Media Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* General Social Media Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={settings.social_media_enabled}
+                    onCheckedChange={(checked) => handleSettingChange('social_media_enabled', checked)}
+                    className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                  />
+                  <Label className="text-gold">Enable Social Media Section</Label>
+                </div>
+                
+                <div>
+                  <Label className="text-gold">Section Title</Label>
+                  <Input
+                    value={settings.social_media_title}
+                    onChange={(e) => handleSettingChange('social_media_title', e.target.value)}
+                    className="bg-black/50 border-gold/30 text-white"
+                    placeholder="Follow Us"
+                  />
+                </div>
+                
+                <div>
+                  <Label className="text-gold">Section Description</Label>
+                  <Textarea
+                    value={settings.social_media_description}
+                    onChange={(e) => handleSettingChange('social_media_description', e.target.value)}
+                    className="bg-black/50 border-gold/30 text-white"
+                    placeholder="Se vores seneste arbejde og tilbud på sociale medier"
+                    rows={2}
+                  />
+                </div>
+              </div>
+
+              <Separator className="bg-gold/20" />
+
+              {/* Instagram Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={settings.instagram_enabled}
+                    onCheckedChange={(checked) => handleSettingChange('instagram_enabled', checked)}
+                    className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                  />
+                  <Label className="text-gold text-lg font-semibold">Instagram</Label>
+                </div>
+                
+                {settings.instagram_enabled && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-6">
+                    <div>
+                      <Label className="text-gold">Instagram Username</Label>
+                      <Input
+                        value={settings.instagram_username}
+                        onChange={(e) => handleSettingChange('instagram_username', e.target.value)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="@frisorlafata"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gold">Instagram Hashtag</Label>
+                      <Input
+                        value={settings.instagram_hashtag}
+                        onChange={(e) => handleSettingChange('instagram_hashtag', e.target.value)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="#frisorlafata"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <Label className="text-gold">Instagram Embed Code</Label>
+                      <Textarea
+                        value={settings.instagram_embed_code}
+                        onChange={(e) => handleSettingChange('instagram_embed_code', e.target.value)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="<blockquote class='instagram-media'... (paste Instagram embed code here)"
+                        rows={3}
+                      />
+                      <p className="text-xs text-gray-400 mt-1">Get embed code from Instagram post → Share → Embed</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Separator className="bg-gold/20" />
+
+              {/* Facebook Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={settings.facebook_enabled}
+                    onCheckedChange={(checked) => handleSettingChange('facebook_enabled', checked)}
+                    className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                  />
+                  <Label className="text-gold text-lg font-semibold">Facebook</Label>
+                </div>
+                
+                {settings.facebook_enabled && (
+                  <div className="space-y-4 ml-6">
+                    <div>
+                      <Label className="text-gold">Facebook Page URL</Label>
+                      <Input
+                        value={settings.facebook_page_url}
+                        onChange={(e) => handleSettingChange('facebook_page_url', e.target.value)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="https://facebook.com/frisorlafata"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gold">Facebook Embed Code</Label>
+                      <Textarea
+                        value={settings.facebook_embed_code}
+                        onChange={(e) => handleSettingChange('facebook_embed_code', e.target.value)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="<iframe src='https://www.facebook.com/plugins/page.php'... (paste Facebook page plugin code here)"
+                        rows={3}
+                      />
+                      <p className="text-xs text-gray-400 mt-1">Get embed code from Facebook Page Plugin configurator</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Separator className="bg-gold/20" />
+
+              {/* TikTok Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={settings.tiktok_enabled}
+                    onCheckedChange={(checked) => handleSettingChange('tiktok_enabled', checked)}
+                    className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                  />
+                  <Label className="text-gold text-lg font-semibold">TikTok</Label>
+                </div>
+                
+                {settings.tiktok_enabled && (
+                  <div className="space-y-4 ml-6">
+                    <div>
+                      <Label className="text-gold">TikTok Username</Label>
+                      <Input
+                        value={settings.tiktok_username}
+                        onChange={(e) => handleSettingChange('tiktok_username', e.target.value)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="@frisorlafata"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gold">TikTok Embed Code</Label>
+                      <Textarea
+                        value={settings.tiktok_embed_code}
+                        onChange={(e) => handleSettingChange('tiktok_embed_code', e.target.value)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="<blockquote class='tiktok-embed'... (paste TikTok embed code here)"
+                        rows={3}
+                      />
+                      <p className="text-xs text-gray-400 mt-1">Get embed code from TikTok video → Share → Embed</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Separator className="bg-gold/20" />
+
+              {/* Twitter/X Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={settings.twitter_enabled}
+                    onCheckedChange={(checked) => handleSettingChange('twitter_enabled', checked)}
+                    className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                  />
+                  <Label className="text-gold text-lg font-semibold">Twitter / X</Label>
+                </div>
+                
+                {settings.twitter_enabled && (
+                  <div className="space-y-4 ml-6">
+                    <div>
+                      <Label className="text-gold">Twitter/X Username</Label>
+                      <Input
+                        value={settings.twitter_username}
+                        onChange={(e) => handleSettingChange('twitter_username', e.target.value)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="@frisorlafata"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gold">Twitter/X Embed Code</Label>
+                      <Textarea
+                        value={settings.twitter_embed_code}
+                        onChange={(e) => handleSettingChange('twitter_embed_code', e.target.value)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="<a class='twitter-timeline'... (paste Twitter embed code here)"
+                        rows={3}
+                      />
+                      <p className="text-xs text-gray-400 mt-1">Get embed code from Twitter timeline or tweet → Embed</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Separator className="bg-gold/20" />
+
+              {/* YouTube Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={settings.youtube_enabled}
+                    onCheckedChange={(checked) => handleSettingChange('youtube_enabled', checked)}
+                    className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                  />
+                  <Label className="text-gold text-lg font-semibold">YouTube</Label>
+                </div>
+                
+                {settings.youtube_enabled && (
+                  <div className="space-y-4 ml-6">
+                    <div>
+                      <Label className="text-gold">YouTube Channel URL</Label>
+                      <Input
+                        value={settings.youtube_channel_url}
+                        onChange={(e) => handleSettingChange('youtube_channel_url', e.target.value)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="https://youtube.com/@frisorlafata"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gold">YouTube Embed Code</Label>
+                      <Textarea
+                        value={settings.youtube_embed_code}
+                        onChange={(e) => handleSettingChange('youtube_embed_code', e.target.value)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="<iframe width='560' height='315' src='https://www.youtube.com/embed/...' (paste YouTube embed code here)"
+                        rows={3}
+                      />
+                      <p className="text-xs text-gray-400 mt-1">Get embed code from YouTube video → Share → Embed</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Instructions */}
+              <div className="bg-gray-800/50 p-4 rounded-lg">
+                <h4 className="text-gold font-semibold mb-2">Instructions:</h4>
+                <div className="space-y-1 text-sm text-gray-300">
+                  <p>📱 <strong>Username/URL:</strong> Link to your social media profiles for "Follow Us" buttons</p>
+                  <p>📽️ <strong>Embed Codes:</strong> Display actual posts/videos on your website</p>
+                  <p>🎨 <strong>Hashtags:</strong> For Instagram, show posts with specific hashtags</p>
+                  <p>💡 <strong>Tip:</strong> Test your embed codes on a separate page first</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
       </Tabs>
     </div>
   );
