@@ -1655,6 +1655,123 @@ async def delete_gallery_item(item_id: str, current_user: User = Depends(get_cur
     
     return {"message": "Gallery item deleted successfully"}
 
+# Staff break management routes
+@api_router.post("/staff-breaks", response_model=StaffBreak)
+async def create_staff_break(break_data: StaffBreakCreate, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Validate that staff member exists
+    staff = await db.staff.find_one({"id": break_data.staff_id})
+    if not staff:
+        raise HTTPException(status_code=404, detail="Staff member not found")
+    
+    new_break = StaffBreak(**break_data.dict(), created_by=current_user.id)
+    await db.staff_breaks.insert_one(prepare_for_mongo(new_break.dict()))
+    
+    return new_break
+
+@api_router.get("/staff-breaks", response_model=List[StaffBreak])
+async def get_staff_breaks(
+    staff_id: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    current_user: User = Depends(get_current_user)
+):
+    """Get staff breaks with optional filtering"""
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    query = {}
+    if staff_id:
+        query["staff_id"] = staff_id
+    
+    if start_date and end_date:
+        query["$or"] = [
+            {
+                "start_date": {"$lte": end_date},
+                "end_date": {"$gte": start_date}
+            }
+        ]
+    
+    breaks = await db.staff_breaks.find(query).sort("start_date", 1).to_list(length=None)
+    return [StaffBreak(**parse_from_mongo(break_item)) for break_item in breaks]
+
+@api_router.get("/staff-breaks/availability/{staff_id}")
+async def check_staff_availability(
+    staff_id: str,
+    check_date: str,
+    start_time: str,
+    end_time: str
+):
+    """Check if staff member is available at a specific time"""
+    try:
+        check_date_obj = datetime.fromisoformat(check_date).date()
+        start_time_obj = datetime.strptime(start_time, '%H:%M:%S').time()
+        end_time_obj = datetime.strptime(end_time, '%H:%M:%S').time()
+        
+        # Find overlapping breaks
+        breaks = await db.staff_breaks.find({
+            "staff_id": staff_id,
+            "start_date": {"$lte": check_date_obj.isoformat()},
+            "end_date": {"$gte": check_date_obj.isoformat()}
+        }).to_list(length=None)
+        
+        conflicts = []
+        for break_item in breaks:
+            break_start = datetime.strptime(break_item["start_time"], '%H:%M:%S').time()
+            break_end = datetime.strptime(break_item["end_time"], '%H:%M:%S').time()
+            
+            # Check for time overlap
+            if (start_time_obj < break_end and end_time_obj > break_start):
+                conflicts.append({
+                    "break_id": break_item["id"],
+                    "break_type": break_item["break_type"],
+                    "reason": break_item["reason"],
+                    "start_time": break_item["start_time"],
+                    "end_time": break_item["end_time"]
+                })
+        
+        return {
+            "is_available": len(conflicts) == 0,
+            "conflicts": conflicts
+        }
+        
+    except Exception as e:
+        print(f"Error checking availability: {e}")
+        raise HTTPException(status_code=400, detail="Invalid date or time format")
+
+@api_router.put("/staff-breaks/{break_id}", response_model=StaffBreak)
+async def update_staff_break(break_id: str, break_update: StaffBreakUpdate, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    existing_break = await db.staff_breaks.find_one({"id": break_id})
+    if not existing_break:
+        raise HTTPException(status_code=404, detail="Staff break not found")
+    
+    update_data = {}
+    for field, value in break_update.dict(exclude_unset=True).items():
+        if value is not None:
+            update_data[field] = prepare_for_mongo({field: value})[field]
+    
+    if update_data:
+        await db.staff_breaks.update_one({"id": break_id}, {"$set": update_data})
+    
+    updated_break_data = await db.staff_breaks.find_one({"id": break_id})
+    return StaffBreak(**parse_from_mongo(updated_break_data))
+
+@api_router.delete("/staff-breaks/{break_id}")
+async def delete_staff_break(break_id: str, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    result = await db.staff_breaks.delete_one({"id": break_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Staff break not found")
+    
+    return {"message": "Staff break deleted successfully"}
+
 # Revenue tracking and analytics
 @api_router.get("/analytics/revenue")
 async def get_revenue_analytics(
