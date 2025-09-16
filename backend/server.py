@@ -1386,6 +1386,64 @@ async def get_email_templates(current_user: User = Depends(get_current_user)):
     templates = await db.email_templates.find().to_list(length=None)
     return [EmailTemplate(**parse_from_mongo(template)) for template in templates]
 
+# Gallery routes
+@api_router.post("/gallery", response_model=GalleryItem)
+async def create_gallery_item(gallery_item: GalleryItemCreate, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    new_gallery_item = GalleryItem(**gallery_item.dict())
+    await db.gallery.insert_one(prepare_for_mongo(new_gallery_item.dict()))
+    
+    return new_gallery_item
+
+@api_router.get("/gallery", response_model=List[GalleryItem])
+async def get_gallery_items(featured_only: bool = False):
+    """Get gallery items - public endpoint"""
+    query = {"is_featured": True} if featured_only else {}
+    gallery_items = await db.gallery.find(query).sort("created_at", -1).to_list(length=None)
+    return [GalleryItem(**parse_from_mongo(item)) for item in gallery_items]
+
+@api_router.get("/admin/gallery", response_model=List[GalleryItem])
+async def get_all_gallery_items(current_user: User = Depends(get_current_user)):
+    """Get all gallery items - admin only"""
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    gallery_items = await db.gallery.find().sort("created_at", -1).to_list(length=None)
+    return [GalleryItem(**parse_from_mongo(item)) for item in gallery_items]
+
+@api_router.put("/gallery/{item_id}", response_model=GalleryItem)
+async def update_gallery_item(item_id: str, gallery_update: GalleryItemUpdate, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    existing_item = await db.gallery.find_one({"id": item_id})
+    if not existing_item:
+        raise HTTPException(status_code=404, detail="Gallery item not found")
+    
+    update_data = {}
+    for field, value in gallery_update.dict(exclude_unset=True).items():
+        if value is not None:
+            update_data[field] = value
+    
+    if update_data:
+        await db.gallery.update_one({"id": item_id}, {"$set": update_data})
+    
+    updated_item_data = await db.gallery.find_one({"id": item_id})
+    return GalleryItem(**parse_from_mongo(updated_item_data))
+
+@api_router.delete("/gallery/{item_id}")
+async def delete_gallery_item(item_id: str, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    result = await db.gallery.delete_one({"id": item_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Gallery item not found")
+    
+    return {"message": "Gallery item deleted successfully"}
+
 # Admin management route
 @api_router.post("/admin/create-admin")
 async def create_admin_user():
