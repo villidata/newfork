@@ -700,28 +700,44 @@ async def create_booking(booking: BookingCreate):
     total_duration = sum(service["duration_minutes"] for service in services)
     total_price = sum(service["price"] for service in services)
     
-    # Check if slot is available
-    existing_booking = await db.bookings.find_one({
+    # Enhanced conflict checking - prevent double booking
+    booking_start_time = datetime.combine(booking.booking_date, booking.booking_time)
+    booking_end_time = booking_start_time + timedelta(minutes=total_duration)
+    
+    # Find overlapping bookings for the same staff
+    existing_bookings = await db.bookings.find({
         "staff_id": booking.staff_id,
         "booking_date": booking.booking_date.isoformat(),
-        "booking_time": booking.booking_time.strftime('%H:%M:%S'),
-        "status": {"$ne": "cancelled"}
-    })
+        "status": {"$in": ["pending", "confirmed"]}  # Only check active bookings
+    }).to_list(length=None)
     
-    if existing_booking:
-        raise HTTPException(status_code=400, detail="Time slot not available")
+    for existing in existing_bookings:
+        existing_start = datetime.combine(
+            booking.booking_date, 
+            datetime.strptime(existing["booking_time"], '%H:%M:%S').time()
+        )
+        existing_end = existing_start + timedelta(minutes=existing["total_duration"])
+        
+        # Check for overlap
+        if (booking_start_time < existing_end and booking_end_time > existing_start):
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Time slot conflicts with existing booking at {existing['booking_time']}"
+            )
     
     booking_dict = booking.dict()
     booking_dict.update({
         "total_duration": total_duration,
-        "total_price": total_price
+        "total_price": total_price,
+        "status": "pending",  # New bookings start as pending
+        "updated_at": datetime.now(timezone.utc)
     })
     
     booking_obj = Booking(**booking_dict)
     await db.bookings.insert_one(prepare_for_mongo(booking_obj.dict()))
     
-    # Send confirmation email (if configured)
-    await send_booking_confirmation(booking_obj)
+    # Send initial booking email (pending confirmation)
+    await send_booking_email(booking_obj, "created")
     
     return booking_obj
 
