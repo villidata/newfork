@@ -168,16 +168,21 @@ const ServiceManager = ({ token, onRefresh }) => {
   };
 
   const handleDeleteService = async (serviceId) => {
+    console.log('Delete service clicked:', serviceId);
     if (window.confirm('Are you sure you want to delete this service?')) {
       try {
-        await axios.delete(`${API}/services/${serviceId}`, {
+        console.log('Deleting service with token:', token ? 'Token exists' : 'No token');
+        const response = await axios.delete(`${API}/services/${serviceId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        console.log('Delete response:', response);
+        alert('Service deleted successfully!');
         fetchServices();
         onRefresh();
       } catch (error) {
         console.error('Error deleting service:', error);
-        alert('Failed to delete service. Please try again.');
+        console.error('Error response:', error.response?.data);
+        alert(`Failed to delete service: ${error.response?.data?.detail || error.message}`);
       }
     }
   };
