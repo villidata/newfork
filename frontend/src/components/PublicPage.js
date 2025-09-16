@@ -16,6 +16,7 @@ const PublicPage = () => {
   const [error, setError] = useState(null);
   const [settings, setSettings] = useState({});
   const [pages, setPages] = useState([]);
+  const [showBooking, setShowBooking] = useState(false);
 
   useEffect(() => {
     fetchPage();
