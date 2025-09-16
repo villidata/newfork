@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Checkbox } from './ui/checkbox';
 import { Calendar, Users, Settings, LogOut, User, Scissors, Clock, Mail, Phone, Plus, Edit, Trash2, Save, X, Upload, Image, FileText, CreditCard, Globe } from 'lucide-react';
 import axios from 'axios';
+import { format } from 'date-fns';
 import RichTextEditor from './RichTextEditor';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
