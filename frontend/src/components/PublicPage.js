@@ -338,6 +338,11 @@ const PublicPage = () => {
           font-weight: bold;
         }
       `}</style>
+
+      {/* BookingSystem Modal */}
+      {showBooking && (
+        <BookingSystem onClose={() => setShowBooking(false)} />
+      )}
     </div>
   );
 };
