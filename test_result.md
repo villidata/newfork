@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Staff avatar images are not displaying correctly on the frontend despite being successfully uploaded. The images should be visible in the admin dashboard staff management section."
+user_problem_statement: "Comprehensive testing of the enhanced page management system for Frisor LaFata website. Test all the new features: Enhanced Page Model Testing, Video Upload Endpoint, Public Pages API, Page CRUD with Enhanced Features, and Static File Serving."
 
 backend:
   - task: "Static file serving configuration"
