@@ -131,6 +131,35 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise HTTPException(status_code=401, detail="Invalid token")
 
 # Models
+class GalleryItem(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str = ""
+    before_image: str
+    after_image: str
+    service_type: str = ""  # "haircut", "beard", "styling", etc.
+    staff_id: Optional[str] = None
+    is_featured: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class GalleryItemCreate(BaseModel):
+    title: str
+    description: str = ""
+    before_image: str
+    after_image: str
+    service_type: str = ""
+    staff_id: Optional[str] = None
+    is_featured: bool = False
+
+class GalleryItemUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    before_image: Optional[str] = None
+    after_image: Optional[str] = None
+    service_type: Optional[str] = None
+    staff_id: Optional[str] = None
+    is_featured: Optional[bool] = None
+
 class UserCreate(BaseModel):
     email: str
     password: str
