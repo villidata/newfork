@@ -129,7 +129,8 @@ const ServiceManager = ({ token, onRefresh }) => {
     duration_minutes: 30,
     price: 0,
     description: '',
-    category: 'general'
+    category: 'general',
+    icon: 'sparkles-emoji'
   });
 
   useEffect(() => {
