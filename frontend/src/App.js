@@ -119,6 +119,7 @@ const Home = () => {
                 <a href="#home" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Hjem</a>
                 <a href="#services" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Tjenester</a>
                 <a href="#staff" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Frisører</a>
+                <a href="#gallery" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Galleri</a>
                 {pages.slice(0, 3).map((page) => (
                   <Link 
                     key={page.id} 
