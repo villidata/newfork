@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Comprehensive testing of the enhanced page management system for Frisor LaFata website. Test all the new features: Enhanced Page Model Testing, Video Upload Endpoint, Public Pages API, Page CRUD with Enhanced Features, and Static File Serving."
+user_problem_statement: "Fix React input field focus loss bug in Staff editing form within the Admin Dashboard. The input fields lose focus after a single character input due to React re-rendering issues."
 
 backend:
   - task: "Enhanced Page Model with new fields"
