@@ -311,7 +311,7 @@ const Home = () => {
               </Button>
               <Separator className="my-6 bg-gold/20" />
               <p className="text-center text-gray-300">
-                Eller ring til os på <span className="text-gold font-semibold">+45 12 34 56 78</span>
+                Eller ring til os på <span className="text-gold font-semibold">{settings.contact_phone}</span>
               </p>
             </div>
           </div>
