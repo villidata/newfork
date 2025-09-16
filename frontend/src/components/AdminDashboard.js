@@ -1542,89 +1542,114 @@ Best regards,
               <CardTitle className="text-gold">Email Templates</CardTitle>
               <p className="text-gray-300 text-sm">Customize the booking confirmation emails sent to customers</p>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
+              {/* Initial Booking Email */}
               <div>
-                <Label className="text-gold">Email Subject Template</Label>
-                <Input
-                  value={settings.email_subject_template || 'Booking Confirmation - {{business_name}}'}
-                  onChange={(e) => handleSettingChange('email_subject_template', e.target.value)}
-                  className="bg-black/50 border-gold/30 text-white"
-                  placeholder="Booking Confirmation - {{business_name}}"
-                />
-                <p className="text-xs text-gray-400 mt-1">Available variables: {'{'}{'{'}{'}'}customer_name{'{'}{'}'}{'}'}{'}'}, {'{'}{'{'}{'}'}business_name{'{'}{'}'}{'}'}{'}'}, {'{'}{'{'}{'}'}booking_date{'{'}{'}'}{'}'}{'}'}, {'{'}{'{'}{'}'}booking_time{'{'}{'}'}{'}'}{'}'}</p>
-              </div>
-              <div>
-                <Label className="text-gold">Email Body Template</Label>
-                <Textarea
-                  value={settings.email_body_template || `Dear {{customer_name}},
-
-Thank you for booking with {{business_name}}!
-
-Booking Details:
-- Date: {{booking_date}}
-- Time: {{booking_time}}
-- Services: {{services}}
-- Staff: {{staff_name}}
-- Total Price: {{total_price}} DKK
-
-Location:
-{{business_address}}
-
-Phone: {{business_phone}}
-Email: {{business_email}}
-
-We look forward to seeing you!
-
-Best regards,
-{{business_name}} Team`}
-                  onChange={(e) => handleSettingChange('email_body_template', e.target.value)}
-                  className="bg-black/50 border-gold/30 text-white"
-                  rows={12}
-                  placeholder="Email body template..."
-                />
-                <div className="mt-2">
-                  <p className="text-xs text-gray-400 mb-2">Available template variables:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {[
-                      '{{customer_name}}', '{{business_name}}', '{{booking_date}}', '{{booking_time}}',
-                      '{{services}}', '{{staff_name}}', '{{total_price}}', '{{business_address}}',
-                      '{{business_phone}}', '{{business_email}}'
-                    ].map(variable => (
-                      <Badge key={variable} variant="outline" className="border-gold/30 text-gold text-xs cursor-pointer"
-                        onClick={() => {
-                          const current = settings.email_body_template || '';
-                          handleSettingChange('email_body_template', current + variable);
-                        }}>
-                        {variable}
-                      </Badge>
-                    ))}
+                <h4 className="text-gold font-semibold mb-3">📧 Initial Booking Email (Pending Confirmation)</h4>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-gold">Email Subject Template</Label>
+                    <Input
+                      value={settings.email_subject_template || 'Booking Confirmation - {{business_name}}'}
+                      onChange={(e) => handleSettingChange('email_subject_template', e.target.value)}
+                      className="bg-black/50 border-gold/30 text-white"
+                      placeholder="Booking Confirmation - {{business_name}}"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gold">Email Body Template</Label>
+                    <Textarea
+                      value={settings.email_body_template || 'Dear {{customer_name}}, Your booking has been created.'}
+                      onChange={(e) => handleSettingChange('email_body_template', e.target.value)}
+                      className="bg-black/50 border-gold/30 text-white"
+                      rows={8}
+                      placeholder="Email body template..."
+                    />
                   </div>
                 </div>
               </div>
-              <div className="bg-blue-900/20 p-4 rounded-lg border border-blue-500/20">
-                <h4 className="text-blue-400 font-semibold mb-2">Preview</h4>
-                <div className="text-xs text-gray-300">
-                  <p><strong>Subject:</strong> {(settings.email_subject_template || 'Booking Confirmation - {{business_name}}')
-                    .replace('{{business_name}}', settings.site_title || 'Frisor LaFata')
-                    .replace('{{customer_name}}', 'John Doe')}</p>
-                  <div className="mt-2 p-2 bg-black/30 rounded text-xs">
-                    {(settings.email_body_template || 'Dear {{customer_name}}, Your booking has been confirmed.')
-                      .split('\n').slice(0, 5).map((line, i) => (
-                      <div key={i}>{line
-                        .replace('{{customer_name}}', 'John Doe')
-                        .replace('{{business_name}}', settings.site_title || 'Frisor LaFata')
-                        .replace('{{booking_date}}', '15/09/2024')
-                        .replace('{{booking_time}}', '14:30')
-                        .replace('{{services}}', 'Classic Haircut, Beard Trim')
-                        .replace('{{staff_name}}', 'Professional Barber')
-                        .replace('{{total_price}}', '350')
-                        .replace('{{business_address}}', settings.address || 'Barbershop Address')
-                        .replace('{{business_phone}}', settings.contact_phone || '+45 12 34 56 78')
-                        .replace('{{business_email}}', settings.contact_email || 'info@barbershop.dk')
-                      }</div>
-                    ))}
-                    {(settings.email_body_template || '').split('\n').length > 5 && <div className="text-gray-500">... (truncated)</div>}
+
+              <Separator className="bg-gold/20" />
+
+              {/* Booking Confirmation Email */}
+              <div>
+                <h4 className="text-gold font-semibold mb-3">✅ Booking Confirmation Email (Admin Confirmed)</h4>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-gold">Confirmation Email Subject</Label>
+                    <Input
+                      value={settings.email_confirmation_subject || 'Booking Confirmed - {{business_name}}'}
+                      onChange={(e) => handleSettingChange('email_confirmation_subject', e.target.value)}
+                      className="bg-black/50 border-gold/30 text-white"
+                      placeholder="Booking Confirmed - {{business_name}}"
+                    />
                   </div>
+                  <div>
+                    <Label className="text-gold">Confirmation Email Body</Label>
+                    <Textarea
+                      value={settings.email_confirmation_body || 'Dear {{customer_name}}, Your booking has been confirmed.'}
+                      onChange={(e) => handleSettingChange('email_confirmation_body', e.target.value)}
+                      className="bg-black/50 border-gold/30 text-white"
+                      rows={8}
+                      placeholder="Confirmation email body..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <Separator className="bg-gold/20" />
+
+              {/* Booking Change Email */}
+              <div>
+                <h4 className="text-gold font-semibold mb-3">🔄 Booking Change Email (Time/Date Changed)</h4>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-gold">Change Email Subject</Label>
+                    <Input
+                      value={settings.email_change_subject || 'Booking Time Changed - {{business_name}}'}
+                      onChange={(e) => handleSettingChange('email_change_subject', e.target.value)}
+                      className="bg-black/50 border-gold/30 text-white"
+                      placeholder="Booking Time Changed - {{business_name}}"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gold">Change Email Body</Label>
+                    <Textarea
+                      value={settings.email_change_body || 'Dear {{customer_name}}, Your booking time has been changed.'}
+                      onChange={(e) => handleSettingChange('email_change_body', e.target.value)}
+                      className="bg-black/50 border-gold/30 text-white"
+                      rows={8}
+                      placeholder="Change notification email body..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <p className="text-xs text-gray-400 mb-2">Available template variables:</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    '{{customer_name}}', '{{business_name}}', '{{booking_date}}', '{{booking_time}}',
+                    '{{services}}', '{{staff_name}}', '{{total_price}}', '{{business_address}}',
+                    '{{business_phone}}', '{{business_email}}', '{{admin_notes}}'
+                  ].map(variable => (
+                    <Badge key={variable} variant="outline" className="border-gold/30 text-gold text-xs cursor-pointer"
+                      onClick={() => {
+                        // For now, just copy to clipboard
+                        navigator.clipboard.writeText(variable);
+                      }}>
+                      {variable}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-blue-900/20 p-4 rounded-lg border border-blue-500/20">
+                <h4 className="text-blue-400 font-semibold mb-2">Email Flow</h4>
+                <div className="text-xs text-gray-300 space-y-1">
+                  <p>📧 <strong>Initial Email:</strong> Sent when customer creates booking (status: pending)</p>
+                  <p>✅ <strong>Confirmation Email:</strong> Sent when admin confirms booking</p>
+                  <p>🔄 <strong>Change Email:</strong> Sent when admin changes booking time/date</p>
                 </div>
               </div>
             </CardContent>
