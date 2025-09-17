@@ -58,6 +58,7 @@ const BookingSystem = ({ onClose }) => {
   useEffect(() => {
     fetchStaff();
     fetchServices();
+    fetchSettings();
   }, []);
 
   useEffect(() => {
