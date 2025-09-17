@@ -1579,85 +1579,113 @@ async def update_settings(settings: Dict[str, Any], current_user: User = Depends
 # Public settings endpoint for frontend
 @api_router.get("/public/settings")
 async def get_public_settings():
-    settings = await db.settings.find_one({"type": "site_settings"})
-    if not settings:
-        # Return default public settings
+    """Get public site settings (excludes sensitive data like API keys)"""
+    try:
+        # Use MySQL instead of MongoDB
+        settings = await execute_query("SELECT * FROM site_settings WHERE id = 1", fetch_one=True)
+        
+        if not settings:
+            # Return default public settings
+            return {
+                "site_title": "Frisor LaFata",
+                "site_description": "Klassisk barbering siden 2010",
+                "contact_phone": "+45 12 34 56 78",
+                "contact_email": "info@frisorlafata.dk",
+                "address": "Hovedgaden 123, 1000 København",
+                "hero_title": "Klassisk Barbering",
+                "hero_subtitle": "i Hjertet af Byen",
+                "hero_description": "Oplev den autentiske barber-oplevelse hos Frisor LaFata.",
+                "hero_image": "",
+                # Social Media Settings
+                "social_media_enabled": True,
+                "social_media_title": "Follow Us",
+                "social_media_description": "Se vores seneste arbejde og tilbud på sociale medier",
+                # Instagram
+                "instagram_enabled": True,
+                "instagram_username": "",
+                "instagram_hashtag": "",
+                "instagram_embed_code": "",
+                # Facebook
+                "facebook_enabled": True,
+                "facebook_page_url": "",
+                "facebook_embed_code": "",
+                # TikTok
+                "tiktok_enabled": False,
+                "tiktok_username": "",
+                "tiktok_embed_code": "",
+                # Twitter/X
+                "twitter_enabled": False,
+                "twitter_username": "",
+                "twitter_embed_code": "",
+                # YouTube
+                "youtube_enabled": False,
+                "youtube_channel_url": "",
+                "youtube_embed_code": "",
+                # Booking System Settings
+                "booking_system_enabled": True,
+                "home_service_enabled": True,
+                "home_service_fee": 150.00,
+                "home_service_description": "Vi kommer til dig! Oplev professionel barbering i dit eget hjem."
+            }
+        
+        # Return only public settings (exclude sensitive data like API keys and passwords)
+        public_settings = {
+            "site_title": settings.get("site_title", "Frisor LaFata"),
+            "site_description": settings.get("site_description", "Klassisk barbering siden 2010"),
+            "contact_phone": settings.get("contact_phone", "+45 12 34 56 78"),
+            "contact_email": settings.get("contact_email", "info@frisorlafata.dk"),
+            "address": settings.get("address", "Hovedgaden 123, 1000 København"),
+            "hero_title": settings.get("hero_title", "Klassisk Barbering"),
+            "hero_subtitle": settings.get("hero_subtitle", "i Hjertet af Byen"),
+            "hero_description": settings.get("hero_description", "Oplev den autentiske barber-oplevelse hos Frisor LaFata."),
+            "hero_image": settings.get("hero_image", ""),
+            # Social Media Settings
+            "social_media_enabled": settings.get("social_media_enabled", True),
+            "social_media_title": settings.get("social_media_title", "Follow Us"),
+            "social_media_description": settings.get("social_media_description", "Se vores seneste arbejde og tilbud på sociale medier"),
+            # Instagram
+            "instagram_enabled": settings.get("instagram_enabled", True),
+            "instagram_username": settings.get("instagram_username", ""),
+            "instagram_hashtag": settings.get("instagram_hashtag", ""),
+            "instagram_embed_code": settings.get("instagram_embed_code", ""),
+            # Facebook
+            "facebook_enabled": settings.get("facebook_enabled", True),
+            "facebook_page_url": settings.get("facebook_page_url", ""),
+            "facebook_embed_code": settings.get("facebook_embed_code", ""),
+            # TikTok
+            "tiktok_enabled": settings.get("tiktok_enabled", False),
+            "tiktok_username": settings.get("tiktok_username", ""),
+            "tiktok_embed_code": settings.get("tiktok_embed_code", ""),
+            # Twitter/X
+            "twitter_enabled": settings.get("twitter_enabled", False),
+            "twitter_username": settings.get("twitter_username", ""),
+            "twitter_embed_code": settings.get("twitter_embed_code", ""),
+            # YouTube
+            "youtube_enabled": settings.get("youtube_enabled", False),
+            "youtube_channel_url": settings.get("youtube_channel_url", ""),
+            "youtube_embed_code": settings.get("youtube_embed_code", ""),
+            # Booking System Settings (CRITICAL - needed by frontend)
+            "booking_system_enabled": settings.get("booking_system_enabled", True),
+            "home_service_enabled": settings.get("home_service_enabled", True),
+            "home_service_fee": settings.get("home_service_fee", 150.00),
+            "home_service_description": settings.get("home_service_description", "Vi kommer til dig! Oplev professionel barbering i dit eget hjem.")
+        }
+        
+        return public_settings
+        
+    except Exception as e:
+        print(f"Error getting public settings: {e}")
+        # Return default settings if database error
         return {
             "site_title": "Frisor LaFata",
             "site_description": "Klassisk barbering siden 2010",
             "contact_phone": "+45 12 34 56 78",
             "contact_email": "info@frisorlafata.dk",
-            "address": "Hovedgaden 123, 1000 København",
-            "hero_title": "Klassisk Barbering",
-            "hero_subtitle": "i Hjertet af Byen",
-            "hero_description": "Oplev den autentiske barber-oplevelse hos Frisor LaFata.",
-            "hero_image": "",
-            # Social Media Settings
-            "social_media_enabled": True,
-            "social_media_title": "Follow Us",
-            "social_media_description": "Se vores seneste arbejde og tilbud på sociale medier",
-            # Instagram
-            "instagram_enabled": True,
-            "instagram_username": "",
-            "instagram_hashtag": "",
-            "instagram_embed_code": "",
-            # Facebook
-            "facebook_enabled": True,
-            "facebook_page_url": "",
-            "facebook_embed_code": "",
-            # TikTok
-            "tiktok_enabled": False,
-            "tiktok_username": "",
-            "tiktok_embed_code": "",
-            # Twitter/X
-            "twitter_enabled": False,
-            "twitter_username": "",
-            "twitter_embed_code": "",
-            # YouTube
-            "youtube_enabled": False,
-            "youtube_channel_url": "",
-            "youtube_embed_code": ""
+            "booking_system_enabled": True,
+            "home_service_enabled": True,
+            "home_service_fee": 150.00,
+            "home_service_description": "Vi kommer til dig! Oplev professionel barbering i dit eget hjem."
         }
-    
-    # Return only public settings (exclude sensitive data)
-    public_settings = {
-        "site_title": settings.get("site_title", "Frisor LaFata"),
-        "site_description": settings.get("site_description", "Klassisk barbering siden 2010"),
-        "contact_phone": settings.get("contact_phone", "+45 12 34 56 78"),
-        "contact_email": settings.get("contact_email", "info@frisorlafata.dk"),
-        "address": settings.get("address", "Hovedgaden 123, 1000 København"),
-        "hero_title": settings.get("hero_title", "Klassisk Barbering"),
-        "hero_subtitle": settings.get("hero_subtitle", "i Hjertet af Byen"),
-        "hero_description": settings.get("hero_description", "Oplev den autentiske barber-oplevelse hos Frisor LaFata."),
-        "hero_image": settings.get("hero_image", ""),
-        # Social Media Settings
-        "social_media_enabled": settings.get("social_media_enabled", True),
-        "social_media_title": settings.get("social_media_title", "Follow Us"),
-        "social_media_description": settings.get("social_media_description", "Se vores seneste arbejde og tilbud på sociale medier"),
-        # Instagram
-        "instagram_enabled": settings.get("instagram_enabled", True),
-        "instagram_username": settings.get("instagram_username", ""),
-        "instagram_hashtag": settings.get("instagram_hashtag", ""),
-        "instagram_embed_code": settings.get("instagram_embed_code", ""),
-        # Facebook
-        "facebook_enabled": settings.get("facebook_enabled", True),
-        "facebook_page_url": settings.get("facebook_page_url", ""),
-        "facebook_embed_code": settings.get("facebook_embed_code", ""),
-        # TikTok
-        "tiktok_enabled": settings.get("tiktok_enabled", False),
-        "tiktok_username": settings.get("tiktok_username", ""),
-        "tiktok_embed_code": settings.get("tiktok_embed_code", ""),
-        # Twitter/X
-        "twitter_enabled": settings.get("twitter_enabled", False),
-        "twitter_username": settings.get("twitter_username", ""),
-        "twitter_embed_code": settings.get("twitter_embed_code", ""),
-        # YouTube
-        "youtube_enabled": settings.get("youtube_enabled", False),
-        "youtube_channel_url": settings.get("youtube_channel_url", ""),
-        "youtube_embed_code": settings.get("youtube_embed_code", "")
-    }
-    
-    return public_settings
 @api_router.post("/payments/paypal/create")
 async def create_paypal_payment(booking_id: str, amount: float = None):
     """Create PayPal payment for a booking"""
