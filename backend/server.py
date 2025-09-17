@@ -1821,21 +1821,6 @@ async def get_public_homepage_sections():
             }
         ]
 
-@api_router.put("/homepage/sections/{section_id}")
-async def update_homepage_section(section_id: str, section_data: dict, current_user: User = Depends(get_current_user)):
-    """Update a homepage section"""
-    try:
-        result = await db.homepage_sections.update_one(
-            {"id": section_id}, 
-            {"$set": section_data}
-        )
-        if result.modified_count == 0:
-            raise HTTPException(status_code=404, detail="Section not found")
-        return {"message": "Section updated successfully"}
-    except Exception as e:
-        print(f"Error updating homepage section: {e}")
-        raise HTTPException(status_code=500, detail="Error updating homepage section")
-
 class HomepageSectionReorder(BaseModel):
     sections: List[dict]
 
@@ -1854,6 +1839,21 @@ async def reorder_homepage_sections(reorder_data: HomepageSectionReorder, curren
     except Exception as e:
         print(f"Error reordering homepage sections: {e}")
         raise HTTPException(status_code=500, detail=f"Error reordering homepage sections: {str(e)}")
+
+@api_router.put("/homepage/sections/{section_id}")
+async def update_homepage_section(section_id: str, section_data: dict, current_user: User = Depends(get_current_user)):
+    """Update a homepage section"""
+    try:
+        result = await db.homepage_sections.update_one(
+            {"id": section_id}, 
+            {"$set": section_data}
+        )
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Section not found")
+        return {"message": "Section updated successfully"}
+    except Exception as e:
+        print(f"Error updating homepage section: {e}")
+        raise HTTPException(status_code=500, detail="Error updating homepage section")
 
 @api_router.post("/payments/paypal/create")
 async def create_paypal_payment(booking_id: str, amount: float = None):
