@@ -587,7 +587,7 @@ frontend:
 
   - task: "Booking System Toggle Feature - Admin Settings"
     implemented: true
-    working: false
+    working: "NA"
     file: "/app/frontend/src/components/AdminDashboard.js"
     stuck_count: 1
     priority: "high"
@@ -599,6 +599,9 @@ frontend:
         - working: false
           agent: "testing"
           comment: "TESTING BLOCKED: Cannot access admin dashboard due to known routing issue - /admin URL redirects to public homepage instead of showing admin login. Admin settings interface cannot be tested."
+        - working: "NA"
+          agent: "testing"
+          comment: "⚠️ ADMIN DASHBOARD ACCESS LIMITATION: Cannot test admin settings interface directly due to known routing issue (/admin redirects to homepage). However, BACKEND FUNCTIONALITY VERIFIED: ✅ Settings API endpoints working correctly, ✅ Booking system settings properly stored and retrieved from database, ✅ Public settings API correctly serves booking system configuration to frontend, ✅ Settings values confirmed working (booking_system_enabled=1, home_service_enabled=1, home_service_fee=150). Admin interface code exists but cannot be UI tested due to access restrictions."
 
   - task: "Booking System Toggle Feature - Public Website Response"
     implemented: true
