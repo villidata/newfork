@@ -308,6 +308,14 @@ class StaffUpdate(BaseModel):
     email: Optional[str] = None
     avatar_url: Optional[str] = None
     portfolio_images: Optional[List[str]] = None
+    # Social Media Links
+    instagram_url: Optional[str] = None
+    facebook_url: Optional[str] = None
+    tiktok_url: Optional[str] = None
+    linkedin_url: Optional[str] = None
+    twitter_url: Optional[str] = None
+    youtube_url: Optional[str] = None
+    website_url: Optional[str] = None
     available_hours: Optional[dict] = None
 
 class Service(BaseModel):
