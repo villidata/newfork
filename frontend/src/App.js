@@ -667,15 +667,27 @@ const Home = () => {
             </div>
             
             <div className="bg-black/50 border border-gold/20 rounded-lg p-8">
-              <h3 className="text-2xl font-semibold text-gold mb-6">Book din tid</h3>
-              <Button 
-                size="lg" 
-                className="w-full bg-gold text-black hover:bg-gold/90 text-lg py-3 font-semibold"
-                onClick={() => setShowBooking(true)}
-              >
-                Gå til booking system
-              </Button>
-              <Separator className="my-6 bg-gold/20" />
+              {settings.booking_system_enabled !== false ? (
+                <>
+                  <h3 className="text-2xl font-semibold text-gold mb-6">Book din tid</h3>
+                  <Button 
+                    size="lg" 
+                    className="w-full bg-gold text-black hover:bg-gold/90 text-lg py-3 font-semibold"
+                    onClick={() => setShowBooking(true)}
+                  >
+                    Gå til booking system
+                  </Button>
+                  <Separator className="my-6 bg-gold/20" />
+                </>
+              ) : (
+                <>
+                  <h3 className="text-2xl font-semibold text-gold mb-6">Kontakt os</h3>
+                  <p className="text-gray-300 mb-6">
+                    Online booking er midlertidigt ikke tilgængelig. Kontakt os direkte for at booke din tid.
+                  </p>
+                  <Separator className="my-6 bg-gold/20" />
+                </>
+              )}
               <p className="text-center text-gray-300">
                 Eller ring til os på <span className="text-gold font-semibold">{settings.contact_phone}</span>
               </p>
