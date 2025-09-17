@@ -1886,6 +1886,10 @@ const AdminDashboard = ({ token, user, onLogout }) => {
               <Calendar className="h-4 w-4 mr-2" />
               Bookings
             </TabsTrigger>
+            <TabsTrigger value="homepage" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+              <Home className="h-4 w-4 mr-2" />
+              Homepage
+            </TabsTrigger>
             <TabsTrigger value="revenue" className="data-[state=active]:bg-gold data-[state=active]:text-black">
               <TrendingUp className="h-4 w-4 mr-2" />
               Revenue
