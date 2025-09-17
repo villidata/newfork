@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the new social media feed feature in the Frisor LaFata website and admin dashboard - Added comprehensive social media functionality that can be configured through admin settings and displayed on the main page."
+user_problem_statement: "Test the new home service booking and booking system toggle features in the Frisor LaFata application - Added home service booking functionality where customers can request barber to come to their home with address collection and extra fees, plus admin can hide/show the entire booking system on the website."
 
 backend:
   - task: "Enhanced Page Model with new fields"
