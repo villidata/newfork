@@ -193,7 +193,12 @@ const BookingSystem = ({ onClose }) => {
         booking_date: selectedDate.toISOString().split('T')[0],
         booking_time: selectedSlot + ':00',
         payment_method: paymentMethod,
-        notes: customerInfo.notes
+        notes: customerInfo.notes,
+        is_home_service: isHomeService,
+        service_address: isHomeService ? homeServiceInfo.address : '',
+        service_city: isHomeService ? homeServiceInfo.city : '',
+        service_postal_code: isHomeService ? homeServiceInfo.postalCode : '',
+        special_instructions: isHomeService ? homeServiceInfo.specialInstructions : ''
       };
 
       const response = await axios.post(`${API}/bookings`, bookingData);
