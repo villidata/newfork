@@ -1652,50 +1652,15 @@ async def get_public_settings():
                 "home_service_description": "Vi kommer til dig! Oplev professionel barbering i dit eget hjem."
             }
         
-        # Return only public settings (exclude sensitive data like API keys and passwords)
-        public_settings = {
-            "site_title": settings.get("site_title", "Frisor LaFata"),
-            "site_description": settings.get("site_description", "Klassisk barbering siden 2010"),
-            "contact_phone": settings.get("contact_phone", "+45 12 34 56 78"),
-            "contact_email": settings.get("contact_email", "info@frisorlafata.dk"),
-            "address": settings.get("address", "Hovedgaden 123, 1000 København"),
-            "hero_title": settings.get("hero_title", "Klassisk Barbering"),
-            "hero_subtitle": settings.get("hero_subtitle", "i Hjertet af Byen"),
-            "hero_description": settings.get("hero_description", "Oplev den autentiske barber-oplevelse hos Frisor LaFata."),
-            "hero_image": settings.get("hero_image", ""),
-            # Social Media Settings
-            "social_media_enabled": settings.get("social_media_enabled", True),
-            "social_media_title": settings.get("social_media_title", "Follow Us"),
-            "social_media_description": settings.get("social_media_description", "Se vores seneste arbejde og tilbud på sociale medier"),
-            # Instagram
-            "instagram_enabled": settings.get("instagram_enabled", True),
-            "instagram_username": settings.get("instagram_username", ""),
-            "instagram_hashtag": settings.get("instagram_hashtag", ""),
-            "instagram_embed_code": settings.get("instagram_embed_code", ""),
-            # Facebook
-            "facebook_enabled": settings.get("facebook_enabled", True),
-            "facebook_page_url": settings.get("facebook_page_url", ""),
-            "facebook_embed_code": settings.get("facebook_embed_code", ""),
-            # TikTok
-            "tiktok_enabled": settings.get("tiktok_enabled", False),
-            "tiktok_username": settings.get("tiktok_username", ""),
-            "tiktok_embed_code": settings.get("tiktok_embed_code", ""),
-            # Twitter/X
-            "twitter_enabled": settings.get("twitter_enabled", False),
-            "twitter_username": settings.get("twitter_username", ""),
-            "twitter_embed_code": settings.get("twitter_embed_code", ""),
-            # YouTube
-            "youtube_enabled": settings.get("youtube_enabled", False),
-            "youtube_channel_url": settings.get("youtube_channel_url", ""),
-            "youtube_embed_code": settings.get("youtube_embed_code", ""),
-            # Booking System Settings (CRITICAL - needed by frontend)
-            "booking_system_enabled": settings.get("booking_system_enabled", True),
-            "home_service_enabled": settings.get("home_service_enabled", True),
-            "home_service_fee": settings.get("home_service_fee", 150.00),
-            "home_service_description": settings.get("home_service_description", "Vi kommer til dig! Oplev professionel barbering i dit eget hjem.")
-        }
+        # Remove MongoDB _id and sensitive fields, return only public settings
+        settings.pop("_id", None)
+        settings.pop("type", None)
+        settings.pop("paypal_client_id", None)
+        settings.pop("paypal_client_secret", None) 
+        settings.pop("email_user", None)
+        settings.pop("email_password", None)
         
-        return public_settings
+        return settings
         
     except Exception as e:
         print(f"Error getting public settings: {e}")
