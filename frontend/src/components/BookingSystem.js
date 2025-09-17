@@ -87,6 +87,15 @@ const BookingSystem = ({ onClose }) => {
     }
   };
 
+  const fetchSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/public/settings`);
+      setSettings(response.data);
+    } catch (error) {
+      console.error('Failed to fetch settings:', error);
+    }
+  };
+
   const fetchAvailableSlots = async () => {
     try {
       setLoading(true);
