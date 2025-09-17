@@ -1836,11 +1836,14 @@ async def update_homepage_section(section_id: str, section_data: dict, current_u
         print(f"Error updating homepage section: {e}")
         raise HTTPException(status_code=500, detail="Error updating homepage section")
 
+class HomepageSectionReorder(BaseModel):
+    sections: List[dict]
+
 @api_router.put("/homepage/sections/reorder")
-async def reorder_homepage_sections(sections: List[dict], current_user: User = Depends(get_current_user)):
+async def reorder_homepage_sections(reorder_data: HomepageSectionReorder, current_user: User = Depends(get_current_user)):
     """Reorder homepage sections"""
     try:
-        for section in sections:
+        for section in reorder_data.sections:
             await db.homepage_sections.update_one(
                 {"id": section['id']},
                 {"$set": {"section_order": section['section_order']}}
