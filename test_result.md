@@ -401,7 +401,12 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Home Service Booking Feature - Customer Flow"
+    - "Home Service Booking Feature - Address Collection"
+    - "Home Service Booking Feature - Fee Calculation"
+    - "Booking System Toggle Feature - Admin Settings"
+    - "Booking System Toggle Feature - Public Website Response"
   stuck_tasks:
     - "Admin Dashboard Access Issue - URL redirects to public homepage instead of admin interface"
   test_all: false
