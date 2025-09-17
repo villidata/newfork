@@ -189,8 +189,38 @@ CREATE TABLE staff_breaks (
     FOREIGN KEY (staff_id) REFERENCES staff(id) ON DELETE CASCADE
 );
 
+-- Homepage layout sections table
+CREATE TABLE homepage_sections (
+    id VARCHAR(36) PRIMARY KEY,
+    section_type VARCHAR(50) NOT NULL, -- 'hero', 'services', 'staff', 'gallery', 'social', 'contact'
+    section_order INT NOT NULL DEFAULT 1,
+    is_enabled BOOLEAN DEFAULT TRUE,
+    title VARCHAR(255),
+    subtitle VARCHAR(255),
+    description TEXT,
+    button_text VARCHAR(100),
+    button_action VARCHAR(50), -- 'open_booking', 'scroll_to_services', 'scroll_to_contact', 'external_link', 'none'
+    button_url TEXT, -- For external links
+    background_color VARCHAR(7) DEFAULT '#000000',
+    text_color VARCHAR(7) DEFAULT '#D4AF37',
+    custom_css TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_section_type (section_type)
+);
+
 -- Insert default settings
 INSERT INTO site_settings (id) VALUES (1) ON DUPLICATE KEY UPDATE id=id;
+
+-- Insert default homepage sections
+INSERT INTO homepage_sections (id, section_type, section_order, is_enabled, title, subtitle, description, button_text, button_action) VALUES
+('hero-section', 'hero', 1, TRUE, 'Klassisk Barbering', 'i Hjertet af Byen', 'Oplev den autentiske barber-oplevelse hos Frisor LaFata.', 'Book din tid nu', 'open_booking'),
+('services-section', 'services', 2, TRUE, 'Vores Services', 'Professionel barbering og styling', 'Vi tilbyder et bredt udvalg af tjenester fra klassiske klipninger til moderne styling.', NULL, 'none'),
+('staff-section', 'staff', 3, TRUE, 'Mød Vores Team', 'Erfarne barbere med passion', 'Vores dygtige barbere har mange års erfaring og står klar til at give dig den perfekte look.', NULL, 'none'),
+('gallery-section', 'gallery', 4, TRUE, 'Galleri', 'Se vores arbejde', 'Få inspiration fra vores før og efter billeder.', NULL, 'none'),
+('social-section', 'social', 5, TRUE, 'Følg Os', 'Se vores seneste arbejde', 'Hold dig opdateret med vores seneste trends og tilbud på sociale medier.', NULL, 'none'),
+('contact-section', 'contact', 6, TRUE, 'Kontakt Os', 'Book din tid i dag', 'Kontakt os for at booke din næste barbering eller hvis du har spørgsmål.', 'Gå til booking system', 'open_booking')
+ON DUPLICATE KEY UPDATE id=id;
 
 -- Create indexes for better performance
 CREATE INDEX idx_bookings_date ON bookings(booking_date);
