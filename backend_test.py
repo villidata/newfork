@@ -1926,7 +1926,7 @@ class FrisorLaFataAPITester:
             "Homepage Sections - No Auth (should fail)", 
             "GET", 
             "homepage/sections", 
-            401  # Expecting 401 Unauthorized
+            403  # Expecting 403 Forbidden (FastAPI standard)
         )
         
         if success:
@@ -1940,7 +1940,7 @@ class FrisorLaFataAPITester:
             "Update Section - No Auth (should fail)", 
             "PUT", 
             "homepage/sections/test-id", 
-            401,  # Expecting 401 Unauthorized
+            403,  # Expecting 403 Forbidden
             data=update_data
         )
         
@@ -1950,12 +1950,12 @@ class FrisorLaFataAPITester:
             print(f"   ❌ Should have rejected unauthorized update")
         
         # Test 3: Reorder endpoint without authentication (should fail)
-        reorder_data = [{"id": "test", "section_order": 1}]
+        reorder_data = {"sections": [{"id": "test", "section_order": 1}]}
         success, response = self.run_test(
             "Reorder Sections - No Auth (should fail)", 
             "PUT", 
             "homepage/sections/reorder", 
-            401,  # Expecting 401 Unauthorized
+            403,  # Expecting 403 Forbidden
             data=reorder_data
         )
         
