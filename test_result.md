@@ -216,17 +216,29 @@ backend:
           agent: "testing"
           comment: "Staff creation and update with avatar_url field working correctly. Staff API returns proper avatar URLs. Database consistency verified - existing staff have correct production URLs."
 
-  - task: "Avatar authentication and validation"
+  - task: "Home Service Booking Backend Support"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
-          agent: "testing"
-          comment: "Avatar upload properly requires admin authentication (returns 403 for unauthorized, 403 for non-admin users). File type validation working (returns 400 for non-image files). All security measures in place."
+        - working: "NA"
+          agent: "main"
+          comment: "Backend support for home service bookings implemented. Booking model includes is_home_service, service_address, service_city, service_postal_code, travel_fee, and special_instructions fields. BookingCreate model supports home service data. Ready for testing."
+
+  - task: "Booking System Settings Backend"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Backend settings model includes booking_system_enabled, home_service_enabled, home_service_fee, and home_service_description fields. Settings API endpoints support reading and updating these values. Public settings endpoint includes booking system configuration. Ready for testing."
 
 frontend:
   - task: "Customizable Service Icons Feature - IconSelector Component"
