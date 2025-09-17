@@ -1664,12 +1664,25 @@ async def get_public_settings():
         
     except Exception as e:
         print(f"Error getting public settings: {e}")
-        # Return default settings if database error
+        # Return default settings if error occurs
         return {
             "site_title": "Frisor LaFata",
             "site_description": "Klassisk barbering siden 2010",
             "contact_phone": "+45 12 34 56 78",
             "contact_email": "info@frisorlafata.dk",
+            "address": "Hovedgaden 123, 1000 København",
+            "hero_title": "Klassisk Barbering",
+            "hero_subtitle": "i Hjertet af Byen",
+            "hero_description": "Oplev den autentiske barber-oplevelse hos Frisor LaFata.",
+            "hero_image": "",
+            "social_media_enabled": True,
+            "social_media_title": "Follow Us",
+            "social_media_description": "Se vores seneste arbejde og tilbud på sociale medier",
+            "instagram_enabled": True,
+            "facebook_enabled": True,
+            "tiktok_enabled": False,
+            "twitter_enabled": False,
+            "youtube_enabled": False,
             "booking_system_enabled": True,
             "home_service_enabled": True,
             "home_service_fee": 150.00,
