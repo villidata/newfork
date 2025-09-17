@@ -40,7 +40,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
 ALGORITHM = "HS256"
 # Use the frontend's backend URL for constructing image URLs
-BACKEND_URL = 'https://stylista-admin.preview.emergentagent.com'
+BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
 
 # Email configuration (will be configurable from admin)
 EMAIL_CONFIG = {
