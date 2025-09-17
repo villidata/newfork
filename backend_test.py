@@ -1593,6 +1593,388 @@ class FrisorLaFataAPITester:
         else:
             print(f"     ✅ {context} URL format correct")
 
+    def test_homepage_editor_comprehensive(self):
+        """Comprehensive Homepage Editor backend API testing"""
+        print("\n" + "🏠 HOMEPAGE EDITOR API TESTS (NEW FEATURE)" + "=" * 25)
+        
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+        
+        # Test 1: GET /api/homepage/sections (Admin endpoint)
+        success, admin_sections = self.test_get_homepage_sections_admin()
+        if not success:
+            return False, {}
+        
+        # Test 2: GET /api/public/homepage/sections (Public endpoint)
+        success, public_sections = self.test_get_homepage_sections_public()
+        if not success:
+            return False, {}
+        
+        # Test 3: Verify default sections creation
+        success = self._verify_default_sections_created(admin_sections)
+        if not success:
+            return False, {}
+        
+        # Test 4: Update homepage section
+        if admin_sections and len(admin_sections) > 0:
+            section_id = admin_sections[0].get('id')
+            success, updated_section = self.test_update_homepage_section(section_id)
+            if not success:
+                return False, {}
+        
+        # Test 5: Reorder homepage sections
+        if admin_sections and len(admin_sections) > 1:
+            success = self.test_reorder_homepage_sections(admin_sections)
+            if not success:
+                return False, {}
+        
+        # Test 6: Verify public endpoint only returns enabled sections
+        success = self._verify_public_sections_filtering(public_sections)
+        
+        return success, {
+            'admin_sections': admin_sections,
+            'public_sections': public_sections
+        }
+
+    def test_get_homepage_sections_admin(self):
+        """Test GET /api/homepage/sections (admin endpoint)"""
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        success, response = self.run_test(
+            "Get Homepage Sections (Admin)", 
+            "GET", 
+            "homepage/sections", 
+            200
+        )
+        
+        if success:
+            self._verify_homepage_sections_structure(response, "Admin")
+        
+        self.token = original_token
+        return success, response
+
+    def test_get_homepage_sections_public(self):
+        """Test GET /api/public/homepage/sections (public endpoint)"""
+        # Test without authentication (public endpoint)
+        original_token = self.token
+        self.token = None
+        
+        success, response = self.run_test(
+            "Get Homepage Sections (Public)", 
+            "GET", 
+            "public/homepage/sections", 
+            200
+        )
+        
+        if success:
+            self._verify_homepage_sections_structure(response, "Public")
+        
+        self.token = original_token
+        return success, response
+
+    def test_update_homepage_section(self, section_id):
+        """Test PUT /api/homepage/sections/{section_id}"""
+        if not self.admin_token or not section_id:
+            print("❌ Skipped - No admin token or section ID available")
+            return False, {}
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        # Test updating various section properties
+        update_data = {
+            "title": f"Updated Section Title {datetime.now().strftime('%H%M%S')}",
+            "subtitle": "Updated subtitle for testing",
+            "description": "This section has been updated via API testing",
+            "background_color": "#1a1a1a",
+            "text_color": "#FFD700",
+            "button_text": "Updated Button",
+            "button_action": "scroll_to_contact",
+            "is_enabled": True
+        }
+        
+        success, response = self.run_test(
+            f"Update Homepage Section ({section_id})", 
+            "PUT", 
+            f"homepage/sections/{section_id}", 
+            200, 
+            data=update_data
+        )
+        
+        if success:
+            print(f"   ✅ Section updated successfully")
+            
+            # Verify the update by fetching sections again
+            verify_success, sections = self.run_test(
+                "Verify Section Update", 
+                "GET", 
+                "homepage/sections", 
+                200
+            )
+            
+            if verify_success:
+                updated_section = None
+                for section in sections:
+                    if section.get('id') == section_id:
+                        updated_section = section
+                        break
+                
+                if updated_section:
+                    # Check if our updates were applied
+                    if updated_section.get('title') == update_data['title']:
+                        print(f"   ✅ Title update verified")
+                    else:
+                        print(f"   ❌ Title update failed - Expected: {update_data['title']}, Got: {updated_section.get('title')}")
+                    
+                    if updated_section.get('background_color') == update_data['background_color']:
+                        print(f"   ✅ Background color update verified")
+                    else:
+                        print(f"   ❌ Background color update failed")
+        
+        self.token = original_token
+        return success, response
+
+    def test_reorder_homepage_sections(self, sections):
+        """Test PUT /api/homepage/sections/reorder"""
+        if not self.admin_token or not sections or len(sections) < 2:
+            print("❌ Skipped - No admin token or insufficient sections for reordering")
+            return False
+            
+        original_token = self.token
+        self.token = self.admin_token
+        
+        # Create reorder data - reverse the order of first two sections
+        reorder_data = []
+        for i, section in enumerate(sections):
+            new_order = section.get('section_order', i + 1)
+            if i == 0:  # First section gets second position
+                new_order = 2
+            elif i == 1:  # Second section gets first position
+                new_order = 1
+            
+            reorder_data.append({
+                'id': section.get('id'),
+                'section_order': new_order
+            })
+        
+        success, response = self.run_test(
+            "Reorder Homepage Sections", 
+            "PUT", 
+            "homepage/sections/reorder", 
+            200, 
+            data=reorder_data
+        )
+        
+        if success:
+            print(f"   ✅ Sections reordered successfully")
+            
+            # Verify the reordering by fetching sections again
+            verify_success, updated_sections = self.run_test(
+                "Verify Section Reordering", 
+                "GET", 
+                "homepage/sections", 
+                200
+            )
+            
+            if verify_success:
+                # Check if sections are in new order
+                first_section = None
+                second_section = None
+                
+                for section in updated_sections:
+                    if section.get('section_order') == 1:
+                        first_section = section
+                    elif section.get('section_order') == 2:
+                        second_section = section
+                
+                if first_section and second_section:
+                    original_first_id = sections[0].get('id')
+                    original_second_id = sections[1].get('id')
+                    
+                    if (first_section.get('id') == original_second_id and 
+                        second_section.get('id') == original_first_id):
+                        print(f"   ✅ Section reordering verified successfully")
+                    else:
+                        print(f"   ❌ Section reordering verification failed")
+        
+        self.token = original_token
+        return success
+
+    def _verify_default_sections_created(self, sections):
+        """Verify that default homepage sections are created correctly"""
+        self.tests_run += 1
+        print(f"\n🔍 Verifying Default Homepage Sections...")
+        
+        if not isinstance(sections, list):
+            print(f"❌ Failed - Expected list, got: {type(sections)}")
+            return False
+        
+        expected_sections = ["hero", "services", "staff", "gallery", "social", "contact"]
+        found_sections = []
+        
+        for section in sections:
+            section_type = section.get('section_type', '')
+            if section_type in expected_sections:
+                found_sections.append(section_type)
+        
+        missing_sections = [s for s in expected_sections if s not in found_sections]
+        
+        if len(missing_sections) == 0:
+            self.tests_passed += 1
+            print(f"✅ Passed - All default sections created")
+            print(f"   Found sections: {found_sections}")
+            print(f"   Total sections: {len(sections)}")
+            return True
+        else:
+            print(f"❌ Failed - Missing default sections: {missing_sections}")
+            print(f"   Found sections: {found_sections}")
+            return False
+
+    def _verify_homepage_sections_structure(self, sections, context):
+        """Verify homepage sections have correct structure"""
+        self.tests_run += 1
+        print(f"\n🔍 Verifying Homepage Sections Structure - {context}...")
+        
+        if not isinstance(sections, list):
+            print(f"❌ Failed - Expected list, got: {type(sections)}")
+            return False
+        
+        print(f"   Found {len(sections)} sections")
+        
+        required_fields = ['id', 'section_type', 'section_order', 'is_enabled', 'title']
+        optional_fields = ['subtitle', 'description', 'button_text', 'button_action', 'background_color', 'text_color']
+        
+        structure_issues = []
+        
+        for i, section in enumerate(sections):
+            section_id = section.get('id', f'Section {i+1}')
+            
+            # Check required fields
+            for field in required_fields:
+                if field not in section:
+                    structure_issues.append(f"{section_id}: Missing required field '{field}'")
+            
+            # Check data types
+            if 'section_order' in section and not isinstance(section['section_order'], int):
+                structure_issues.append(f"{section_id}: section_order should be integer")
+            
+            if 'is_enabled' in section and not isinstance(section['is_enabled'], bool):
+                structure_issues.append(f"{section_id}: is_enabled should be boolean")
+        
+        if len(structure_issues) == 0:
+            self.tests_passed += 1
+            print(f"✅ Passed - All sections have correct structure")
+            
+            # Show section details
+            for section in sections[:3]:  # Show first 3 sections
+                print(f"   - {section.get('section_type', 'unknown')}: {section.get('title', 'No title')} (Order: {section.get('section_order', 'N/A')})")
+            
+            if len(sections) > 3:
+                print(f"   ... and {len(sections) - 3} more sections")
+            
+            return True
+        else:
+            print(f"❌ Failed - Structure issues found:")
+            for issue in structure_issues:
+                print(f"   - {issue}")
+            return False
+
+    def _verify_public_sections_filtering(self, public_sections):
+        """Verify public endpoint only returns enabled sections"""
+        self.tests_run += 1
+        print(f"\n🔍 Verifying Public Sections Filtering...")
+        
+        if not isinstance(public_sections, list):
+            print(f"❌ Failed - Expected list, got: {type(public_sections)}")
+            return False
+        
+        disabled_sections = []
+        
+        for section in public_sections:
+            if not section.get('is_enabled', True):
+                disabled_sections.append(section.get('id', 'Unknown'))
+        
+        if len(disabled_sections) == 0:
+            self.tests_passed += 1
+            print(f"✅ Passed - Public endpoint only returns enabled sections")
+            print(f"   Enabled sections returned: {len(public_sections)}")
+            return True
+        else:
+            print(f"❌ Failed - Found disabled sections in public response: {disabled_sections}")
+            return False
+
+    def test_homepage_authentication_requirements(self):
+        """Test authentication requirements for homepage endpoints"""
+        print("\n" + "🔐 HOMEPAGE AUTHENTICATION TESTS" + "=" * 35)
+        
+        # Test 1: Admin endpoint without authentication (should fail)
+        original_token = self.token
+        self.token = None
+        
+        success, response = self.run_test(
+            "Homepage Sections - No Auth (should fail)", 
+            "GET", 
+            "homepage/sections", 
+            401  # Expecting 401 Unauthorized
+        )
+        
+        if success:
+            print(f"   ✅ Correctly rejected unauthorized request")
+        else:
+            print(f"   ❌ Should have rejected unauthorized request")
+        
+        # Test 2: Update endpoint without authentication (should fail)
+        update_data = {"title": "Unauthorized Update"}
+        success, response = self.run_test(
+            "Update Section - No Auth (should fail)", 
+            "PUT", 
+            "homepage/sections/test-id", 
+            401,  # Expecting 401 Unauthorized
+            data=update_data
+        )
+        
+        if success:
+            print(f"   ✅ Correctly rejected unauthorized update")
+        else:
+            print(f"   ❌ Should have rejected unauthorized update")
+        
+        # Test 3: Reorder endpoint without authentication (should fail)
+        reorder_data = [{"id": "test", "section_order": 1}]
+        success, response = self.run_test(
+            "Reorder Sections - No Auth (should fail)", 
+            "PUT", 
+            "homepage/sections/reorder", 
+            401,  # Expecting 401 Unauthorized
+            data=reorder_data
+        )
+        
+        if success:
+            print(f"   ✅ Correctly rejected unauthorized reorder")
+        else:
+            print(f"   ❌ Should have rejected unauthorized reorder")
+        
+        # Test 4: Public endpoint should work without authentication
+        success, response = self.run_test(
+            "Public Homepage Sections - No Auth (should work)", 
+            "GET", 
+            "public/homepage/sections", 
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Public endpoint correctly accessible without auth")
+        else:
+            print(f"   ❌ Public endpoint should be accessible without auth")
+        
+        self.token = original_token
+        return True
+
 def main():
     print("🚀 Starting Frisor LaFata API Tests - COMPREHENSIVE NEW FEATURES TEST")
     print("=" * 70)
