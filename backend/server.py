@@ -341,6 +341,13 @@ class Booking(BaseModel):
     status: str = "pending"  # "pending", "confirmed", "cancelled", "completed", "rescheduled"
     notes: str = ""
     admin_notes: str = ""
+    # Home service fields
+    is_home_service: bool = False
+    service_address: Optional[str] = ""
+    service_city: Optional[str] = ""
+    service_postal_code: Optional[str] = ""
+    travel_fee: float = 0.00
+    special_instructions: Optional[str] = ""
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -355,6 +362,12 @@ class BookingCreate(BaseModel):
     booking_time: time
     payment_method: str = "cash"
     notes: str = ""
+    # Home service fields
+    is_home_service: bool = False
+    service_address: Optional[str] = ""
+    service_city: Optional[str] = ""
+    service_postal_code: Optional[str] = ""
+    special_instructions: Optional[str] = ""
 
 class BookingUpdate(BaseModel):
     booking_date: Optional[date] = None
