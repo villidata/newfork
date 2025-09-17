@@ -1,3 +1,4 @@
+aiomysql==0.2.0
 annotated-types==0.7.0
 anyio==4.10.0
 bcrypt==4.3.0
@@ -44,6 +45,7 @@ pyflakes==3.4.0
 Pygments==2.19.2
 PyJWT==2.10.1
 pymongo==4.5.0
+PyMySQL==1.1.2
 pyOpenSSL==25.2.0
 pytest==8.4.2
 python-dateutil==2.9.0.post0
