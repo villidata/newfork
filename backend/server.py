@@ -1605,8 +1605,8 @@ async def update_settings(settings: Dict[str, Any], current_user: User = Depends
 async def get_public_settings():
     """Get public site settings (excludes sensitive data like API keys)"""
     try:
-        # Use MySQL instead of MongoDB
-        settings = await execute_query("SELECT * FROM site_settings WHERE id = 1", fetch_one=True)
+        # Use MongoDB instead of MySQL until MySQL is properly configured
+        settings = await db.settings.find_one({"type": "site_settings"})
         
         if not settings:
             # Return default public settings
