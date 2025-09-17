@@ -233,9 +233,9 @@ backend:
 
   - task: "Booking System Settings Backend"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/server.py"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -245,6 +245,9 @@ backend:
         - working: false
           agent: "testing"
           comment: "❌ CRITICAL ISSUE: Backend settings model includes booking system fields (lines 512-515) but public settings API endpoint (/api/public/settings) does NOT return these settings to frontend. Missing fields: booking_system_enabled, home_service_enabled, home_service_fee, home_service_description. This prevents frontend from knowing if booking system/home service should be enabled. Public API endpoint needs to be updated to include these settings."
+        - working: true
+          agent: "testing"
+          comment: "✅ CRITICAL FIX VERIFIED: Backend public settings API endpoint (/api/public/settings) now correctly includes all booking system settings! CONFIRMED WORKING: booking_system_enabled=1, home_service_enabled=1, home_service_fee=150, home_service_description='Vi kommer til dig! Oplev professionel barbering i dit eget hjem.' Frontend successfully receives these settings and responds correctly. MySQL integration working properly. The critical blocking issue has been resolved."
 
 frontend:
   - task: "Customizable Service Icons Feature - IconSelector Component"
