@@ -1119,6 +1119,10 @@ Best regards,
             <Users className="h-4 w-4 mr-2" />
             Social Media
           </TabsTrigger>
+          <TabsTrigger value="booking" className="data-[state=active]:bg-gold data-[state=active]:text-black">
+            <Calendar className="h-4 w-4 mr-2" />
+            Booking System
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="space-y-6">
