@@ -457,9 +457,21 @@ const StaffManager = ({ token, onRefresh }) => {
   const [uploadingAvatar, setUploadingAvatar] = useState(null);
   const [newStaff, setNewStaff] = useState({
     name: '',
-    specialty: '',
-    experience: '',
+    bio: '',
+    experience_years: 0,
+    specialties: [],
+    phone: '',
+    email: '',
     avatar_url: '',
+    portfolio_images: [],
+    // Social Media Links
+    instagram_url: '',
+    facebook_url: '',
+    tiktok_url: '',
+    linkedin_url: '',
+    twitter_url: '',
+    youtube_url: '',
+    website_url: '',
     available_hours: {
       monday: { start: '09:00', end: '18:00', enabled: true },
       tuesday: { start: '09:00', end: '18:00', enabled: true },
