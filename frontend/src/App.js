@@ -313,26 +313,112 @@ const Home = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {staff.map((member, index) => (
-              <Card key={member.id || index} className="bg-black/70 border-gold/20 hover:border-gold/50 transition-all duration-300">
-                <CardContent className="p-6 text-center">
-                  <div className="mb-4">
+              <Card key={member.id || index} className="bg-black/70 border-gold/20 hover:border-gold/50 transition-all duration-300 hover:scale-105">
+                <CardContent className="p-8 text-center">
+                  <div className="mb-6">
                     {member.avatar_url ? (
                       <img 
                         src={member.avatar_url} 
                         alt={member.name}
-                        className="w-16 h-16 rounded-full object-cover mx-auto mb-4 border-2 border-gold/30"
+                        className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-gold/30 shadow-lg"
                       />
                     ) : (
-                      <Users className="h-16 w-16 text-gold mx-auto mb-4" />
+                      <div className="w-24 h-24 rounded-full bg-gold/20 border-4 border-gold/30 flex items-center justify-center mx-auto mb-4">
+                        <Users className="h-12 w-12 text-gold" />
+                      </div>
                     )}
                   </div>
-                  <h3 className="text-xl font-semibold text-gold mb-2">{member.name}</h3>
-                  <p className="text-gray-300 mb-2">{member.specialty}</p>
-                  <div className="flex items-center justify-center text-gold">
+                  
+                  <h3 className="text-2xl font-semibold text-gold mb-3 font-serif">{member.name}</h3>
+                  
+                  {member.bio && (
+                    <p className="text-gray-300 text-sm mb-3 italic">{member.bio}</p>
+                  )}
+                  
+                  {member.specialties && member.specialties.length > 0 && (
+                    <div className="mb-3">
+                      <div className="flex flex-wrap justify-center gap-1">
+                        {member.specialties.slice(0, 3).map((specialty, idx) => (
+                          <Badge key={idx} variant="outline" className="border-gold/50 text-gold text-xs">
+                            {specialty}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center justify-center text-gold mb-4">
                     <Star className="h-4 w-4 mr-1" />
-                    <span className="text-sm">{member.experience} erfaring</span>
+                    <span className="text-sm">{member.experience_years} års erfaring</span>
+                  </div>
+
+                  {/* Social Media Icons */}
+                  <div className="flex items-center justify-center space-x-3 pt-4 border-t border-gold/20">
+                    {member.instagram_url && (
+                      <button
+                        onClick={() => window.open(member.instagram_url, '_blank')}
+                        className="p-2 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white hover:scale-110 transition-transform duration-200"
+                        title="Instagram"
+                      >
+                        <Instagram className="h-4 w-4" />
+                      </button>
+                    )}
+                    {member.facebook_url && (
+                      <button
+                        onClick={() => window.open(member.facebook_url, '_blank')}
+                        className="p-2 rounded-full bg-blue-600 text-white hover:scale-110 transition-transform duration-200"
+                        title="Facebook"
+                      >
+                        <Facebook className="h-4 w-4" />
+                      </button>
+                    )}
+                    {member.linkedin_url && (
+                      <button
+                        onClick={() => window.open(member.linkedin_url, '_blank')}
+                        className="p-2 rounded-full bg-blue-700 text-white hover:scale-110 transition-transform duration-200"
+                        title="LinkedIn"
+                      >
+                        <Linkedin className="h-4 w-4" />
+                      </button>
+                    )}
+                    {member.youtube_url && (
+                      <button
+                        onClick={() => window.open(member.youtube_url, '_blank')}
+                        className="p-2 rounded-full bg-red-600 text-white hover:scale-110 transition-transform duration-200"
+                        title="YouTube"
+                      >
+                        <Youtube className="h-4 w-4" />
+                      </button>
+                    )}
+                    {member.tiktok_url && (
+                      <button
+                        onClick={() => window.open(member.tiktok_url, '_blank')}
+                        className="p-2 rounded-full bg-black text-white hover:scale-110 transition-transform duration-200"
+                        title="TikTok"
+                      >
+                        <span className="text-xs font-bold">TT</span>
+                      </button>
+                    )}
+                    {member.twitter_url && (
+                      <button
+                        onClick={() => window.open(member.twitter_url, '_blank')}
+                        className="p-2 rounded-full bg-black text-white hover:scale-110 transition-transform duration-200"
+                        title="X (Twitter)"
+                      >
+                        <span className="text-xs font-bold">𝕏</span>
+                      </button>
+                    )}
+                    {member.website_url && (
+                      <button
+                        onClick={() => window.open(member.website_url, '_blank')}
+                        className="p-2 rounded-full bg-gold text-black hover:scale-110 transition-transform duration-200"
+                        title="Website"
+                      >
+                        <Globe className="h-4 w-4" />
+                      </button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
