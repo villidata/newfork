@@ -111,8 +111,12 @@ const Home = () => {
   };
 
   useEffect(() => {
-    helloWorldApi();
-    fetchData();
+    console.log('useEffect triggered, starting fetchData');
+    // Add a small delay to ensure proper state initialization
+    setTimeout(() => {
+      helloWorldApi();
+      fetchData();
+    }, 100);
   }, []);
 
   const getServiceIcon = (iconValue) => {
