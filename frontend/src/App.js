@@ -52,21 +52,62 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const [servicesRes, staffRes, settingsRes, pagesRes, galleryRes] = await Promise.all([
-        axios.get(`${API}/services`),
-        axios.get(`${API}/staff`),
-        axios.get(`${API}/public/settings`),
-        axios.get(`${API}/public/pages`),
-        axios.get(`${API}/gallery?featured_only=false`)
-      ]);
+      console.log('Starting data fetch...');
       
-      setServices(servicesRes.data);
-      setStaff(staffRes.data);
-      setSettings(settingsRes.data);
-      setPages(pagesRes.data);
-      setGalleryItems(galleryRes.data);
+      // Add timeout to individual API calls
+      const apiTimeout = 10000; // 10 seconds
+      
+      const apiCall = (url, name) => {
+        console.log(`Fetching ${name} from ${url}`);
+        return Promise.race([
+          axios.get(url),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error(`${name} API timeout`)), apiTimeout)
+          )
+        ]);
+      };
+
+      // Fetch APIs individually with better error handling
+      console.log('Fetching services...');
+      const servicesRes = await apiCall(`${API}/services`, 'services').catch(e => {
+        console.error('Services API failed:', e);
+        return { data: [] };
+      });
+      
+      console.log('Fetching staff...');
+      const staffRes = await apiCall(`${API}/staff`, 'staff').catch(e => {
+        console.error('Staff API failed:', e);
+        return { data: [] };
+      });
+      
+      console.log('Fetching settings...');
+      const settingsRes = await apiCall(`${API}/public/settings`, 'settings').catch(e => {
+        console.error('Settings API failed:', e);
+        return { data: {} };
+      });
+      
+      console.log('Fetching pages...');
+      const pagesRes = await apiCall(`${API}/public/pages`, 'pages').catch(e => {
+        console.error('Pages API failed:', e);
+        return { data: [] };
+      });
+      
+      console.log('Fetching gallery...');
+      const galleryRes = await apiCall(`${API}/gallery?featured_only=false`, 'gallery').catch(e => {
+        console.error('Gallery API failed:', e);
+        return { data: [] };
+      });
+      
+      console.log('All APIs fetched, setting data...');
+      setServices(servicesRes.data || []);
+      setStaff(staffRes.data || []);
+      setSettings(settingsRes.data || {});
+      setPages(pagesRes.data || []);
+      setGalleryItems(galleryRes.data || []);
+      
+      console.log('Data set successfully');
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Critical error in fetchData:', error);
       // Fallback to default data if API fails
       setServices([
         { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" },
@@ -77,9 +118,24 @@ const Home = () => {
         { name: "Komplet styling", duration_minutes: 90, price: 750, category: "premium", icon: "⭐" }
       ]);
       setStaff([
-        { name: "Lars Andersen", specialty: "Klassisk klipning", experience: "15 år" },
-        { name: "Mikael Jensen", specialty: "Modern styling", experience: "12 år" },
-        { name: "Sofia Nielsen", specialty: "Farvning", experience: "8 år" }
+        { 
+          name: "Lars Andersen", 
+          bio: "Specialist i klassisk barbering",
+          experience_years: 15,
+          specialties: ["Klassisk klipning", "Skægtrimning"],
+          instagram_url: "",
+          facebook_url: "",
+          avatar_url: ""
+        },
+        { 
+          name: "Mikael Jensen", 
+          bio: "Ekspert i moderne styling",
+          experience_years: 12,
+          specialties: ["Modern styling", "Hårvask"],
+          instagram_url: "",
+          facebook_url: "",
+          avatar_url: ""
+        }
       ]);
       setSettings({
         site_title: "Frisor LaFata",
@@ -92,7 +148,10 @@ const Home = () => {
         hero_description: "Oplev den autentiske barber-oplevelse hos Frisor LaFata. Vi kombinerer traditionel håndværk med moderne teknikker.",
         hero_image: "https://images.unsplash.com/photo-1573586927918-3e6476da8395?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwzfHxyZXRybyUyMGJhcmJlcnxlbnwwfHx8fDE3NTc5NzcyODB8MA&ixlib=rb-4.1.0&q=85"
       });
+      setPages([]);
+      setGalleryItems([]);
     } finally {
+      console.log('Setting loading to false');
       setLoading(false);
     }
   };
