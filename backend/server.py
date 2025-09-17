@@ -20,6 +20,11 @@ from email.mime.multipart import MIMEMultipart
 import paypalrestsdk
 import shutil
 import mimetypes
+from database import (
+    init_db, close_db, get_db_connection, execute_query, 
+    insert_record, update_record, delete_record,
+    prepare_record_for_response, prepare_data_for_insert
+)
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
