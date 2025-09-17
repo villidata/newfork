@@ -67,7 +67,15 @@ paypalrestsdk.configure({
 })
 
 # Create the main app
-app = FastAPI(title="Frisor LaFata API", version="1.0.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Initialize MySQL database
+    await init_db()
+    yield
+    # Close MySQL database
+    await close_db()
+
+app = FastAPI(lifespan=lifespan, title="Frisor LaFata API", version="1.0.0")
 api_router = APIRouter(prefix="/api")
 
 # Create uploads directory
