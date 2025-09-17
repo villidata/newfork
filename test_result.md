@@ -218,27 +218,33 @@ backend:
 
   - task: "Home Service Booking Backend Support"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Backend support for home service bookings implemented. Booking model includes is_home_service, service_address, service_city, service_postal_code, travel_fee, and special_instructions fields. BookingCreate model supports home service data. Ready for testing."
+        - working: true
+          agent: "testing"
+          comment: "✅ Backend home service support verified. Booking model (lines 345-350) includes all required home service fields: is_home_service, service_address, service_city, service_postal_code, travel_fee, special_instructions. BookingCreate model (lines 366-370) supports home service data collection. Backend ready to handle home service bookings."
 
   - task: "Booking System Settings Backend"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Backend settings model includes booking_system_enabled, home_service_enabled, home_service_fee, and home_service_description fields. Settings API endpoints support reading and updating these values. Public settings endpoint includes booking system configuration. Ready for testing."
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL ISSUE: Backend settings model includes booking system fields (lines 512-515) but public settings API endpoint (/api/public/settings) does NOT return these settings to frontend. Missing fields: booking_system_enabled, home_service_enabled, home_service_fee, home_service_description. This prevents frontend from knowing if booking system/home service should be enabled. Public API endpoint needs to be updated to include these settings."
 
 frontend:
   - task: "Customizable Service Icons Feature - IconSelector Component"
