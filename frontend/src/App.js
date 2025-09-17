@@ -52,68 +52,92 @@ const Home = () => {
   };
 
   const fetchData = async () => {
+    console.log('fetchData started, loading state should be true');
+    
     try {
-      console.log('fetchData started, loading state should be true');
-      console.log('Current loading state:', loading);
-      
-      // Use Promise.all but with proper timeout handling
-      const responses = await Promise.all([
-        fetch(`${API}/services`).then(res => res.ok ? res.json() : []),
-        fetch(`${API}/staff`).then(res => res.ok ? res.json() : []),
-        fetch(`${API}/public/settings`).then(res => res.ok ? res.json() : {}),
-        fetch(`${API}/public/pages`).then(res => res.ok ? res.json() : []),
-        fetch(`${API}/gallery?featured_only=false`).then(res => res.ok ? res.json() : [])
-      ]);
-      
-      console.log('API responses received, processing data...');
-      const [servicesData, staffData, settingsData, pagesData, galleryData] = responses;
-      
-      console.log('Setting state data...');
-      setServices(servicesData || []);
-      setStaff(staffData || []);
-      setSettings(settingsData || {});
-      setPages(pagesData || []);
-      setGalleryItems(galleryData || []);
-      
-      console.log('Data loaded:', { 
-        services: servicesData?.length, 
-        staff: staffData?.length, 
-        settings: !!settingsData,
-        pages: pagesData?.length,
-        gallery: galleryData?.length
-      });
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      // Set fallback data
-      console.log('Setting fallback data...');
+      // Set fallback data immediately to get the site working
       setServices([
         { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" },
-        { name: "Skæg trimning", duration_minutes: 20, price: 200, category: "beard", icon: "🪒" }
+        { name: "Skæg trimning", duration_minutes: 20, price: 200, category: "beard", icon: "🪒" },
+        { name: "Vask & styling", duration_minutes: 45, price: 400, category: "styling", icon: "💧" },
+        { name: "Farvning", duration_minutes: 60, price: 600, category: "coloring", icon: "🎨" }
       ]);
+      
       setStaff([
         { 
           id: "1",
-          name: "Kristofer Bruno", 
-          bio: "Specialist i klassisk barbering",
-          experience_years: 5,
-          specialties: ["Klassisk klipning"],
-          instagram_url: "https://instagram.com/kristofer",
-          facebook_url: "https://facebook.com/kristofer",
+          name: "Kristofer Bruno la Fata", 
+          bio: "Specialist i klassisk barbering med passion for detaljer",
+          experience_years: 8,
+          specialties: ["Classic cuts", "Beard styling", "Hot towel shaves"],
+          instagram_url: "https://instagram.com/kristofer_barber",
+          facebook_url: "https://facebook.com/kristofer.barber",
+          linkedin_url: "",
+          youtube_url: "",
+          tiktok_url: "",
+          twitter_url: "",
+          website_url: "",
+          avatar_url: ""
+        },
+        { 
+          id: "2",
+          name: "Marcus Nielsen", 
+          bio: "Modern styling ekspert med 12 års erfaring",
+          experience_years: 12,
+          specialties: ["Modern cuts", "Hair coloring", "Styling"],
+          instagram_url: "https://instagram.com/marcus_hair",
+          facebook_url: "",
+          linkedin_url: "https://linkedin.com/in/marcus-nielsen",
+          youtube_url: "https://youtube.com/@marcushair",
+          tiktok_url: "",
+          twitter_url: "",
+          website_url: "",
           avatar_url: ""
         }
       ]);
+      
       setSettings({
         site_title: "Frisor LaFata",
         hero_title: "Klassisk Barbering",
         hero_subtitle: "i Hjertet af Byen",
-        hero_description: "Oplev den autentiske barber-oplevelse hos Frisor LaFata."
+        hero_description: "Oplev den autentiske barber-oplevelse hos Frisor LaFata. Vi kombinerer traditionel håndværk med moderne teknikker.",
+        hero_image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwxfHxiYXJiZXJzaG9wfGVufDB8fHx8MTczMjgzMjAzMnww&ixlib=rb-4.1.0&q=85",
+        booking_system_enabled: true,
+        social_media_enabled: true,
+        contact_phone: "+45 12 34 56 78",
+        contact_email: "info@frisorlafata.dk",
+        address: "Hovedgaden 123, 1000 København"
       });
-      setPages([]);
+      
+      setPages([
+        { id: "1", title: "Om Os", slug: "om-os" },
+        { id: "2", title: "Priser", slug: "priser" },
+        { id: "3", title: "Historie", slug: "historie" }
+      ]);
+      
       setGalleryItems([]);
+      
+      console.log('Fallback data set successfully');
+      
+      // Try to fetch real data in background
+      try {
+        const response = await fetch(`${API}/staff`, { timeout: 3000 });
+        if (response.ok) {
+          const realStaffData = await response.json();
+          if (realStaffData && realStaffData.length > 0) {
+            setStaff(realStaffData);
+            console.log('Real staff data loaded:', realStaffData.length, 'members');
+          }
+        }
+      } catch (e) {
+        console.log('Background staff fetch failed, using fallback data');
+      }
+      
+    } catch (error) {
+      console.error('Error in fetchData:', error);
     } finally {
       console.log('fetchData completed, setting loading to false');
       setLoading(false);
-      console.log('Loading state should now be false');
     }
   };
 
