@@ -473,6 +473,75 @@ const BookingSystem = ({ onClose }) => {
                   rows={3}
                 />
               </div>
+              
+              {/* Home Service Option */}
+              {settings.home_service_enabled && (
+                <div className="border-t border-gold/20 pt-6">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Checkbox
+                      checked={isHomeService}
+                      onCheckedChange={setIsHomeService}
+                      className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                    />
+                    <Label className="text-gold font-semibold">
+                      🏠 Hjemmebesøg (+{settings.home_service_fee || 150} DKK)
+                    </Label>
+                  </div>
+                  
+                  {settings.home_service_description && (
+                    <p className="text-gray-300 text-sm mb-4">{settings.home_service_description}</p>
+                  )}
+                  
+                  {isHomeService && (
+                    <div className="space-y-4 mt-4 p-4 bg-black/30 rounded-lg border border-gold/20">
+                      <h4 className="text-gold font-semibold">Hjemmeservice adresse</h4>
+                      <div>
+                        <Label htmlFor="service-address" className="text-gold">Adresse *</Label>
+                        <Input
+                          id="service-address"
+                          value={homeServiceInfo.address}
+                          onChange={(e) => setHomeServiceInfo(prev => ({ ...prev, address: e.target.value }))}
+                          className="bg-black/50 border-gold/30 text-white"
+                          placeholder="Gadenavn og husnummer"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="service-city" className="text-gold">By *</Label>
+                          <Input
+                            id="service-city"
+                            value={homeServiceInfo.city}
+                            onChange={(e) => setHomeServiceInfo(prev => ({ ...prev, city: e.target.value }))}
+                            className="bg-black/50 border-gold/30 text-white"
+                            placeholder="København"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="service-postal" className="text-gold">Postnummer *</Label>
+                          <Input
+                            id="service-postal"
+                            value={homeServiceInfo.postalCode}
+                            onChange={(e) => setHomeServiceInfo(prev => ({ ...prev, postalCode: e.target.value }))}
+                            className="bg-black/50 border-gold/30 text-white"
+                            placeholder="2100"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="special-instructions" className="text-gold">Særlige instruktioner</Label>
+                        <Textarea
+                          id="special-instructions"
+                          value={homeServiceInfo.specialInstructions}
+                          onChange={(e) => setHomeServiceInfo(prev => ({ ...prev, specialInstructions: e.target.value }))}
+                          className="bg-black/50 border-gold/30 text-white"
+                          placeholder="Etage, dørtelefon, parkeringsmuligheder, etc."
+                          rows={3}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
