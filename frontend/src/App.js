@@ -6,7 +6,7 @@ import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
 import { Badge } from "./components/ui/badge";
 import { Separator } from "./components/ui/separator";
-import { Clock, MapPin, Phone, Mail, Scissors, Users, Star, Instagram, Facebook, Youtube, Linkedin, Globe } from "lucide-react";
+import { Clock, MapPin, Phone, Mail, Scissors, Users, Star, Instagram, Facebook, Youtube, Linkedin, Globe, Menu, X } from "lucide-react";
 import { 
   GiRazor,
   GiComb,
