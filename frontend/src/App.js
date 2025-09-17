@@ -207,12 +207,14 @@ const Home = () => {
                   </Link>
                 ))}
                 <a href="#contact" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Kontakt</a>
-                <Button 
-                  className="bg-gold text-black hover:bg-gold/90 font-semibold"
-                  onClick={() => setShowBooking(true)}
-                >
-                  Book tid
-                </Button>
+                {settings.booking_system_enabled !== false && (
+                  <Button 
+                    className="bg-gold text-black hover:bg-gold/90 font-semibold"
+                    onClick={() => setShowBooking(true)}
+                  >
+                    Book tid
+                  </Button>
+                )}
               </div>
             </div>
           </div>
