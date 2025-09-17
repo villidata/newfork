@@ -1686,6 +1686,72 @@ async def get_public_settings():
             "home_service_fee": 150.00,
             "home_service_description": "Vi kommer til dig! Oplev professionel barbering i dit eget hjem."
         }
+
+# Homepage Layout Management
+@api_router.get("/homepage/sections")
+async def get_homepage_sections(current_user: User = Depends(get_current_user)):
+    """Get all homepage sections for admin editing"""
+    try:
+        sections = await execute_query(
+            "SELECT * FROM homepage_sections ORDER BY section_order ASC",
+            fetch_all=True
+        )
+        return sections
+    except Exception as e:
+        print(f"Error getting homepage sections: {e}")
+        raise HTTPException(status_code=500, detail="Error retrieving homepage sections")
+
+@api_router.get("/public/homepage/sections")
+async def get_public_homepage_sections():
+    """Get enabled homepage sections for public display"""
+    try:
+        sections = await execute_query(
+            "SELECT * FROM homepage_sections WHERE is_enabled = TRUE ORDER BY section_order ASC",
+            fetch_all=True
+        )
+        return sections
+    except Exception as e:
+        print(f"Error getting public homepage sections: {e}")
+        # Return default sections if database error
+        return [
+            {
+                "id": "hero-section",
+                "section_type": "hero",
+                "section_order": 1,
+                "is_enabled": True,
+                "title": "Klassisk Barbering",
+                "subtitle": "i Hjertet af Byen",
+                "description": "Oplev den autentiske barber-oplevelse hos Frisor LaFata.",
+                "button_text": "Book din tid nu",
+                "button_action": "open_booking"
+            }
+        ]
+
+@api_router.put("/homepage/sections/{section_id}")
+async def update_homepage_section(section_id: str, section_data: dict, current_user: User = Depends(get_current_user)):
+    """Update a homepage section"""
+    try:
+        await update_record("homepage_sections", section_id, section_data)
+        return {"message": "Section updated successfully"}
+    except Exception as e:
+        print(f"Error updating homepage section: {e}")
+        raise HTTPException(status_code=500, detail="Error updating homepage section")
+
+@api_router.put("/homepage/sections/reorder")
+async def reorder_homepage_sections(sections: List[dict], current_user: User = Depends(get_current_user)):
+    """Reorder homepage sections"""
+    try:
+        async with get_db_connection() as (connection, cursor):
+            for section in sections:
+                await cursor.execute(
+                    "UPDATE homepage_sections SET section_order = %s WHERE id = %s",
+                    (section['section_order'], section['id'])
+                )
+        return {"message": "Sections reordered successfully"}
+    except Exception as e:
+        print(f"Error reordering homepage sections: {e}")
+        raise HTTPException(status_code=500, detail="Error reordering homepage sections")
+
 @api_router.post("/payments/paypal/create")
 async def create_paypal_payment(booking_id: str, amount: float = None):
     """Create PayPal payment for a booking"""
