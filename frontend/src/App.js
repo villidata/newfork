@@ -40,6 +40,7 @@ const Home = () => {
   const [pages, setPages] = useState([]);
   const [galleryItems, setGalleryItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const helloWorldApi = async () => {
     try {
