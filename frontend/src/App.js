@@ -52,7 +52,8 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      console.log('Fetching data from APIs...');
+      console.log('fetchData started, loading state should be true');
+      console.log('Current loading state:', loading);
       
       // Use Promise.all but with proper timeout handling
       const responses = await Promise.all([
@@ -63,8 +64,10 @@ const Home = () => {
         fetch(`${API}/gallery?featured_only=false`).then(res => res.ok ? res.json() : [])
       ]);
       
+      console.log('API responses received, processing data...');
       const [servicesData, staffData, settingsData, pagesData, galleryData] = responses;
       
+      console.log('Setting state data...');
       setServices(servicesData || []);
       setStaff(staffData || []);
       setSettings(settingsData || {});
@@ -81,6 +84,7 @@ const Home = () => {
     } catch (error) {
       console.error('Error fetching data:', error);
       // Set fallback data
+      console.log('Setting fallback data...');
       setServices([
         { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" },
         { name: "Skæg trimning", duration_minutes: 20, price: 200, category: "beard", icon: "🪒" }
@@ -106,7 +110,9 @@ const Home = () => {
       setPages([]);
       setGalleryItems([]);
     } finally {
+      console.log('fetchData completed, setting loading to false');
       setLoading(false);
+      console.log('Loading state should now be false');
     }
   };
 
