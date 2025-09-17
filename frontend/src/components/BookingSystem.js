@@ -41,9 +41,19 @@ const BookingSystem = ({ onClose }) => {
     notes: ''
   });
   
+  // Home service info
+  const [isHomeService, setIsHomeService] = useState(false);
+  const [homeServiceInfo, setHomeServiceInfo] = useState({
+    address: '',
+    city: '',
+    postalCode: '',
+    specialInstructions: ''
+  });
+  
   // Payment info
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [settings, setSettings] = useState({});
 
   useEffect(() => {
     fetchStaff();
