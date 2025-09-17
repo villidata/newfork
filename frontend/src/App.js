@@ -51,35 +51,80 @@ const Home = () => {
   };
 
   const fetchData = async () => {
-    console.log('Starting fetchData...');
-    setLoading(false); // Immediately set loading to false to test if this fixes the issue
-    
-    // Simple fallback data for testing
-    setServices([
-      { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" }
-    ]);
-    setStaff([
-      { 
-        id: "test-1",
-        name: "Test Barber", 
-        bio: "Test description",
-        experience_years: 5,
-        specialties: ["Haircut"],
-        instagram_url: "https://instagram.com/test",
-        facebook_url: "https://facebook.com/test",
-        avatar_url: ""
+    try {
+      console.log('Fetching data from APIs...');
+      
+      // Fetch each API individually with fallbacks
+      try {
+        const servicesRes = await axios.get(`${API}/services`, { timeout: 5000 });
+        setServices(servicesRes.data || []);
+        console.log('Services loaded:', servicesRes.data?.length);
+      } catch (error) {
+        console.error('Services API failed:', error);
+        setServices([
+          { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" },
+          { name: "Skæg trimning", duration_minutes: 20, price: 200, category: "beard", icon: "🪒" }
+        ]);
       }
-    ]);
-    setSettings({
-      site_title: "Frisor LaFata",
-      hero_title: "Klassisk Barbering",
-      hero_subtitle: "i Hjertet af Byen",
-      hero_description: "Test description"
-    });
-    setPages([]);
-    setGalleryItems([]);
-    
-    console.log('Data set, loading should be false now');
+
+      try {
+        const staffRes = await axios.get(`${API}/staff`, { timeout: 5000 });
+        setStaff(staffRes.data || []);
+        console.log('Staff loaded:', staffRes.data?.length);
+      } catch (error) {
+        console.error('Staff API failed:', error);
+        setStaff([
+          { 
+            id: "1",
+            name: "Test Barber", 
+            bio: "Specialist i klassisk barbering",
+            experience_years: 5,
+            specialties: ["Klassisk klipning"],
+            instagram_url: "https://instagram.com/test",
+            facebook_url: "",
+            avatar_url: ""
+          }
+        ]);
+      }
+
+      try {
+        const settingsRes = await axios.get(`${API}/public/settings`, { timeout: 5000 });
+        setSettings(settingsRes.data || {});
+        console.log('Settings loaded');
+      } catch (error) {
+        console.error('Settings API failed:', error);
+        setSettings({
+          site_title: "Frisor LaFata",
+          hero_title: "Klassisk Barbering",
+          hero_subtitle: "i Hjertet af Byen",
+          hero_description: "Oplev den autentiske barber-oplevelse hos Frisor LaFata."
+        });
+      }
+
+      try {
+        const pagesRes = await axios.get(`${API}/public/pages`, { timeout: 5000 });
+        setPages(pagesRes.data || []);
+        console.log('Pages loaded:', pagesRes.data?.length);
+      } catch (error) {
+        console.error('Pages API failed:', error);
+        setPages([]);
+      }
+
+      try {
+        const galleryRes = await axios.get(`${API}/gallery?featured_only=false`, { timeout: 5000 });
+        setGalleryItems(galleryRes.data || []);
+        console.log('Gallery loaded:', galleryRes.data?.length);
+      } catch (error) {
+        console.error('Gallery API failed:', error);
+        setGalleryItems([]);
+      }
+
+      console.log('All data loaded successfully');
+    } catch (error) {
+      console.error('Critical error in fetchData:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
