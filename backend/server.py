@@ -1798,6 +1798,11 @@ async def get_public_homepage_sections():
     """Get enabled homepage sections for public display"""
     try:
         sections = await db.homepage_sections.find({"is_enabled": True}).sort("section_order", 1).to_list(length=None)
+        
+        # Remove MongoDB _id field from each section
+        for section in sections:
+            section.pop("_id", None)
+            
         return sections
     except Exception as e:
         print(f"Error getting public homepage sections: {e}")
