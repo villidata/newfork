@@ -694,25 +694,169 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
           placeholder="Staff member name"
         />
       </div>
+      
       <div>
-        <Label className="text-gold">Specialty</Label>
-        <Input
-          key={`specialty-${isEditing ? 'edit' : 'new'}`}
-          value={staffData.specialty || ''}
-          onChange={(e) => handleFieldChange('specialty', e.target.value)}
+        <Label className="text-gold">Bio</Label>
+        <Textarea
+          key={`bio-${isEditing ? 'edit' : 'new'}`}
+          value={staffData.bio || ''}
+          onChange={(e) => handleFieldChange('bio', e.target.value)}
           className="bg-black/50 border-gold/30 text-white"
-          placeholder="e.g., Classic haircuts"
+          placeholder="Brief bio or description"
+          rows={3}
         />
       </div>
+      
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label className="text-gold">Experience (years)</Label>
+          <Input
+            key={`experience_years-${isEditing ? 'edit' : 'new'}`}
+            type="number"
+            value={staffData.experience_years || 0}
+            onChange={(e) => handleFieldChange('experience_years', parseInt(e.target.value) || 0)}
+            className="bg-black/50 border-gold/30 text-white"
+            placeholder="5"
+          />
+        </div>
+        <div>
+          <Label className="text-gold">Phone</Label>
+          <Input
+            key={`phone-${isEditing ? 'edit' : 'new'}`}
+            value={staffData.phone || ''}
+            onChange={(e) => handleFieldChange('phone', e.target.value)}
+            className="bg-black/50 border-gold/30 text-white"
+            placeholder="+45 12 34 56 78"
+          />
+        </div>
+      </div>
+      
       <div>
-        <Label className="text-gold">Experience</Label>
+        <Label className="text-gold">Email</Label>
         <Input
-          key={`experience-${isEditing ? 'edit' : 'new'}`}
-          value={staffData.experience || ''}
-          onChange={(e) => handleFieldChange('experience', e.target.value)}
+          key={`email-${isEditing ? 'edit' : 'new'}`}
+          type="email"
+          value={staffData.email || ''}
+          onChange={(e) => handleFieldChange('email', e.target.value)}
           className="bg-black/50 border-gold/30 text-white"
-          placeholder="e.g., 5 years"
+          placeholder="email@example.com"
         />
+      </div>
+      
+      <div>
+        <Label className="text-gold">Specialties</Label>
+        <Input
+          key={`specialties-${isEditing ? 'edit' : 'new'}`}
+          value={Array.isArray(staffData.specialties) ? staffData.specialties.join(', ') : (staffData.specialties || '')}
+          onChange={(e) => {
+            const specialties = e.target.value.split(',').map(s => s.trim()).filter(s => s);
+            handleFieldChange('specialties', specialties);
+          }}
+          className="bg-black/50 border-gold/30 text-white"
+          placeholder="e.g., Classic cuts, Beard styling, Hair coloring"
+        />
+        <p className="text-xs text-gray-400 mt-1">Separate multiple specialties with commas</p>
+      </div>
+
+      {/* Social Media Section */}
+      <Separator className="bg-gold/20" />
+      <div>
+        <Label className="text-gold text-lg mb-4 block">Social Media Links</Label>
+        <div className="grid grid-cols-1 gap-3">
+          <div>
+            <Label className="text-gold text-sm flex items-center">
+              <Instagram className="h-4 w-4 mr-2" />
+              Instagram
+            </Label>
+            <Input
+              key={`instagram_url-${isEditing ? 'edit' : 'new'}`}
+              value={staffData.instagram_url || ''}
+              onChange={(e) => handleFieldChange('instagram_url', e.target.value)}
+              className="bg-black/50 border-gold/30 text-white"
+              placeholder="https://instagram.com/username"
+            />
+          </div>
+          
+          <div>
+            <Label className="text-gold text-sm flex items-center">
+              <Facebook className="h-4 w-4 mr-2" />
+              Facebook
+            </Label>
+            <Input
+              key={`facebook_url-${isEditing ? 'edit' : 'new'}`}
+              value={staffData.facebook_url || ''}
+              onChange={(e) => handleFieldChange('facebook_url', e.target.value)}
+              className="bg-black/50 border-gold/30 text-white"
+              placeholder="https://facebook.com/username"
+            />
+          </div>
+          
+          <div>
+            <Label className="text-gold text-sm flex items-center">
+              <Linkedin className="h-4 w-4 mr-2" />
+              LinkedIn
+            </Label>
+            <Input
+              key={`linkedin_url-${isEditing ? 'edit' : 'new'}`}
+              value={staffData.linkedin_url || ''}
+              onChange={(e) => handleFieldChange('linkedin_url', e.target.value)}
+              className="bg-black/50 border-gold/30 text-white"
+              placeholder="https://linkedin.com/in/username"
+            />
+          </div>
+          
+          <div>
+            <Label className="text-gold text-sm flex items-center">
+              <Youtube className="h-4 w-4 mr-2" />
+              YouTube
+            </Label>
+            <Input
+              key={`youtube_url-${isEditing ? 'edit' : 'new'}`}
+              value={staffData.youtube_url || ''}
+              onChange={(e) => handleFieldChange('youtube_url', e.target.value)}
+              className="bg-black/50 border-gold/30 text-white"
+              placeholder="https://youtube.com/@username"
+            />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-gold text-sm">TikTok</Label>
+              <Input
+                key={`tiktok_url-${isEditing ? 'edit' : 'new'}`}
+                value={staffData.tiktok_url || ''}
+                onChange={(e) => handleFieldChange('tiktok_url', e.target.value)}
+                className="bg-black/50 border-gold/30 text-white"
+                placeholder="https://tiktok.com/@username"
+              />
+            </div>
+            
+            <div>
+              <Label className="text-gold text-sm">X (Twitter)</Label>
+              <Input
+                key={`twitter_url-${isEditing ? 'edit' : 'new'}`}
+                value={staffData.twitter_url || ''}
+                onChange={(e) => handleFieldChange('twitter_url', e.target.value)}
+                className="bg-black/50 border-gold/30 text-white"
+                placeholder="https://x.com/username"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <Label className="text-gold text-sm flex items-center">
+              <Globe className="h-4 w-4 mr-2" />
+              Personal Website
+            </Label>
+            <Input
+              key={`website_url-${isEditing ? 'edit' : 'new'}`}
+              value={staffData.website_url || ''}
+              onChange={(e) => handleFieldChange('website_url', e.target.value)}
+              className="bg-black/50 border-gold/30 text-white"
+              placeholder="https://yourwebsite.com"
+            />
+          </div>
+        </div>
       </div>
       
       <div>
