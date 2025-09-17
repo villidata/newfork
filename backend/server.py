@@ -508,6 +508,11 @@ Best regards,
     youtube_enabled: bool = False
     youtube_channel_url: str = ""
     youtube_embed_code: str = ""
+    # Booking System Settings
+    booking_system_enabled: bool = True
+    home_service_enabled: bool = True
+    home_service_fee: float = 150.00
+    home_service_description: str = "Vi kommer til dig! Oplev professionel barbering i dit eget hjem."
     # Booking Reminder Email Template
     reminder_subject_template: str = "Appointment Reminder - {{business_name}}"
     reminder_body_template: str = """Dear {{customer_name}},
