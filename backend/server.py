@@ -1844,14 +1844,16 @@ async def reorder_homepage_sections(reorder_data: HomepageSectionReorder, curren
     """Reorder homepage sections"""
     try:
         for section in reorder_data.sections:
-            await db.homepage_sections.update_one(
+            result = await db.homepage_sections.update_one(
                 {"id": section['id']},
                 {"$set": {"section_order": section['section_order']}}
             )
+            if result.matched_count == 0:
+                print(f"Warning: Section with id '{section['id']}' not found")
         return {"message": "Sections reordered successfully"}
     except Exception as e:
         print(f"Error reordering homepage sections: {e}")
-        raise HTTPException(status_code=500, detail="Error reordering homepage sections")
+        raise HTTPException(status_code=500, detail=f"Error reordering homepage sections: {str(e)}")
 
 @api_router.post("/payments/paypal/create")
 async def create_paypal_payment(booking_id: str, amount: float = None):
