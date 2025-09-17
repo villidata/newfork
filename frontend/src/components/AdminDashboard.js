@@ -22,6 +22,7 @@ import GalleryManager from './GalleryManager';
 import RevenueDashboard from './RevenueDashboard';
 import BreakManager from './BreakManager';
 import IconSelector from './IconSelector';
+import HomepageEditor from './HomepageEditor';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
