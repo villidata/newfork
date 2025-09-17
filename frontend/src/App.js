@@ -246,18 +246,20 @@ const Home = () => {
             </p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              size="lg" 
-              className="bg-gold text-black hover:bg-gold/90 text-lg px-8 py-3 font-semibold"
-              onClick={() => setShowBooking(true)}
-            >
-              Book din tid nu
-            </Button>
-            <Button variant="outline" size="lg" className="border-gold text-gold hover:bg-gold hover:text-black text-lg px-8 py-3">
-              Se vores tjenester
-            </Button>
-          </div>
+          {settings.booking_system_enabled !== false && (
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button 
+                size="lg" 
+                className="bg-gold text-black hover:bg-gold/90 text-lg px-8 py-3 font-semibold"
+                onClick={() => setShowBooking(true)}
+              >
+                Book din tid nu
+              </Button>
+              <Button variant="outline" size="lg" className="border-gold text-gold hover:bg-gold hover:text-black text-lg px-8 py-3">
+                Se vores tjenester
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 
