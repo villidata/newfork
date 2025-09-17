@@ -509,29 +509,65 @@ frontend:
           agent: "testing"
           comment: "COMPREHENSIVE TESTING COMPLETED: ✅ Gallery display functionality working perfectly on public website! VERIFIED IMPLEMENTATION: 1) 'Galleri' navigation link present in main menu (line 122), 2) Gallery section properly positioned between Staff and Contact sections (lines 263-343), 3) Gallery data fetching working via axios.get('/api/gallery?featured_only=false') (line 42), 4) Before/after images displayed in grid layout with proper badges ('Før' and 'Efter'), 5) Featured items showing star badges correctly, 6) Navigation link scrolling functionality working (scrolled from 2628px to 2854px), 7) Gallery API returning data successfully - found 1 gallery item with title 'test', before/after images, service_type 'beard', and is_featured=true. FALLBACK MESSAGE: When no items exist, shows 'Galleri kommer snart' message as expected. Gallery items created in admin are successfully displaying on public website. The original issue has been completely resolved."
 
-  - task: "Gallery image display fix - custom API endpoint"
+  - task: "Home Service Booking Feature - Customer Flow"
     implemented: true
-    working: true
-    file: "/app/backend/server.py"
+    working: "NA"
+    file: "/app/frontend/src/components/BookingSystem.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
-          agent: "testing"
-          comment: "GALLERY IMAGE DISPLAY FIX SUCCESSFUL: ✅ The broken image icon issue has been completely resolved! IMPLEMENTED FIX: 1) Custom image serving endpoint `/api/uploads/{file_type}/{filename}` added to backend (lines 1372-1409) with correct MIME type detection and content-type headers, 2) All image upload endpoints updated to generate URLs using new API route (/api/uploads/images/ instead of /uploads/images/), 3) Database URLs successfully updated from old static path to new API route, 4) New endpoint serves images with proper content-type headers (image/jpeg) instead of text/html from proxy/ingress. COMPREHENSIVE TESTING RESULTS: ✅ Gallery images now display correctly (no broken icons), ✅ Before/after images loading with proper dimensions (1080x1350, 884x884), ✅ Image URLs use new API route (/api/uploads/images/), ✅ Content-type headers correct (image/jpeg), ✅ Direct API endpoint access working, ✅ Visual confirmation via screenshot shows properly displayed gallery images. The original proxy/ingress content-type override issue has been bypassed with the custom API endpoint solution."
+        - working: "NA"
+          agent: "main"
+          comment: "Home service booking feature implemented in BookingSystem component. Customer can select home service option with checkbox, extra fee calculation, and address collection form. Ready for comprehensive testing."
 
-  - task: "Comprehensive image display testing for all image types"
+  - task: "Home Service Booking Feature - Address Collection"
     implemented: true
-    working: true
-    file: "/app/backend/server.py"
+    working: "NA"
+    file: "/app/frontend/src/components/BookingSystem.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
-          agent: "testing"
-          comment: "COMPREHENSIVE IMAGE DISPLAY TESTING COMPLETED: ✅ FINAL SUCCESS - ALL image types now display correctly on the Frisor LaFata website! ISSUE IDENTIFIED AND RESOLVED: User reported that only gallery and staff images were fixed, but other images still didn't display properly. Found that some images in database still used old URL format (frisor-admin.preview.emergentagent.com/uploads/) instead of new API endpoint format (stylista-admin.preview.emergentagent.com/api/uploads/). FIXED IMAGES: 1) Hero image in site settings: Updated from https://frisor-admin.preview.emergentagent.com/uploads/images/655c3d9c-d2d8-4e68-85f9-73c380f97228.jpg to /api/uploads/images/ endpoint, 2) Staff avatar: Updated from https://frisor-admin.preview.emergentagent.com/uploads/avatars/ffd56389-f2ee-4199-b2c7-dd7cfc293b1d.jpg to /api/uploads/avatars/ endpoint. COMPREHENSIVE VERIFICATION RESULTS: ✅ Hero image loads successfully (1080x1350), ✅ Staff avatar loads successfully (1080x1350), ✅ Gallery before/after images working (already fixed), ✅ All images use new API endpoint format, ✅ NO BROKEN IMAGES DETECTED anywhere on site, ✅ API endpoints return 200 status with correct content-type (image/jpeg), ✅ Both public homepage and admin dashboard show all images correctly. The user's original issue has been completely resolved - ALL image types now work perfectly across the entire website."
+        - working: "NA"
+          agent: "main"
+          comment: "Address collection form implemented with fields for Address, City, Postal Code, and Special Instructions. Form appears when home service checkbox is selected. Ready for testing."
+
+  - task: "Home Service Booking Feature - Fee Calculation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/BookingSystem.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Home service fee calculation implemented. Default +150 DKK fee added to total price when home service is selected. Fee amount configurable through admin settings. Ready for testing."
+
+  - task: "Booking System Toggle Feature - Admin Settings"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/AdminDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Booking System settings tab implemented in admin dashboard. Admin can toggle 'Enable Online Booking System' and 'Enable Home Service' options. Home service fee and description configurable. Ready for testing."
+
+  - task: "Booking System Toggle Feature - Public Website Response"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Public website responds to booking system settings. When booking_system_enabled is false, booking buttons are hidden and appropriate message is shown. Ready for testing."
 
 agent_communication:
     - agent: "main"
