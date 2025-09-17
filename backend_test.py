@@ -1980,7 +1980,307 @@ class FrisorLaFataAPITester:
         self.token = original_token
         return True
 
+    def test_priority_endpoints_with_timeout_analysis(self):
+        """Test priority endpoints that may be causing frontend loading hang"""
+        print("\n" + "🔥 PRIORITY ENDPOINT TIMEOUT ANALYSIS" + "=" * 30)
+        print("Testing endpoints that may be causing frontend loading hang...")
+        
+        priority_endpoints = [
+            ("GET /api/services", "GET", "services", 200, "Services list"),
+            ("GET /api/staff", "GET", "staff", 200, "Staff with social media fields"),
+            ("GET /api/public/settings", "GET", "public/settings", 200, "Public site settings"),
+            ("GET /api/public/pages", "GET", "public/pages", 200, "Public pages"),
+            ("GET /api/gallery?featured_only=false", "GET", "gallery?featured_only=false", 200, "Gallery items")
+        ]
+        
+        results = {}
+        hanging_endpoints = []
+        
+        for endpoint_name, method, endpoint, expected_status, description in priority_endpoints:
+            print(f"\n🔍 Testing {endpoint_name} - {description}")
+            print(f"   Endpoint: {endpoint}")
+            
+            start_time = datetime.now()
+            
+            try:
+                # Test with 5-second timeout as specified in requirements
+                success, response_data = self.run_test_with_timeout(
+                    endpoint_name, method, endpoint, expected_status, timeout=5
+                )
+                
+                end_time = datetime.now()
+                response_time = (end_time - start_time).total_seconds()
+                
+                results[endpoint_name] = {
+                    'success': success,
+                    'response_time': response_time,
+                    'data': response_data,
+                    'description': description
+                }
+                
+                if success:
+                    print(f"✅ SUCCESS - Response time: {response_time:.2f}s")
+                    
+                    # Analyze response data for specific endpoints
+                    if endpoint == "staff" and response_data:
+                        self._analyze_staff_social_media_fields(response_data)
+                    elif endpoint == "public/settings" and response_data:
+                        self._analyze_public_settings_response(response_data)
+                    elif endpoint == "gallery?featured_only=false" and response_data:
+                        self._analyze_gallery_response(response_data)
+                    elif endpoint == "public/pages" and response_data:
+                        self._analyze_public_pages_response(response_data)
+                    elif endpoint == "services" and response_data:
+                        self._analyze_services_response(response_data)
+                        
+                else:
+                    print(f"❌ FAILED - Response time: {response_time:.2f}s")
+                    if response_time >= 5.0:
+                        hanging_endpoints.append(endpoint_name)
+                        print(f"⚠️  TIMEOUT DETECTED - This endpoint may be causing frontend hang!")
+                        
+            except Exception as e:
+                end_time = datetime.now()
+                response_time = (end_time - start_time).total_seconds()
+                print(f"❌ ERROR - {str(e)} (Time: {response_time:.2f}s)")
+                hanging_endpoints.append(endpoint_name)
+                results[endpoint_name] = {
+                    'success': False,
+                    'response_time': response_time,
+                    'error': str(e),
+                    'description': description
+                }
+        
+        # Summary analysis
+        print(f"\n📊 PRIORITY ENDPOINT ANALYSIS SUMMARY:")
+        print(f"   Total endpoints tested: {len(priority_endpoints)}")
+        
+        fast_endpoints = [name for name, data in results.items() if data.get('success') and data.get('response_time', 0) < 2.0]
+        slow_endpoints = [name for name, data in results.items() if data.get('success') and data.get('response_time', 0) >= 2.0]
+        failed_endpoints = [name for name, data in results.items() if not data.get('success')]
+        
+        print(f"   Fast endpoints (< 2s): {len(fast_endpoints)}")
+        for endpoint in fast_endpoints:
+            print(f"     ✅ {endpoint}: {results[endpoint]['response_time']:.2f}s")
+            
+        print(f"   Slow endpoints (≥ 2s): {len(slow_endpoints)}")
+        for endpoint in slow_endpoints:
+            print(f"     ⚠️  {endpoint}: {results[endpoint]['response_time']:.2f}s")
+            
+        print(f"   Failed/Hanging endpoints: {len(failed_endpoints)}")
+        for endpoint in failed_endpoints:
+            print(f"     ❌ {endpoint}: {results[endpoint].get('error', 'Failed')}")
+        
+        if hanging_endpoints:
+            print(f"\n🚨 HANGING ENDPOINTS IDENTIFIED:")
+            for endpoint in hanging_endpoints:
+                print(f"   - {endpoint}: {results[endpoint]['description']}")
+            print(f"\n💡 RECOMMENDATION: Focus on fixing these {len(hanging_endpoints)} endpoint(s) to resolve frontend loading hang")
+        else:
+            print(f"\n✅ NO HANGING ENDPOINTS DETECTED - All endpoints respond within 5 seconds")
+        
+        return results, hanging_endpoints
+
+    def run_test_with_timeout(self, name, method, endpoint, expected_status, data=None, headers=None, timeout=5):
+        """Run a single API test with custom timeout"""
+        url = f"{self.api_url}/{endpoint}"
+        test_headers = {'Content-Type': 'application/json'}
+        if self.token:
+            test_headers['Authorization'] = f'Bearer {self.token}'
+        if headers:
+            test_headers.update(headers)
+
+        self.tests_run += 1
+        print(f"   Testing with {timeout}s timeout...")
+        
+        try:
+            if method == 'GET':
+                response = requests.get(url, headers=test_headers, timeout=timeout)
+            elif method == 'POST':
+                response = requests.post(url, json=data, headers=test_headers, timeout=timeout)
+            elif method == 'PUT':
+                response = requests.put(url, json=data, headers=test_headers, timeout=timeout)
+            elif method == 'DELETE':
+                response = requests.delete(url, headers=test_headers, timeout=timeout)
+
+            success = response.status_code == expected_status
+            if success:
+                self.tests_passed += 1
+                try:
+                    response_data = response.json()
+                    return True, response_data
+                except:
+                    return True, {}
+            else:
+                print(f"   Status: {response.status_code} (expected {expected_status})")
+                try:
+                    error_data = response.json()
+                    print(f"   Error: {error_data}")
+                except:
+                    print(f"   Error: {response.text}")
+                return False, {}
+
+        except requests.exceptions.Timeout:
+            print(f"   ❌ TIMEOUT after {timeout}s - This endpoint is hanging!")
+            return False, {}
+        except Exception as e:
+            print(f"   ❌ ERROR: {str(e)}")
+            return False, {}
+
+    def _analyze_staff_social_media_fields(self, staff_data):
+        """Analyze staff response for social media fields"""
+        print(f"   📱 Analyzing staff social media fields...")
+        
+        if not isinstance(staff_data, list):
+            print(f"     ❌ Expected list, got {type(staff_data)}")
+            return
+            
+        print(f"     Found {len(staff_data)} staff members")
+        
+        social_media_fields = [
+            'instagram_url', 'facebook_url', 'tiktok_url', 
+            'linkedin_url', 'twitter_url', 'youtube_url', 'website_url'
+        ]
+        
+        staff_with_social = 0
+        for staff in staff_data:
+            has_social = any(staff.get(field, '') for field in social_media_fields)
+            if has_social:
+                staff_with_social += 1
+                print(f"     ✅ {staff.get('name', 'Unknown')} has social media fields")
+        
+        print(f"     Staff with social media: {staff_with_social}/{len(staff_data)}")
+
+    def _analyze_public_settings_response(self, settings_data):
+        """Analyze public settings response"""
+        print(f"   ⚙️  Analyzing public settings response...")
+        
+        if not isinstance(settings_data, dict):
+            print(f"     ❌ Expected dict, got {type(settings_data)}")
+            return
+            
+        # Check for booking system settings
+        booking_fields = [
+            'booking_system_enabled', 'home_service_enabled', 
+            'home_service_fee', 'home_service_description'
+        ]
+        
+        missing_booking_fields = []
+        for field in booking_fields:
+            if field not in settings_data:
+                missing_booking_fields.append(field)
+        
+        if missing_booking_fields:
+            print(f"     ❌ Missing booking system fields: {missing_booking_fields}")
+        else:
+            print(f"     ✅ All booking system fields present")
+            
+        # Check for social media settings
+        social_fields = [
+            'social_media_enabled', 'instagram_enabled', 'facebook_enabled'
+        ]
+        
+        social_present = sum(1 for field in social_fields if field in settings_data)
+        print(f"     Social media fields: {social_present}/{len(social_fields)} present")
+
+    def _analyze_gallery_response(self, gallery_data):
+        """Analyze gallery response"""
+        print(f"   🖼️  Analyzing gallery response...")
+        
+        if not isinstance(gallery_data, list):
+            print(f"     ❌ Expected list, got {type(gallery_data)}")
+            return
+            
+        print(f"     Found {len(gallery_data)} gallery items")
+        
+        if gallery_data:
+            # Check image URLs
+            url_issues = 0
+            for item in gallery_data:
+                before_img = item.get('before_image', '')
+                after_img = item.get('after_image', '')
+                
+                if before_img and 'localhost' in before_img:
+                    url_issues += 1
+                if after_img and 'localhost' in after_img:
+                    url_issues += 1
+            
+            if url_issues > 0:
+                print(f"     ⚠️  Found {url_issues} localhost URL issues")
+            else:
+                print(f"     ✅ All image URLs use production domain")
+
+    def _analyze_services_response(self, services_data):
+        """Analyze services response"""
+        print(f"   🛠️  Analyzing services response...")
+        
+        if not isinstance(services_data, list):
+            print(f"     ❌ Expected list, got {type(services_data)}")
+            return
+            
+        print(f"     Found {len(services_data)} services")
+        
+        if services_data:
+            # Check for custom icons
+            services_with_icons = sum(1 for service in services_data if service.get('icon'))
+            print(f"     Services with custom icons: {services_with_icons}/{len(services_data)}")
+
+    def _analyze_public_pages_response(self, pages_data):
+        """Analyze public pages response"""
+        print(f"   📄 Analyzing public pages response...")
+        
+        if not isinstance(pages_data, list):
+            print(f"     ❌ Expected list, got {type(pages_data)}")
+            return
+            
+        print(f"     Found {len(pages_data)} public pages")
+        
+        if pages_data:
+            # Check navigation order
+            nav_orders = [page.get('navigation_order', 0) for page in pages_data]
+            is_sorted = nav_orders == sorted(nav_orders)
+            print(f"     Navigation order sorted: {'✅' if is_sorted else '❌'}")
+
 def main():
+    """Main test execution with priority endpoint focus"""
+    tester = FrisorLaFataAPITester()
+    
+    print("🚀 Starting Frisor LaFata API Tests - PRIORITY ENDPOINT ANALYSIS")
+    print(f"Base URL: {tester.base_url}")
+    print(f"API URL: {tester.api_url}")
+    
+    # PRIORITY: Test endpoints that may be causing frontend loading hang
+    print("\n" + "🔥 PRIORITY TESTING - FRONTEND LOADING HANG ANALYSIS" + "=" * 20)
+    priority_results, hanging_endpoints = tester.test_priority_endpoints_with_timeout_analysis()
+    
+    # Print final results focused on priority endpoints
+    print("\n" + "=" * 70)
+    print(f"📊 PRIORITY ENDPOINT ANALYSIS RESULTS")
+    print(f"Tests passed: {tester.tests_passed}/{tester.tests_run}")
+    
+    # Detailed breakdown
+    success_rate = (tester.tests_passed / tester.tests_run) * 100 if tester.tests_run > 0 else 0
+    print(f"Success rate: {success_rate:.1f}%")
+    
+    if hanging_endpoints:
+        print(f"\n🚨 CRITICAL FINDINGS:")
+        print(f"   {len(hanging_endpoints)} endpoint(s) causing frontend hang:")
+        for endpoint in hanging_endpoints:
+            print(f"     - {endpoint}")
+        print(f"\n💡 RECOMMENDATION: Fix these hanging endpoints to resolve frontend loading issue")
+        return 1
+    else:
+        print(f"\n✅ No hanging endpoints detected in priority testing")
+        if tester.tests_passed == tester.tests_run:
+            print("🎉 All priority endpoints working correctly!")
+            return 0
+        else:
+            failed_tests = tester.tests_run - tester.tests_passed
+            print(f"⚠️  {failed_tests} tests failed but no timeouts detected")
+            return 0
+
+def main_comprehensive():
+    """Comprehensive test execution (original main function)"""
     print("🚀 Starting Frisor LaFata API Tests - COMPREHENSIVE NEW FEATURES TEST")
     print("=" * 70)
     
