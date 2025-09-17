@@ -253,6 +253,14 @@ class Staff(BaseModel):
     email: str = ""
     avatar_url: str = ""
     portfolio_images: List[str] = Field(default_factory=list)
+    # Social Media Links
+    instagram_url: str = ""
+    facebook_url: str = ""
+    tiktok_url: str = ""
+    linkedin_url: str = ""
+    twitter_url: str = ""
+    youtube_url: str = ""
+    website_url: str = ""
     available_hours: dict = Field(default_factory=lambda: {
         "monday": {"start": "09:00", "end": "18:00", "enabled": True},
         "tuesday": {"start": "09:00", "end": "18:00", "enabled": True},
