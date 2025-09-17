@@ -212,32 +212,48 @@ const Home = () => {
               <h1 className="text-2xl font-bold text-gold font-serif">{settings.site_title}</h1>
             </div>
             <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-8">
-                <a href="#home" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Hjem</a>
-                <a href="#services" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Tjenester</a>
-                <a href="#staff" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Frisører</a>
-                <a href="#gallery" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Galleri</a>
-                {settings.social_media_enabled && (
-                  <a href="#social" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Social Media</a>
-                )}
-                {pages.slice(0, 3).map((page) => (
-                  <Link 
-                    key={page.id} 
-                    to={`/page/${page.slug}`} 
-                    className="text-gold hover:text-gold/80 transition-colors px-3 py-2"
-                  >
-                    {page.title}
-                  </Link>
-                ))}
-                <a href="#contact" className="text-gold hover:text-gold/80 transition-colors px-3 py-2">Kontakt</a>
-                {settings.booking_system_enabled !== false && (
-                  <Button 
-                    className="bg-gold text-black hover:bg-gold/90 font-semibold"
-                    onClick={() => setShowBooking(true)}
-                  >
-                    Book tid
-                  </Button>
-                )}
+              <div className="flex items-center space-x-6">
+                {/* Main Navigation Links - Fixed positions */}
+                <div className="flex items-center space-x-6">
+                  <a href="#home" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">Hjem</a>
+                  <a href="#services" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">Tjenester</a>
+                  <a href="#staff" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">Frisører</a>
+                  <a href="#gallery" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">Galleri</a>
+                  
+                  {/* Social Media Link - Fixed width container */}
+                  <div className="w-24 flex justify-center">
+                    {settings.social_media_enabled && (
+                      <a href="#social" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">Social</a>
+                    )}
+                  </div>
+                  
+                  {/* Dynamic Pages - Fixed width container for up to 3 pages */}
+                  <div className="flex items-center space-x-4 w-48 justify-center">
+                    {pages.slice(0, 3).map((page, index) => (
+                      <Link 
+                        key={page.id} 
+                        to={`/page/${page.slug}`} 
+                        className="text-gold hover:text-gold/80 transition-colors px-2 py-2 text-sm whitespace-nowrap"
+                      >
+                        {page.title}
+                      </Link>
+                    ))}
+                  </div>
+                  
+                  <a href="#contact" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">Kontakt</a>
+                </div>
+                
+                {/* Booking Button - Fixed width container */}
+                <div className="w-24 flex justify-center ml-4">
+                  {settings.booking_system_enabled !== false && (
+                    <Button 
+                      className="bg-gold text-black hover:bg-gold/90 font-semibold whitespace-nowrap px-4 py-2"
+                      onClick={() => setShowBooking(true)}
+                    >
+                      Book tid
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
