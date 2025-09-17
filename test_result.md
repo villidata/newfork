@@ -523,63 +523,78 @@ frontend:
 
   - task: "Home Service Booking Feature - Customer Flow"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/components/BookingSystem.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Home service booking feature implemented in BookingSystem component. Customer can select home service option with checkbox, extra fee calculation, and address collection form. Ready for comprehensive testing."
+        - working: false
+          agent: "testing"
+          comment: "TESTING BLOCKED: Home service feature cannot be tested due to critical backend issue. The public settings API endpoint (/api/public/settings) does not include booking system settings (booking_system_enabled, home_service_enabled, home_service_fee, home_service_description). Frontend cannot determine if home service is enabled. Additionally, booking system UI has stability issues with staff selection preventing full flow testing."
 
   - task: "Home Service Booking Feature - Address Collection"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/components/BookingSystem.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Address collection form implemented with fields for Address, City, Postal Code, and Special Instructions. Form appears when home service checkbox is selected. Ready for testing."
+        - working: false
+          agent: "testing"
+          comment: "TESTING BLOCKED: Cannot test address collection form because home service option is not visible in booking flow. Root cause: Backend public settings API missing home_service_enabled setting, so frontend doesn't know to show home service option."
 
   - task: "Home Service Booking Feature - Fee Calculation"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/components/BookingSystem.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Home service fee calculation implemented. Default +150 DKK fee added to total price when home service is selected. Fee amount configurable through admin settings. Ready for testing."
+        - working: false
+          agent: "testing"
+          comment: "TESTING BLOCKED: Cannot test fee calculation because home service option is not visible. Backend public settings API missing home_service_fee setting, so frontend uses hardcoded default instead of configured value."
 
   - task: "Booking System Toggle Feature - Admin Settings"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/components/AdminDashboard.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Booking System settings tab implemented in admin dashboard. Admin can toggle 'Enable Online Booking System' and 'Enable Home Service' options. Home service fee and description configurable. Ready for testing."
+        - working: false
+          agent: "testing"
+          comment: "TESTING BLOCKED: Cannot access admin dashboard due to known routing issue - /admin URL redirects to public homepage instead of showing admin login. Admin settings interface cannot be tested."
 
   - task: "Booking System Toggle Feature - Public Website Response"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Public website responds to booking system settings. When booking_system_enabled is false, booking buttons are hidden and appropriate message is shown. Ready for testing."
+        - working: false
+          agent: "testing"
+          comment: "TESTING BLOCKED: Cannot test booking system toggle because backend public settings API does not include booking_system_enabled setting. Frontend cannot determine if booking system should be enabled/disabled. Booking buttons are always visible regardless of admin settings."
 
 agent_communication:
     - agent: "main"
