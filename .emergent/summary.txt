@@ -1,114 +1,121 @@
 <analysis>
-The AI engineer's work trajectory details the development of the Frisor LaFata barbershop application, progressively adding significant features and addressing bugs. Initial tasks involved resolving staff avatar display issues, which required fixing backend static file serving, correcting hardcoded URLs, and updating database entries for existing avatars. This was followed by implementing a comprehensive page management system, enabling blog-style pages with a TinyMCE editor, dynamic navigation integration, and rich content capabilities. Subsequently, a robust email template system was added for booking confirmations, changes, and initial notifications. The booking management system was then enhanced with confirmation, rescheduling, double-booking prevention, and email notifications. Phase 1 focused on adding backend user account creation, a before/after gallery, and booking reminders. Phase 2 delivered a revenue tracking dashboard, break management, and staff portfolio enhancements. The current task involves debugging a recurring React input field focus loss issue in the staff editing form.
+The AI engineer's work primarily focused on progressively enhancing the Frisor LaFata barbershop application and resolving critical bugs. Initial efforts addressed React input field focus loss issues in forms (Staff and Pages) by refactoring components to prevent unnecessary re-renders using  and component extraction. A significant bug involving TinyMCE API key validation was resolved by configuring the editor for offline (JSDelivr CDN) use. Image display issues, caused by an infrastructure proxy overriding content-types, were fixed by implementing a custom backend image-serving endpoint and migrating all existing image URLs. New features included customizable service icons and a comprehensive social media feed section with admin configuration. A major architectural shift was initiated to migrate the database from MongoDB to MySQL, involving schema creation, driver installation, data migration, and partial backend endpoint conversion. The latest work involves adding home service booking options and a booking system toggle, which have been successfully implemented and tested. The current, immediate task is to implement a homepage editor with drag-and-drop functionality, with the first step being the installation of .
 </analysis>
 
 <product_requirements>
-The objective is to create a full-featured, mobile-friendly barbershop website with a retro black/gold aesthetic.
-**Core Features:** Homepage, subpages (services, about, contact) with responsive design. A robust booking system allowing customers to select services, staff, and view time slots with calendar integration, supporting business hours, staff availability, and sending customizable Danish email confirmations. Payment options include PayPal and pay-in-person.
-**Admin Functionality:** A comprehensive English admin dashboard for CRUD operations on bookings, staff, services, pages, and settings. This includes staff avatar upload, scheduling, content editing for frontend pages, and payment/email configuration.
-**Enhanced Features (Implemented):**
-*   **Page Management:** Blog-style pages with rich text (TinyMCE) editor, image/video support, categories, tags, dynamic navigation integration, and consistent styling.
-*   **Email Templates:** Customizable email templates for initial booking, confirmation, and booking changes.
-*   **Booking Management:** Confirmation/rescheduling options, double-booking prevention, and automated email notifications for status changes.
-*   **Backend User Accounts:** Admin functionality to create and manage user accounts for backend access.
-*   **Before/After Gallery:** Admin-managed gallery to showcase transformations.
-*   **Booking Reminders:** Automated 24h email reminders before appointments.
-*   **Revenue Tracking:** Dashboard for daily/weekly/monthly earnings.
-*   **Break Management:** Staff can block time for breaks.
-*   **Staff Portfolios:** Enhanced staff profiles with bio, experience, specialties, and portfolio images.
+The goal is to build a full-featured, mobile-friendly barbershop website (Frisor LaFata) with a retro black/gold aesthetic. Core features include a homepage, subpages (services, about, contact), a robust booking system (staff/service selection, time slots, calendar, customizable Danish email confirmations, PayPal/pay-in-person), and a comprehensive English admin dashboard for CRUD on bookings, staff, services, pages, and settings (staff avatar, scheduling, content editing, payment/email config).
+
+Implemented enhancements:
+- **Page Management:** Rich text (TinyMCE) editor, image/video, categories, tags, dynamic navigation.
+- **Email Templates:** Customizable initial booking, confirmation, and change emails.
+- **Booking Management:** Confirmation, rescheduling, double-booking prevention, automated notifications.
+- **Backend User Accounts:** Admin for user creation/management.
+- **Before/After Gallery:** Admin-managed gallery, publicly displayed.
+- **Booking Reminders:** Automated 24h email reminders.
+- **Revenue Tracking:** Dashboard for earnings.
+- **Break Management:** Staff time-blocking.
+- **Staff Portfolios:** Enhanced profiles with bio, experience, specialties, portfolio images.
+- **Customizable Service Icons:** Admin-selectable icons for services using free barber/salon icon packs.
+- **Social Media Feed:** Configurable options in admin settings, displayed on the main page.
+- **Home Service Booking:** Option to request barber home visits with address collection and fee.
+- **Booking System Toggle:** Admin setting to hide/show booking on the main site.
+- **Homepage Editor:** User-requested ability to edit, reorder, show/hide, and customize homepage sections.
 </product_requirements>
 
 <key_technical_concepts>
--   **Full-stack:** React.js (frontend), FastAPI (backend), MongoDB (database).
--   **UI/UX:** Shadcn UI, Tailwind CSS, responsive design, retro aesthetic.
--   **Data Handling:** Pydantic for models, JWT for authentication, Axios for API calls.
--   **Content Management:** TinyMCE for rich text editing.
--   **Payments:**  for PayPal integration.
--   **File Storage:** FastAPI  for serving uploaded content (avatars, page images/videos).
--   **State Management:** React , .
--   **Routing:** React Router DOM.
+- **Full-stack:** React.js (frontend), FastAPI (backend), MongoDB/MySQL (database).
+- **UI/UX:** Shadcn UI, Tailwind CSS, , responsive design.
+- **Data Handling:** Pydantic models, JWT authentication, Axios for API.
+- **Content Management:** TinyMCE for rich text.
+- **Payments:** .
+- **File Storage:** FastAPI static files, custom image serving endpoint.
+- **State Management:** React , , .
+- **Routing:** React Router DOM.
+- **Database Migration:** Transition from MongoDB (Motor) to MySQL (aiomysql/pymysql).
 </key_technical_concepts>
 
 <code_architecture>
-The application uses a React frontend, a FastAPI backend, and a MongoDB database.
+The application utilizes a React frontend, a FastAPI backend, and is currently migrating from a MongoDB database to MySQL.
 
 
 
 -   ****:
-    -   **Summary**: Core FastAPI application with API endpoints for all entities. Handles MongoDB, JWT auth, admin auth, and static file serving.
+    -   **Summary**: Core FastAPI application, API endpoints for all entities. Handles DB, JWT auth, admin auth.
     -   **Changes Made**:
-        *   Fixed hardcoded  to use .
-        *   Enhanced  model with categories, tags, featured image/video URLs.
-        *   Added  and  static file serving from  and .
-        *   Added endpoints for video uploads and fetching public pages.
-        *   Enhanced  model with multiple email template fields (, , , ).
-        *   Implemented  and  functions.
-        *   Enhanced  model with status, and made , ,  optional for backward compatibility.
-        *   Implemented booking confirmation, rescheduling, and double-booking prevention logic.
-        *   Added , ,  models and CRUD routes for backend user management.
-        *   Added  model and CRUD routes for the before/after gallery.
-        *   Added backend API for revenue analytics and  model with CRUD routes for break management.
-        *   Enhanced  model with , , , .
+        *   Enhanced , , , ,  models.
+        *   Added , ,  models and CRUD routes.
+        *   Implemented email sending, booking logic, revenue analytics.
+        *   **Crucially**: Modified to use MySQL connection (partially converted), imports .
+        *   Added custom image serving endpoint  to bypass proxy content-type issues.
+        *   Added homepage layout management endpoints.
+        *   Updated  to include social media, booking system toggles, home service settings.
+        *   Updated  models for home service fields.
+-   ** (NEW)**:
+    -   **Summary**: Centralized MySQL database connection pool and helper functions.
+    -   **Changes Made**: Created for MySQL integration.
+-   ** (NEW)**:
+    -   **Summary**: Defines the SQL schema for all application tables (users, staff, services, bookings, pages, gallery, site_settings, homepage_layout).
+    -   **Changes Made**: Created and updated to reflect new features (service icons, social media settings, booking options, homepage layout).
+-   ** (NEW)**:
+    -   **Summary**: Script to migrate existing data from MongoDB to the new MySQL database.
+    -   **Changes Made**: Created to transfer data for all collections to their respective MySQL tables.
 -   ****:
-    -   **Summary**: Main React component managing application routing.
-    -   **Changes Made**: Configured routes for  using  and updated navigation to use  for consistent SPA navigation. Fetches public pages for dynamic navigation.
+    -   **Summary**: Main React component managing application routing and public content display.
+    -   **Changes Made**: Configured routes for public pages. Integrated dynamic navigation. Added data fetching for gallery, social media, and site settings. Added new sections for Gallery and Social Media, conditionally displaying booking buttons based on settings. Updated service icon rendering logic.
 -   ****:
-    -   **Summary**: The main admin interface with tab-based navigation.
-    -   **Changes Made**:
-        *   Integrated new components for page management, booking management, user management, gallery management, revenue dashboard, and break management.
-        *   Created and imported  (replacing inline content).
-        *   Replaced inline  with .
-        *   Added , , ,  components as new tabs.
-        *   Fixed a bug where  component was undefined by adding .
-        *   Attempted to fix input focus loss in staff editing by modifying state updates.
+    -   **Summary**: Central admin interface with tab-based navigation.
+    -   **Changes Made**: Integrated new components for content, booking, user, gallery, revenue, and break management. **Refactored  out of **. Added  to service creation/edit forms. Added Social Media and Booking Settings tabs to .
 -   ****:
     -   **Summary**: Customer-facing booking process.
-    -   **Changes Made**: Updated booking submission to include customer information in the booking data.
--   ** (NEW)**:
-    -   **Summary**: Component to display dynamically created pages from the admin panel.
-    -   **Changes Made**: Fetches page content based on slug, renders rich text, includes dynamic navigation, and integrates the  as a modal for Book tid.
--   ** (NEW)**:
-    -   **Summary**: A reusable component integrating TinyMCE for rich text editing.
-    -   **Changes Made**: Implemented TinyMCE editor, configured to work offline to avoid API key warnings.
--   ** (NEW)**:
-    -   **Summary**: Component for managing pages content within the Admin Dashboard, using .
-    -   **Changes Made**: Implemented enhanced page creation/editing interface with tabs for content, settings, and media (featured image/video).
--   ** (NEW)**:
-    -   **Summary**: Replaces the old  in the Admin Dashboard, offering advanced booking management features.
-    -   **Changes Made**: Implemented professional card-based display, status management (Pending, Confirmed, Completed), reschedule/delete actions, and comprehensive booking details.
--   ** (NEW)**:
-    -   **Summary**: Component for creating and managing backend user accounts in the Admin Dashboard.
-    -   **Changes Made**: Displays users with roles (Admin), and provides edit/delete functionality.
--   ** (NEW)**:
-    -   **Summary**: Component for managing before/after gallery items in the Admin Dashboard.
-    -   **Changes Made**: Provides an interface to add gallery items (images).
--   ** (NEW)**:
-    -   **Summary**: Component for displaying revenue analytics in the Admin Dashboard.
-    -   **Changes Made**: Implemented filters (period, staff, dates), key metrics (total revenue, bookings, average value), and a revenue trend chart placeholder. Fixed  value issue.
--   ** (NEW)**:
-    -   **Summary**: Component for staff to schedule breaks in the Admin Dashboard.
-    -   **Changes Made**: Provides filters for staff and dates, and an interface to schedule breaks. Fixed  value issue.
+    -   **Changes Made**: Updated to fetch site settings (home service enabled/fee). Added UI fields for home service address, city, postal code, special instructions. Modified  to include home service fee. Updated booking submission data.
 -   ****:
-    -   **Summary**: Stores frontend environment variables, primarily .
-    -   **Changes Made**: Referenced for dynamic image URLs and API calls.
+    -   **Summary**: Reusable TinyMCE rich text editor component.
+    -   **Changes Made**: Configured for offline (self-hosted/CDN) use, removing API key validation. Uses JSDelivr CDN and GPL license.
 -   ****:
-    -   **Summary**: Contains backend environment variables (MONGO_URL, PayPal, email server).
-    -   **Changes Made**: Updated with PayPal and SMTP variables, which are now used by email functions.
+    -   **Summary**: Manages page content in the Admin Dashboard.
+    -   **Changes Made**: **Refactored  out of ** to fix input focus issues.
+-   ****:
+    -   **Summary**: Manages before/after gallery items.
+    -   **Changes Made**: Fixed  bug by changing empty  to  and updated logic to handle this.
+-   ** (NEW - Extracted from AdminDashboard.js)**:
+    -   **Summary**: Dedicated component for staff creation/editing forms.
+    -   **Changes Made**: Extracted from  to resolve input focus loss due to re-renders. Uses  for event handlers.
+-   ** (NEW - Extracted from ContentManager.js)**:
+    -   **Summary**: Dedicated component for page creation/editing forms.
+    -   **Changes Made**: Extracted from  to resolve input focus loss due to re-renders. Uses  for event handlers.
+-   ** (NEW)**:
+    -   **Summary**: Component to select icons from  for services.
+    -   **Changes Made**: Created to provide a visual icon picker.
+-   ** (NEW)**:
+    -   **Summary**: Placeholder component for future homepage layout editing.
+    -   **Changes Made**: Created for the upcoming feature.
+-   ****:
+    -   **Summary**: Stores frontend environment variables.
+    -   **Changes Made**: Referenced  for API calls.
+-   ****:
+    -   **Summary**: Contains backend environment variables.
+    -   **Changes Made**: Updated to include  and  for MySQL connection, replacing MongoDB variables.
 </code_architecture>
 
 <pending_tasks>
--   Resolve the input field focus loss bug in the Staff editing form within the Admin Dashboard.
--   Implement the remaining Phase 3 features (Loyalty points system, Recurring bookings, Gift Certificates, etc.).
+- Complete the conversion of  from MongoDB to MySQL (currently only key parts are converted, most database operations still need updating).
+- Resolve the recurring admin dashboard routing issues (redirects to homepage upon login attempts in automated tests).
+- Implement the Homepage Editor functionality, including drag-and-drop for sections.
+- Implement Phase 3 features (Loyalty points system, Recurring bookings, Gift Certificates, etc.).
 </pending_tasks>
 
 <current_work>
-The AI engineer is currently debugging a bug where input fields in the Staff editing form (likely within  or  if it were a separate file) lose focus after a single character input. This indicates a React re-rendering issue caused by incorrect state updates.
+The AI engineer is currently in the process of implementing a homepage customization system. This system will allow the user to reorder sections (drag & drop), edit content, show/hide sections, and customize styling.
 
-Previous attempts to fix this involved modifying the  function and the  handlers. The engineer identified that the  component's state update mechanism was likely causing the re-renders.
+Immediate actions before this summary included:
+1.  **Database Schema Update**: Modified  to include a  table for storing layout configurations.
+2.  **API Endpoints**: Added new FastAPI endpoints in  (, , ) to manage homepage layout data.
+3.  **Frontend Component Creation**: Created a new React component  within  as the interface for this feature.
+4.  **Dependency Installation**: The last action taken was planning to install  to enable the drag-and-drop functionality for reordering homepage sections.
 
-The immediate challenge is to interact with the UI to confirm the fix. The testing steps involved taking a screenshot and attempting to click the edit icon for a staff member. This attempt failed because the screenshot tool could not locate the edit button. The engineer is currently investigating why the edit button is not being detected and suspects it might be due to an older version of the Staff management component being rendered or an incorrect selector in the testing script.
+This work is part of a larger initiative to provide greater control over the main page's design and content. The backend infrastructure for storing layout information and exposing it via API is set up, and the frontend component structure is initiated.
 </current_work>
 
 <optional_next_step>
-The next step is to correctly identify and interact with the staff edit button in the UI to open the staff editing form.
+Install the  library to enable drag-and-drop functionality for the Homepage Editor.
 </optional_next_step>
