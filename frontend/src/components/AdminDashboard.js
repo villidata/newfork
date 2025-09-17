@@ -1712,6 +1712,85 @@ Best regards,
           </Card>
         </TabsContent>
 
+        <TabsContent value="booking" className="space-y-6">
+          <Card className="bg-gray-900/50 border-gold/20">
+            <CardHeader>
+              <CardTitle className="text-gold">Booking System Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* General Booking Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={settings.booking_system_enabled}
+                    onCheckedChange={(checked) => handleSettingChange('booking_system_enabled', checked)}
+                    className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                  />
+                  <Label className="text-gold font-semibold">Enable Online Booking System</Label>
+                </div>
+                <p className="text-gray-300 text-sm">
+                  When disabled, booking buttons will be hidden from the website and customers will need to contact you directly.
+                </p>
+              </div>
+
+              <Separator className="bg-gold/20" />
+
+              {/* Home Service Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={settings.home_service_enabled}
+                    onCheckedChange={(checked) => handleSettingChange('home_service_enabled', checked)}
+                    className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                  />
+                  <Label className="text-gold text-lg font-semibold">🏠 Enable Home Service</Label>
+                </div>
+                
+                {settings.home_service_enabled && (
+                  <div className="space-y-4 ml-6">
+                    <div>
+                      <Label className="text-gold">Home Service Fee (DKK)</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={settings.home_service_fee}
+                        onChange={(e) => handleSettingChange('home_service_fee', parseFloat(e.target.value) || 0)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="150.00"
+                      />
+                      <p className="text-xs text-gray-400 mt-1">Extra fee charged for home visits</p>
+                    </div>
+                    
+                    <div>
+                      <Label className="text-gold">Home Service Description</Label>
+                      <Textarea
+                        value={settings.home_service_description}
+                        onChange={(e) => handleSettingChange('home_service_description', e.target.value)}
+                        className="bg-black/50 border-gold/30 text-white"
+                        placeholder="Vi kommer til dig! Oplev professionel barbering i dit eget hjem."
+                        rows={3}
+                      />
+                      <p className="text-xs text-gray-400 mt-1">Shown to customers when they select home service option</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Booking Instructions */}
+              <div className="bg-gray-800/50 p-4 rounded-lg">
+                <h4 className="text-gold font-semibold mb-2">How it works:</h4>
+                <div className="space-y-1 text-sm text-gray-300">
+                  <p>📅 <strong>Booking System:</strong> Control whether customers can book online or must contact you directly</p>
+                  <p>🏠 <strong>Home Service:</strong> Allow customers to request barber visits to their home</p>
+                  <p>💰 <strong>Pricing:</strong> Automatically adds home service fee to total price</p>
+                  <p>📍 <strong>Address Collection:</strong> Collects customer address and special instructions for home visits</p>
+                  <p>💡 <strong>Tip:</strong> You can temporarily disable online booking during holidays or busy periods</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
       </Tabs>
     </div>
   );
