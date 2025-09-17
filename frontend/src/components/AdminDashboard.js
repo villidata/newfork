@@ -1017,7 +1017,12 @@ Best regards,
     // YouTube
     youtube_enabled: false,
     youtube_channel_url: '',
-    youtube_embed_code: ''
+    youtube_embed_code: '',
+    // Booking System Settings
+    booking_system_enabled: true,
+    home_service_enabled: true,
+    home_service_fee: 150.00,
+    home_service_description: 'Vi kommer til dig! Oplev professionel barbering i dit eget hjem.'
   });
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
