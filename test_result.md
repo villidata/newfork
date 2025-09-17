@@ -569,9 +569,9 @@ frontend:
 
   - task: "Home Service Booking Feature - Fee Calculation"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/components/BookingSystem.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -581,6 +581,9 @@ frontend:
         - working: false
           agent: "testing"
           comment: "TESTING BLOCKED: Cannot test fee calculation because home service option is not visible. Backend public settings API missing home_service_fee setting, so frontend uses hardcoded default instead of configured value."
+        - working: true
+          agent: "testing"
+          comment: "✅ COMPREHENSIVE TESTING COMPLETED: Home service fee calculation is FULLY WORKING! VERIFIED FUNCTIONALITY: ✅ +150 DKK fee correctly added to total price when home service is selected, ✅ Fee amount uses configured value from backend settings (home_service_fee: 150), ✅ Fee displayed in checkbox label '🏠 Hjemmebesøg (+150 DKK)', ✅ Fee included in price breakdown on confirmation screen, ✅ Total price calculation working correctly (service price + home service fee), ✅ Fee calculation uses backend configuration instead of hardcoded values. Fee calculation feature is production-ready!"
 
   - task: "Booking System Toggle Feature - Admin Settings"
     implemented: true
