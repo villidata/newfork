@@ -212,6 +212,8 @@ const Home = () => {
               <Scissors className="h-8 w-8 text-gold mr-3" />
               <h1 className="text-2xl font-bold text-gold font-serif">{settings.site_title}</h1>
             </div>
+            
+            {/* Desktop Navigation */}
             <div className="hidden md:block">
               <div className="flex items-center space-x-6">
                 {/* Main Navigation Links - Fixed positions */}
@@ -257,7 +259,56 @@ const Home = () => {
                 </div>
               </div>
             </div>
+            
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="text-gold hover:text-gold/80 transition-colors p-2"
+              >
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            </div>
           </div>
+          
+          {/* Mobile Navigation Menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden bg-black/95 border-t border-gold/20">
+              <div className="px-2 pt-2 pb-3 space-y-1">
+                <a href="#home" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>Hjem</a>
+                <a href="#services" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>Tjenester</a>
+                <a href="#staff" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>Frisører</a>
+                <a href="#gallery" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>Galleri</a>
+                {settings.social_media_enabled && (
+                  <a href="#social" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>Social Media</a>
+                )}
+                {pages.slice(0, 3).map((page) => (
+                  <Link 
+                    key={page.id} 
+                    to={`/page/${page.slug}`} 
+                    className="block text-gold hover:text-gold/80 transition-colors px-3 py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {page.title}
+                  </Link>
+                ))}
+                <a href="#contact" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>Kontakt</a>
+                {settings.booking_system_enabled !== false && (
+                  <div className="px-3 py-2">
+                    <Button 
+                      className="bg-gold text-black hover:bg-gold/90 font-semibold w-full"
+                      onClick={() => {
+                        setShowBooking(true);
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      Book tid
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </nav>
 
