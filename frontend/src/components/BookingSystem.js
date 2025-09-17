@@ -585,12 +585,34 @@ const BookingSystem = ({ onClose }) => {
                           </div>
                         ) : null;
                       })}
+                      {isHomeService && (
+                        <div className="flex justify-between text-gold">
+                          <span>🏠 Hjemmeservice</span>
+                          <span>+{settings.home_service_fee || 150} DKK</span>
+                        </div>
+                      )}
                       <Separator className="my-2 bg-gold/20" />
                       <div className="flex justify-between font-bold text-gold">
                         <span>I alt ({getTotalDuration()} min):</span>
                         <span>{getTotalPrice()} DKK</span>
                       </div>
                     </div>
+                    
+                    {isHomeService && (
+                      <div className="mt-4">
+                        <Label className="text-gold">Service adresse:</Label>
+                        <div className="text-white">
+                          <p>{homeServiceInfo.address}</p>
+                          <p>{homeServiceInfo.postalCode} {homeServiceInfo.city}</p>
+                          {homeServiceInfo.specialInstructions && (
+                            <p className="text-gray-300 text-sm mt-1">
+                              Bemærkninger: {homeServiceInfo.specialInstructions}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   </div>
                 </div>
 
