@@ -2077,7 +2077,12 @@ def main():
     tester.test_gallery_url_construction_analysis()
     tester.test_gallery_comprehensive()
     
-    # Test 17: PayPal payment
+    # Test 17: NEW FEATURE - Homepage Editor API Tests
+    print("\n" + "🏠 HOMEPAGE EDITOR API TESTS (NEW FEATURE)" + "=" * 25)
+    tester.test_homepage_editor_comprehensive()
+    tester.test_homepage_authentication_requirements()
+    
+    # Test 18: PayPal payment
     print("\n" + "💳 PAYMENT SYSTEM TESTS" + "=" * 40)
     tester.test_paypal_payment()
     
