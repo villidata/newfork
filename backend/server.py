@@ -1695,6 +1695,10 @@ async def get_homepage_sections(current_user: User = Depends(get_current_user)):
         # Use MongoDB for now until MySQL is properly configured
         sections = await db.homepage_sections.find().sort("section_order", 1).to_list(length=None)
         
+        # Remove MongoDB _id field from each section
+        for section in sections:
+            section.pop("_id", None)
+        
         # If no sections exist, create default sections
         if not sections:
             default_sections = [
