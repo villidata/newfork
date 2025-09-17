@@ -613,7 +613,6 @@ const BookingSystem = ({ onClose }) => {
                       </div>
                     )}
                   </div>
-                  </div>
                 </div>
 
                 <Separator className="bg-gold/20" />
