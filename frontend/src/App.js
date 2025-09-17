@@ -142,73 +142,127 @@ const Home = () => {
   };
 
   useEffect(() => {
-    console.log('useEffect triggered, starting fetchData');
-    // Set loading to false immediately and load fallback data
+    console.log('useEffect triggered, starting data fetch');
     setLoading(false);
     
-    // Set sample data to demonstrate the navigation and staff improvements
-    setTimeout(() => {
-      setServices([
-        { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" },
-        { name: "Skæg trimning", duration_minutes: 20, price: 200, category: "beard", icon: "🪒" },
-        { name: "Vask & styling", duration_minutes: 45, price: 400, category: "styling", icon: "💧" },
-        { name: "Farvning", duration_minutes: 60, price: 600, category: "coloring", icon: "🎨" }
-      ]);
-      
-      setStaff([
-        { 
-          id: "1",
-          name: "Kristofer Bruno la Fata", 
-          bio: "Specialist i klassisk barbering med passion for detaljer",
-          experience_years: 8,
-          specialties: ["Classic cuts", "Beard styling", "Hot towel shaves"],
-          instagram_url: "https://instagram.com/kristofer_barber",
-          facebook_url: "https://facebook.com/kristofer.barber", 
-          linkedin_url: "",
-          youtube_url: "",
-          tiktok_url: "",
-          twitter_url: "",
-          website_url: "",
-          avatar_url: ""
-        },
-        { 
-          id: "2",
-          name: "Marcus Nielsen", 
-          bio: "Modern styling ekspert med 12 års erfaring",
-          experience_years: 12,
-          specialties: ["Modern cuts", "Hair coloring", "Styling"],
-          instagram_url: "https://instagram.com/marcus_hair",
-          facebook_url: "",
-          linkedin_url: "https://linkedin.com/in/marcus-nielsen",
-          youtube_url: "https://youtube.com/@marcushair",
-          tiktok_url: "",
-          twitter_url: "",
-          website_url: "",
-          avatar_url: ""
+    // Fetch real data from backend
+    const loadData = async () => {
+      try {
+        // Fetch real staff data from backend
+        const staffResponse = await fetch(`${API}/staff`);
+        if (staffResponse.ok) {
+          const realStaffData = await staffResponse.json();
+          setStaff(realStaffData);
+          console.log('Real staff data loaded:', realStaffData.length, 'members');
+        } else {
+          // Fallback staff data only if API fails
+          setStaff([
+            { 
+              id: "fallback-1",
+              name: "Kristofer Bruno la Fata", 
+              bio: "Specialist i klassisk barbering",
+              experience_years: 8,
+              specialties: ["Classic cuts", "Beard styling"],
+              instagram_url: "",
+              facebook_url: "",
+              linkedin_url: "",
+              youtube_url: "",
+              tiktok_url: "",
+              twitter_url: "",
+              website_url: "",
+              avatar_url: ""
+            }
+          ]);
         }
-      ]);
-      
-      setSettings({
-        site_title: "Frisor LaFata",
-        hero_title: "Klassisk Barbering",
-        hero_subtitle: "i Hjertet af Byen",
-        hero_description: "Oplev den autentiske barber-oplevelse hos Frisor LaFata. Vi kombinerer traditionel håndværk med moderne teknikker.",
-        hero_image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwxfHxiYXJiZXJzaG9wfGVufDB8fHx8MTczMjgzMjAzMnww&ixlib=rb-4.1.0&q=85",
-        booking_system_enabled: true,
-        social_media_enabled: true,
-        contact_phone: "+45 12 34 56 78",
-        contact_email: "info@frisorlafata.dk",
-        address: "Hovedgaden 123, 1000 København"
-      });
-      
-      setPages([
-        { id: "1", title: "Om Os", slug: "om-os" },
-        { id: "2", title: "Priser", slug: "priser" },
-        { id: "3", title: "Historie", slug: "historie" }
-      ]);
-      
-      setGalleryItems([]);
-    }, 500);
+
+        // Fetch real services data
+        const servicesResponse = await fetch(`${API}/services`);
+        if (servicesResponse.ok) {
+          const realServicesData = await servicesResponse.json();
+          setServices(realServicesData);
+          console.log('Real services data loaded:', realServicesData.length, 'services');
+        } else {
+          // Fallback services data
+          setServices([
+            { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" },
+            { name: "Skæg trimning", duration_minutes: 20, price: 200, category: "beard", icon: "🪒" },
+            { name: "Vask & styling", duration_minutes: 45, price: 400, category: "styling", icon: "💧" },
+            { name: "Farvning", duration_minutes: 60, price: 600, category: "coloring", icon: "🎨" }
+          ]);
+        }
+
+        // Fetch real settings data
+        const settingsResponse = await fetch(`${API}/public/settings`);
+        if (settingsResponse.ok) {
+          const realSettingsData = await settingsResponse.json();
+          setSettings(realSettingsData);
+          console.log('Real settings data loaded');
+        } else {
+          // Fallback settings data
+          setSettings({
+            site_title: "Frisor LaFata",
+            hero_title: "Klassisk Barbering",
+            hero_subtitle: "i Hjertet af Byen",
+            hero_description: "Oplev den autentiske barber-oplevelse hos Frisor LaFata.",
+            booking_system_enabled: true,
+            social_media_enabled: true,
+            contact_phone: "+45 12 34 56 78",
+            contact_email: "info@frisorlafata.dk",
+            address: "Hovedgaden 123, 1000 København"
+          });
+        }
+
+        // Fetch pages and gallery
+        const pagesResponse = await fetch(`${API}/public/pages`);
+        if (pagesResponse.ok) {
+          const realPagesData = await pagesResponse.json();
+          setPages(realPagesData);
+        } else {
+          setPages([
+            { id: "1", title: "Om Os", slug: "om-os" },
+            { id: "2", title: "Priser", slug: "priser" }
+          ]);
+        }
+
+        const galleryResponse = await fetch(`${API}/gallery?featured_only=false`);
+        if (galleryResponse.ok) {
+          const realGalleryData = await galleryResponse.json();
+          setGalleryItems(realGalleryData);
+        } else {
+          setGalleryItems([]);
+        }
+
+      } catch (error) {
+        console.error('Error loading data:', error);
+        // Set minimal fallback data if everything fails
+        setStaff([
+          { 
+            id: "error-fallback",
+            name: "Kristofer Bruno la Fata", 
+            bio: "Specialist i klassisk barbering",
+            experience_years: 8,
+            specialties: ["Classic cuts"],
+            instagram_url: "",
+            facebook_url: "",
+            avatar_url: ""
+          }
+        ]);
+        setServices([
+          { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" }
+        ]);
+        setSettings({
+          site_title: "Frisor LaFata",
+          hero_title: "Klassisk Barbering",
+          hero_subtitle: "i Hjertet af Byen",
+          hero_description: "Oplev den autentiske barber-oplevelse hos Frisor LaFata.",
+          booking_system_enabled: true
+        });
+        setPages([]);
+        setGalleryItems([]);
+      }
+    };
+
+    loadData();
   }, []);
 
   const getServiceIcon = (iconValue) => {
