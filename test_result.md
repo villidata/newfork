@@ -551,9 +551,9 @@ frontend:
 
   - task: "Home Service Booking Feature - Address Collection"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/components/BookingSystem.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -563,6 +563,9 @@ frontend:
         - working: false
           agent: "testing"
           comment: "TESTING BLOCKED: Cannot test address collection form because home service option is not visible in booking flow. Root cause: Backend public settings API missing home_service_enabled setting, so frontend doesn't know to show home service option."
+        - working: true
+          agent: "testing"
+          comment: "✅ COMPREHENSIVE TESTING COMPLETED: Address collection form is FULLY WORKING! VERIFIED FUNCTIONALITY: ✅ Form appears correctly when home service checkbox is selected, ✅ All required fields working: Address (Gadenavn og husnummer), City (København), Postal Code (2100), ✅ Optional Special Instructions field working (Særlige instruktioner), ✅ Form validation working for required fields, ✅ Address information correctly captured and displayed in confirmation screen, ✅ All form fields have proper styling and placeholders. Address collection feature is production-ready!"
 
   - task: "Home Service Booking Feature - Fee Calculation"
     implemented: true
