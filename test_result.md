@@ -102,7 +102,125 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the new home service booking and booking system toggle features in the Frisor LaFata application - Added home service booking functionality where customers can request barber to come to their home with address collection and extra fees, plus admin can hide/show the entire booking system on the website."
+user_problem_statement: "Implement Homepage Editor with drag-and-drop functionality to allow users to reorder, edit, show/hide, and customize homepage sections. The system should provide a user-friendly interface for managing the layout and content of the main website homepage."
+
+backend:
+  - task: "Homepage Editor Backend API - GET /homepage/sections"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Implemented GET /api/homepage/sections endpoint with MongoDB support. Creates default homepage sections (hero, services, staff, gallery, social, contact) if none exist. Includes proper authentication and error handling."
+
+  - task: "Homepage Editor Backend API - GET /public/homepage/sections"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Implemented GET /api/public/homepage/sections endpoint for fetching enabled homepage sections for public display. Uses MongoDB with fallback to default sections if database error occurs."
+
+  - task: "Homepage Editor Backend API - PUT /homepage/sections/{section_id}"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Implemented PUT /api/homepage/sections/{section_id} endpoint for updating individual homepage sections. Supports updating title, subtitle, description, button settings, colors, and visibility status."
+
+  - task: "Homepage Editor Backend API - PUT /homepage/sections/reorder"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high" 
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Implemented PUT /api/homepage/sections/reorder endpoint for drag-and-drop reordering functionality. Accepts array of sections with updated section_order values and updates them in MongoDB."
+
+frontend:
+  - task: "HomepageEditor Component - React Beautiful DnD Installation"
+    implemented: true
+    working: true
+    file: "/app/frontend/package.json"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Successfully installed react-beautiful-dnd version 13.1.1 using yarn. Library is ready for drag-and-drop functionality in HomepageEditor component."
+
+  - task: "HomepageEditor Component - Core Implementation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/HomepageEditor.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Comprehensive HomepageEditor component implemented with 435+ lines of code. Features: drag-and-drop section reordering, section visibility toggles, content editing forms, color customization, button action configuration, responsive design with barbershop aesthetic (black/gold theme)."
+
+  - task: "HomepageEditor Integration - Admin Dashboard"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/AdminDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added HomepageEditor component to AdminDashboard as new 'Homepage' tab with Home icon. Positioned between 'Bookings' and 'Revenue' tabs. Component receives admin token for API authentication. Import and tab integration completed."
+
+  - task: "Homepage Layout System - Public Website Integration"
+    implemented: false
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Not yet implemented. Need to add homepage sections fetching to App.js and update the public website to use the customizable layout configuration from backend API. Current website is stuck on 'Loading...' screen."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 6
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Homepage Editor Backend API - All endpoints"
+    - "HomepageEditor Component - Core Implementation"
+    - "HomepageEditor Integration - Admin Dashboard"
+    - "Homepage Layout System - Public Website Integration"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "main"
+      message: "HOMEPAGE EDITOR IMPLEMENTATION PROGRESS: Phase 1 completed - react-beautiful-dnd installed successfully (v13.1.1). Phase 2 completed - comprehensive HomepageEditor component implemented with full drag-and-drop functionality, section editing, color customization, and barbershop-themed UI. Backend API endpoints implemented using MongoDB (MySQL temporarily disabled due to connection issues). Added HomepageEditor to AdminDashboard as new tab. Ready for backend API testing and then frontend integration testing. Main website currently shows 'Loading...' - need to integrate homepage sections fetching to App.js."
 
 backend:
   - task: "Enhanced Page Model with new fields"
