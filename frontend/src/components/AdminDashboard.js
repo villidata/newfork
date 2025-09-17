@@ -1933,6 +1933,10 @@ const AdminDashboard = ({ token, user, onLogout }) => {
             />
           </TabsContent>
 
+          <TabsContent value="homepage">
+            <HomepageEditor token={token} />
+          </TabsContent>
+
           <TabsContent value="revenue">
             <RevenueDashboard 
               token={token} 
