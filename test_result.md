@@ -222,7 +222,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Homepage Editor Backend API - All endpoints"
     - "HomepageEditor Component - Core Implementation"
     - "HomepageEditor Integration - Admin Dashboard"
     - "Homepage Layout System - Public Website Integration"
