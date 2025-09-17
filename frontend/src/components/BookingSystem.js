@@ -122,10 +122,13 @@ const BookingSystem = ({ onClose }) => {
   };
 
   const getTotalPrice = () => {
-    return selectedServices.reduce((total, serviceId) => {
+    const servicesTotal = selectedServices.reduce((total, serviceId) => {
       const service = services.find(s => s.id === serviceId);
       return total + (service ? service.price : 0);
     }, 0);
+    
+    const homeServiceFee = isHomeService ? (settings.home_service_fee || 150) : 0;
+    return servicesTotal + homeServiceFee;
   };
 
   const getTotalDuration = () => {
