@@ -51,109 +51,35 @@ const Home = () => {
   };
 
   const fetchData = async () => {
-    try {
-      console.log('Starting data fetch...');
-      
-      // Add timeout to individual API calls
-      const apiTimeout = 10000; // 10 seconds
-      
-      const apiCall = (url, name) => {
-        console.log(`Fetching ${name} from ${url}`);
-        return Promise.race([
-          axios.get(url),
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error(`${name} API timeout`)), apiTimeout)
-          )
-        ]);
-      };
-
-      // Fetch APIs individually with better error handling
-      console.log('Fetching services...');
-      const servicesRes = await apiCall(`${API}/services`, 'services').catch(e => {
-        console.error('Services API failed:', e);
-        return { data: [] };
-      });
-      
-      console.log('Fetching staff...');
-      const staffRes = await apiCall(`${API}/staff`, 'staff').catch(e => {
-        console.error('Staff API failed:', e);
-        return { data: [] };
-      });
-      
-      console.log('Fetching settings...');
-      const settingsRes = await apiCall(`${API}/public/settings`, 'settings').catch(e => {
-        console.error('Settings API failed:', e);
-        return { data: {} };
-      });
-      
-      console.log('Fetching pages...');
-      const pagesRes = await apiCall(`${API}/public/pages`, 'pages').catch(e => {
-        console.error('Pages API failed:', e);
-        return { data: [] };
-      });
-      
-      console.log('Fetching gallery...');
-      const galleryRes = await apiCall(`${API}/gallery?featured_only=false`, 'gallery').catch(e => {
-        console.error('Gallery API failed:', e);
-        return { data: [] };
-      });
-      
-      console.log('All APIs fetched, setting data...');
-      setServices(servicesRes.data || []);
-      setStaff(staffRes.data || []);
-      setSettings(settingsRes.data || {});
-      setPages(pagesRes.data || []);
-      setGalleryItems(galleryRes.data || []);
-      
-      console.log('Data set successfully');
-    } catch (error) {
-      console.error('Critical error in fetchData:', error);
-      // Fallback to default data if API fails
-      setServices([
-        { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" },
-        { name: "Skæg trimning", duration_minutes: 20, price: 200, category: "beard", icon: "🪒" },
-        { name: "Vask & styling", duration_minutes: 45, price: 400, category: "styling", icon: "💧" },
-        { name: "Farvning", duration_minutes: 60, price: 600, category: "coloring", icon: "🎨" },
-        { name: "Børneklip", duration_minutes: 25, price: 250, category: "haircut", icon: "👶" },
-        { name: "Komplet styling", duration_minutes: 90, price: 750, category: "premium", icon: "⭐" }
-      ]);
-      setStaff([
-        { 
-          name: "Lars Andersen", 
-          bio: "Specialist i klassisk barbering",
-          experience_years: 15,
-          specialties: ["Klassisk klipning", "Skægtrimning"],
-          instagram_url: "",
-          facebook_url: "",
-          avatar_url: ""
-        },
-        { 
-          name: "Mikael Jensen", 
-          bio: "Ekspert i moderne styling",
-          experience_years: 12,
-          specialties: ["Modern styling", "Hårvask"],
-          instagram_url: "",
-          facebook_url: "",
-          avatar_url: ""
-        }
-      ]);
-      setSettings({
-        site_title: "Frisor LaFata",
-        site_description: "Klassisk barbering siden 2010",
-        contact_phone: "+45 12 34 56 78",
-        contact_email: "info@frisorlafata.dk",
-        address: "Hovedgaden 123, 1000 København",
-        hero_title: "Klassisk Barbering",
-        hero_subtitle: "i Hjertet af Byen",
-        hero_description: "Oplev den autentiske barber-oplevelse hos Frisor LaFata. Vi kombinerer traditionel håndværk med moderne teknikker.",
-        hero_image: "https://images.unsplash.com/photo-1573586927918-3e6476da8395?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwzfHxyZXRybyUyMGJhcmJlcnxlbnwwfHx8fDE3NTc5NzcyODB8MA&ixlib=rb-4.1.0&q=85"
-      });
-      setPages([]);
-      setGalleryItems([]);
-    } finally {
-      console.log('Setting loading to false');
-      setLoading(false);
-    }
+    console.log('Starting fetchData...');
+    setLoading(false); // Immediately set loading to false to test if this fixes the issue
+    
+    // Simple fallback data for testing
+    setServices([
+      { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" }
+    ]);
+    setStaff([
+      { 
+        id: "test-1",
+        name: "Test Barber", 
+        bio: "Test description",
+        experience_years: 5,
+        specialties: ["Haircut"],
+        instagram_url: "https://instagram.com/test",
+        facebook_url: "https://facebook.com/test",
+        avatar_url: ""
+      }
+    ]);
+    setSettings({
+      site_title: "Frisor LaFata",
+      hero_title: "Klassisk Barbering",
+      hero_subtitle: "i Hjertet af Byen",
+      hero_description: "Test description"
+    });
+    setPages([]);
+    setGalleryItems([]);
+    
+    console.log('Data set, loading should be false now');
   };
 
   useEffect(() => {
