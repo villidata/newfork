@@ -1750,7 +1750,7 @@ class FrisorLaFataAPITester:
         self.token = self.admin_token
         
         # Create reorder data - reverse the order of first two sections
-        reorder_data = []
+        reorder_sections = []
         for i, section in enumerate(sections):
             new_order = section.get('section_order', i + 1)
             if i == 0:  # First section gets second position
@@ -1758,10 +1758,15 @@ class FrisorLaFataAPITester:
             elif i == 1:  # Second section gets first position
                 new_order = 1
             
-            reorder_data.append({
+            reorder_sections.append({
                 'id': section.get('id'),
                 'section_order': new_order
             })
+        
+        # Use the correct format expected by the API
+        reorder_data = {
+            'sections': reorder_sections
+        }
         
         success, response = self.run_test(
             "Reorder Homepage Sections", 
