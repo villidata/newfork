@@ -1692,10 +1692,98 @@ async def get_public_settings():
 async def get_homepage_sections(current_user: User = Depends(get_current_user)):
     """Get all homepage sections for admin editing"""
     try:
-        sections = await execute_query(
-            "SELECT * FROM homepage_sections ORDER BY section_order ASC",
-            fetch_all=True
-        )
+        # Use MongoDB for now until MySQL is properly configured
+        sections = await db.homepage_sections.find().sort("section_order", 1).to_list(length=None)
+        
+        # If no sections exist, create default sections
+        if not sections:
+            default_sections = [
+                {
+                    "id": "hero-section",
+                    "section_type": "hero",
+                    "section_order": 1,
+                    "is_enabled": True,
+                    "title": "Klassisk Barbering",
+                    "subtitle": "i Hjertet af Byen", 
+                    "description": "Oplev den autentiske barber-oplevelse hos Frisor LaFata.",
+                    "button_text": "Book din tid nu",
+                    "button_action": "open_booking",
+                    "background_color": "#000000",
+                    "text_color": "#D4AF37"
+                },
+                {
+                    "id": "services-section",
+                    "section_type": "services",
+                    "section_order": 2,
+                    "is_enabled": True,
+                    "title": "Vores Services",
+                    "subtitle": "Professionel barbering og styling",
+                    "description": "Vi tilbyder et bredt udvalg af tjenester fra klassiske klipninger til moderne styling.",
+                    "button_text": "",
+                    "button_action": "none",
+                    "background_color": "#000000",
+                    "text_color": "#D4AF37"
+                },
+                {
+                    "id": "staff-section",
+                    "section_type": "staff",
+                    "section_order": 3,
+                    "is_enabled": True,
+                    "title": "Mød Vores Team",
+                    "subtitle": "Erfarne barbere med passion",
+                    "description": "Vores dygtige barbere har mange års erfaring og står klar til at give dig den perfekte look.",
+                    "button_text": "",
+                    "button_action": "none",
+                    "background_color": "#000000",
+                    "text_color": "#D4AF37"
+                },
+                {
+                    "id": "gallery-section",
+                    "section_type": "gallery",
+                    "section_order": 4,
+                    "is_enabled": True,
+                    "title": "Galleri",
+                    "subtitle": "Se vores arbejde",
+                    "description": "Få inspiration fra vores før og efter billeder.",
+                    "button_text": "",
+                    "button_action": "none",
+                    "background_color": "#000000",
+                    "text_color": "#D4AF37"
+                },
+                {
+                    "id": "social-section",
+                    "section_type": "social",
+                    "section_order": 5,
+                    "is_enabled": True,
+                    "title": "Følg Os",
+                    "subtitle": "Se vores seneste arbejde",
+                    "description": "Hold dig opdateret med vores seneste trends og tilbud på sociale medier.",
+                    "button_text": "",
+                    "button_action": "none",
+                    "background_color": "#000000",
+                    "text_color": "#D4AF37"
+                },
+                {
+                    "id": "contact-section",
+                    "section_type": "contact",
+                    "section_order": 6,
+                    "is_enabled": True,
+                    "title": "Kontakt Os",
+                    "subtitle": "Book din tid i dag",
+                    "description": "Kontakt os for at booke din næste barbering eller hvis du har spørgsmål.",
+                    "button_text": "Gå til booking system",
+                    "button_action": "open_booking",
+                    "background_color": "#000000",
+                    "text_color": "#D4AF37"
+                }
+            ]
+            
+            # Insert default sections
+            for section in default_sections:
+                await db.homepage_sections.insert_one(section)
+            
+            sections = default_sections
+        
         return sections
     except Exception as e:
         print(f"Error getting homepage sections: {e}")
@@ -1705,10 +1793,7 @@ async def get_homepage_sections(current_user: User = Depends(get_current_user)):
 async def get_public_homepage_sections():
     """Get enabled homepage sections for public display"""
     try:
-        sections = await execute_query(
-            "SELECT * FROM homepage_sections WHERE is_enabled = TRUE ORDER BY section_order ASC",
-            fetch_all=True
-        )
+        sections = await db.homepage_sections.find({"is_enabled": True}).sort("section_order", 1).to_list(length=None)
         return sections
     except Exception as e:
         print(f"Error getting public homepage sections: {e}")
@@ -1731,7 +1816,12 @@ async def get_public_homepage_sections():
 async def update_homepage_section(section_id: str, section_data: dict, current_user: User = Depends(get_current_user)):
     """Update a homepage section"""
     try:
-        await update_record("homepage_sections", section_id, section_data)
+        result = await db.homepage_sections.update_one(
+            {"id": section_id}, 
+            {"$set": section_data}
+        )
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Section not found")
         return {"message": "Section updated successfully"}
     except Exception as e:
         print(f"Error updating homepage section: {e}")
@@ -1741,12 +1831,11 @@ async def update_homepage_section(section_id: str, section_data: dict, current_u
 async def reorder_homepage_sections(sections: List[dict], current_user: User = Depends(get_current_user)):
     """Reorder homepage sections"""
     try:
-        async with get_db_connection() as (connection, cursor):
-            for section in sections:
-                await cursor.execute(
-                    "UPDATE homepage_sections SET section_order = %s WHERE id = %s",
-                    (section['section_order'], section['id'])
-                )
+        for section in sections:
+            await db.homepage_sections.update_one(
+                {"id": section['id']},
+                {"$set": {"section_order": section['section_order']}}
+            )
         return {"message": "Sections reordered successfully"}
     except Exception as e:
         print(f"Error reordering homepage sections: {e}")
