@@ -456,7 +456,7 @@ const BookingSystem = ({ onClose }) => {
           </div>
         )}
 
-        {currentStep === 2 && (
+        {currentStep === 2 && bookingType === 'individual' && (
           <Card className="bg-gray-900/50 border-gold/20">
             <CardHeader>
               <CardTitle className="text-gold">Vælg tjenester</CardTitle>
@@ -510,6 +510,122 @@ const BookingSystem = ({ onClose }) => {
                   <div className="flex justify-between font-bold text-gold">
                     <span>Total: {getTotalDuration()} min</span>
                     <span>{getTotalPrice()} DKK</span>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {currentStep === 2 && bookingType === 'corporate' && (
+          <Card className="bg-gray-900/50 border-gold/20">
+            <CardHeader>
+              <CardTitle className="text-gold">Medarbejdere og tjenester</CardTitle>
+              <p className="text-gray-300">Tilføj medarbejdere og vælg tjenester for hver</p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {employees.map((employee, index) => (
+                <div key={index} className="p-4 bg-black/30 rounded-lg border border-gold/20">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-gold font-semibold">Medarbejder {index + 1}</h4>
+                    {employees.length > 1 && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => removeEmployee(index)}
+                        className="border-red-500 text-red-400 hover:bg-red-500/10"
+                      >
+                        Fjern
+                      </Button>
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <Label className="text-gold">Navn</Label>
+                      <Input
+                        value={employee.name}
+                        onChange={(e) => updateEmployee(index, 'name', e.target.value)}
+                        placeholder="Medarbejderens navn"
+                        className="bg-black/50 border-gold/30 text-white"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gold">Noter (valgfrit)</Label>
+                      <Input
+                        value={employee.notes}
+                        onChange={(e) => updateEmployee(index, 'notes', e.target.value)}
+                        placeholder="Særlige ønsker"
+                        className="bg-black/50 border-gold/30 text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-gold mb-2 block">Vælg tjenester</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {services.map((service) => (
+                        <div
+                          key={service.id}
+                          className={`p-3 rounded border cursor-pointer transition-all ${
+                            employee.selectedServices.includes(service.id)
+                              ? 'border-gold bg-gold/10'
+                              : 'border-gold/20 hover:border-gold/50'
+                          }`}
+                          onClick={() => updateEmployeeServices(index, service.id, !employee.selectedServices.includes(service.id))}
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              checked={employee.selectedServices.includes(service.id)}
+                              className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                            />
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gold">{service.name}</p>
+                              <p className="text-xs text-gray-400">{service.duration_minutes} min - {service.price} DKK</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <Button 
+                onClick={addEmployee}
+                variant="outline"
+                className="w-full border-gold/50 text-gold hover:bg-gold/10"
+              >
+                + Tilføj medarbejder
+              </Button>
+
+              {employees.some(emp => emp.selectedServices.length > 0) && (
+                <div className="mt-6 p-4 bg-gold/10 rounded-lg border border-gold/30">
+                  <h4 className="font-semibold text-gold mb-3">Oversigt:</h4>
+                  <div className="space-y-3">
+                    {employees.map((employee, index) => (
+                      employee.selectedServices.length > 0 && (
+                        <div key={index}>
+                          <p className="text-gold font-medium">{employee.name || `Medarbejder ${index + 1}`}:</p>
+                          <div className="ml-4 space-y-1">
+                            {employee.selectedServices.map(serviceId => {
+                              const service = services.find(s => s.id === serviceId);
+                              return service ? (
+                                <div key={serviceId} className="flex justify-between text-gray-300 text-sm">
+                                  <span>{service.name}</span>
+                                  <span>{service.price} DKK</span>
+                                </div>
+                              ) : null;
+                            })}
+                          </div>
+                        </div>
+                      )
+                    ))}
+                  </div>
+                  <Separator className="my-3 bg-gold/20" />
+                  <div className="flex justify-between font-bold text-gold">
+                    <span>Total for services:</span>
+                    <span>{getCorporateTotalPrice() - parseFloat(corporateInfo.travelFee || 0)} DKK</span>
                   </div>
                 </div>
               )}
