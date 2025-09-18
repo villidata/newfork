@@ -671,7 +671,7 @@ const BookingSystem = ({ onClose }) => {
           </Card>
         )}
 
-        {currentStep === 4 && (
+        {currentStep === 4 && bookingType === 'individual' && (
           <Card className="bg-gray-900/50 border-gold/20">
             <CardHeader>
               <CardTitle className="text-gold">Dine oplysninger</CardTitle>
@@ -790,6 +790,123 @@ const BookingSystem = ({ onClose }) => {
                   )}
                 </div>
               )}
+            </CardContent>
+          </Card>
+        )}
+
+        {currentStep === 4 && bookingType === 'corporate' && (
+          <Card className="bg-gray-900/50 border-gold/20">
+            <CardHeader>
+              <CardTitle className="text-gold">Virksomhedsoplysninger</CardTitle>
+              <p className="text-gray-300">Oplysninger om virksomheden og kontaktperson</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="company-name" className="text-gold">Virksomhedsnavn *</Label>
+                  <Input
+                    id="company-name"
+                    value={corporateInfo.companyName}
+                    onChange={(e) => setCorporateInfo(prev => ({ ...prev, companyName: e.target.value }))}
+                    className="bg-black/50 border-gold/30 text-white"
+                    placeholder="ABC Virksomhed ApS"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="contact-person" className="text-gold">Kontaktperson *</Label>
+                  <Input
+                    id="contact-person"
+                    value={corporateInfo.contactPerson}
+                    onChange={(e) => setCorporateInfo(prev => ({ ...prev, contactPerson: e.target.value }))}
+                    className="bg-black/50 border-gold/30 text-white"
+                    placeholder="Fornavn Efternavn"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="company-email" className="text-gold">Email *</Label>
+                  <Input
+                    id="company-email"
+                    type="email"
+                    value={corporateInfo.email}
+                    onChange={(e) => setCorporateInfo(prev => ({ ...prev, email: e.target.value }))}
+                    className="bg-black/50 border-gold/30 text-white"
+                    placeholder="kontakt@virksomhed.dk"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="company-phone" className="text-gold">Telefon *</Label>
+                  <Input
+                    id="company-phone"
+                    value={corporateInfo.phone}
+                    onChange={(e) => setCorporateInfo(prev => ({ ...prev, phone: e.target.value }))}
+                    className="bg-black/50 border-gold/30 text-white"
+                    placeholder="+45 12 34 56 78"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="company-address" className="text-gold">Virksomhedsadresse *</Label>
+                <Input
+                  id="company-address"
+                  value={corporateInfo.address}
+                  onChange={(e) => setCorporateInfo(prev => ({ ...prev, address: e.target.value }))}
+                  className="bg-black/50 border-gold/30 text-white"
+                  placeholder="Vejnavn og nummer"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="company-city" className="text-gold">By *</Label>
+                  <Input
+                    id="company-city"
+                    value={corporateInfo.city}
+                    onChange={(e) => setCorporateInfo(prev => ({ ...prev, city: e.target.value }))}
+                    className="bg-black/50 border-gold/30 text-white"
+                    placeholder="København"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="company-postal" className="text-gold">Postnummer *</Label>
+                  <Input
+                    id="company-postal"
+                    value={corporateInfo.postalCode}
+                    onChange={(e) => setCorporateInfo(prev => ({ ...prev, postalCode: e.target.value }))}
+                    className="bg-black/50 border-gold/30 text-white"
+                    placeholder="1000"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="travel-fee" className="text-gold">Udkørsel/rejseomkostninger (DKK) *</Label>
+                <Input
+                  id="travel-fee"
+                  type="number"
+                  value={corporateInfo.travelFee}
+                  onChange={(e) => setCorporateInfo(prev => ({ ...prev, travelFee: e.target.value }))}
+                  className="bg-black/50 border-gold/30 text-white"
+                  placeholder="500"
+                  min="0"
+                />
+                <p className="text-gray-400 text-sm mt-1">Ekstra omkostninger for at komme til virksomheden</p>
+              </div>
+
+              <div>
+                <Label htmlFor="special-requirements" className="text-gold">Særlige krav (valgfrit)</Label>
+                <Textarea
+                  id="special-requirements"
+                  value={corporateInfo.specialRequirements}
+                  onChange={(e) => setCorporateInfo(prev => ({ ...prev, specialRequirements: e.target.value }))}
+                  className="bg-black/50 border-gold/30 text-white"
+                  placeholder="F.eks. parkeringsforhold, adgang til lokaler, tidskrav..."
+                  rows={3}
+                />
+              </div>
             </CardContent>
           </Card>
         )}
