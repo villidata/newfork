@@ -43,6 +43,15 @@
     "confirmBooking": "Confirm booking",
     "bookingConfirmed": "Booking confirmed!"
   },
+  "gallery": {
+    "title": "Our Work",
+    "subtitle": "Before and after transformations",
+    "description": "See before and after photos of our amazing transformations",
+    "comingSoon": "Gallery coming soon",
+    "beforeBadge": "Before",
+    "afterBadge": "After",
+    "viewMore": "View more gallery"
+  },
   "contact": {
     "title": "Contact Us",
     "subtitle": "Book your appointment today",
