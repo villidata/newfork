@@ -721,7 +721,6 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
         <div>
           <Label className="text-gold">Experience (years)</Label>
           <Input
-            key={`experience_years-${isEditing ? 'edit' : 'new'}`}
             type="number"
             value={staffData.experience_years || 0}
             onChange={(e) => handleFieldChange('experience_years', parseInt(e.target.value) || 0)}
