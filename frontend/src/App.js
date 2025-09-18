@@ -972,11 +972,11 @@ const Home = () => {
                   <Clock className="h-6 w-6 text-gold" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gold">Åbningstider</h3>
+                  <h3 className="text-lg font-semibold text-gold">{t('contact.openingHours')}</h3>
                   <div className="text-gray-300 space-y-1">
-                    <p>Man-Fre: 09:00 - 18:00</p>
-                    <p>Lørdag: 09:00 - 16:00</p>
-                    <p>Søndag: Lukket</p>
+                    <p>{t('contact.weekdays')}: 09:00 - 18:00</p>
+                    <p>{t('contact.saturday')}: 09:00 - 16:00</p>
+                    <p>{t('contact.sunday')}: {t('contact.closed')}</p>
                   </div>
                 </div>
               </div>
