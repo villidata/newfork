@@ -1055,7 +1055,7 @@ const BookingSystem = ({ onClose }) => {
               </Button>
             ) : (
               <Button
-                onClick={handleBooking}
+                onClick={bookingType === 'corporate' ? handleCorporateBooking : handleBooking}
                 disabled={loading}
                 className="bg-gold text-black hover:bg-gold/90"
               >
