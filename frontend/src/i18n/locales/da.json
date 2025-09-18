@@ -55,10 +55,23 @@
   "contact": {
     "title": "Kontakt Os",
     "subtitle": "Book din tid i dag",
-    "description": "Kontakt os for at booke din næste barbering eller hvis du har spørgsmål.",
+    "description": "Book din tid eller kontakt os for mere information",
     "phone": "Telefon",
     "email": "Email",
-    "address": "Adresse"
+    "address": "Adresse",
+    "openingHours": "Åbningstider",
+    "monday": "Mandag",
+    "tuesday": "Tirsdag", 
+    "wednesday": "Onsdag",
+    "thursday": "Torsdag",
+    "friday": "Fredag",
+    "saturday": "Lørdag",
+    "sunday": "Søndag",
+    "closed": "Lukket",
+    "weekdays": "Man-Fre",
+    "contactForm": "Kontakt os",
+    "bookingUnavailable": "Online booking er midlertidigt ikke tilgængelig. Kontakt os direkte for at booke din tid.",
+    "orCall": "Eller ring til os på"
   },
   "common": {
     "loading": "Indlæser...",
