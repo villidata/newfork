@@ -684,7 +684,7 @@ const Home = () => {
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute top-2 left-2">
-                          <Badge className="bg-red-500 text-white text-xs">Før</Badge>
+                          <Badge className="bg-red-500 text-white text-xs">{t('gallery.beforeBadge')}</Badge>
                         </div>
                       </div>
                       <div className="relative">
@@ -694,7 +694,7 @@ const Home = () => {
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute top-2 right-2">
-                          <Badge className="bg-green-500 text-white text-xs">Efter</Badge>
+                          <Badge className="bg-green-500 text-white text-xs">{t('gallery.afterBadge')}</Badge>
                         </div>
                       </div>
                     </div>
