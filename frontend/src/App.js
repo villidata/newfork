@@ -514,12 +514,17 @@ const Home = () => {
                         src={member.avatar_url} 
                         alt={member.name}
                         className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-gold/30 shadow-lg"
+                        onLoad={() => console.log('✅ Staff avatar loaded:', member.name, member.avatar_url)}
+                        onError={(e) => {
+                          console.error('❌ Staff avatar failed to load:', member.name, member.avatar_url);
+                          e.target.style.display = 'none';
+                          e.target.nextElementSibling.style.display = 'flex';
+                        }}
                       />
-                    ) : (
-                      <div className="w-24 h-24 rounded-full bg-gold/20 border-4 border-gold/30 flex items-center justify-center mx-auto mb-4">
-                        <Users className="h-12 w-12 text-gold" />
-                      </div>
-                    )}
+                    ) : null}
+                    <div className="w-24 h-24 rounded-full bg-gold/20 border-4 border-gold/30 flex items-center justify-center mx-auto mb-4" style={{display: member.avatar_url ? 'none' : 'flex'}}>
+                      <Users className="h-12 w-12 text-gold" />
+                    </div>
                   </div>
                   
                   <h3 className="text-2xl font-semibold text-gold mb-3 font-serif">{member.name}</h3>
