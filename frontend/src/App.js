@@ -185,7 +185,13 @@ const Home = () => {
         const galleryRes = await fetch(`${API}/gallery?featured_only=false`);
         if (galleryRes.ok) {
           const galleryData = await galleryRes.json();
-          setGalleryItems(galleryData);
+          // Fix gallery image URLs
+          const fixedGalleryData = galleryData.map(item => ({
+            ...item,
+            before_image: fixImageUrl(item.before_image),
+            after_image: fixImageUrl(item.after_image)
+          }));
+          setGalleryItems(fixedGalleryData);
         }
         
         // Services data
