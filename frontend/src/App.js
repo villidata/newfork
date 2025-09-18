@@ -392,12 +392,12 @@ const Home = () => {
           {mobileMenuOpen && (
             <div className="md:hidden bg-black/95 border-t border-gold/20">
               <div className="px-2 pt-2 pb-3 space-y-1">
-                <a href="#home" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>Hjem</a>
-                <a href="#services" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>Tjenester</a>
-                <a href="#staff" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>Frisører</a>
-                <a href="#gallery" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>Galleri</a>
+                <a href="#home" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>{t('navigation.home')}</a>
+                <a href="#services" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>{t('navigation.services')}</a>
+                <a href="#staff" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>{t('navigation.staff')}</a>
+                <a href="#gallery" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>{t('navigation.gallery')}</a>
                 {settings.social_media_enabled && (
-                  <a href="#social" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>Social Media</a>
+                  <a href="#social" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>{t('navigation.social')}</a>
                 )}
                 {pages.slice(0, 3).map((page) => (
                   <Link 
@@ -409,7 +409,13 @@ const Home = () => {
                     {page.title}
                   </Link>
                 ))}
-                <a href="#contact" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>Kontakt</a>
+                <a href="#contact" className="block text-gold hover:text-gold/80 transition-colors px-3 py-2" onClick={() => setMobileMenuOpen(false)}>{t('navigation.contact')}</a>
+                
+                {/* Language Switcher in Mobile Menu */}
+                <div className="px-3 py-2">
+                  <LanguageSwitcher />
+                </div>
+                
                 {settings.booking_system_enabled !== false && (
                   <div className="px-3 py-2">
                     <Button 
@@ -419,7 +425,7 @@ const Home = () => {
                         setMobileMenuOpen(false);
                       }}
                     >
-                      Book tid
+                      {t('navigation.bookAppointment')}
                     </Button>
                   </div>
                 )}
