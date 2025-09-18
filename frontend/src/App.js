@@ -141,11 +141,18 @@ const Home = () => {
     }
   };
 
-  // Function to fix image URLs that point to wrong domain
+  // Function to fix image URLs that point to wrong domain or localhost
   const fixImageUrl = (url) => {
     if (!url) return '';
-    // Replace wrong domain with correct domain
-    const fixedUrl = url.replace('stylista-admin.preview.emergentagent.com', 'barberedit.preview.emergentagent.com');
+    
+    let fixedUrl = url;
+    
+    // Replace wrong external domain with correct domain
+    fixedUrl = fixedUrl.replace('stylista-admin.preview.emergentagent.com', 'barberedit.preview.emergentagent.com');
+    
+    // Replace localhost with correct external domain
+    fixedUrl = fixedUrl.replace('http://localhost:8001/api/', 'https://barberedit.preview.emergentagent.com/api/');
+    
     console.log('Fixed image URL:', url, '->', fixedUrl);
     return fixedUrl;
   };
