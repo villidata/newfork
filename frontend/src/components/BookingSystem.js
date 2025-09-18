@@ -32,6 +32,7 @@ const BookingSystem = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [bookingType, setBookingType] = useState('individual'); // 'individual' or 'corporate'
   
   // Customer info
   const [customerInfo, setCustomerInfo] = useState({
@@ -49,6 +50,23 @@ const BookingSystem = ({ onClose }) => {
     postalCode: '',
     specialInstructions: ''
   });
+
+  // Corporate booking info
+  const [corporateInfo, setCorporateInfo] = useState({
+    companyName: '',
+    contactPerson: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    postalCode: '',
+    specialRequirements: '',
+    travelFee: 500 // Default travel fee for corporate bookings
+  });
+
+  const [employees, setEmployees] = useState([
+    { name: '', selectedServices: [], notes: '' }
+  ]);
   
   // Payment info
   const [paymentMethod, setPaymentMethod] = useState('cash');
