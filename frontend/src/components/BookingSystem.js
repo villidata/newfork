@@ -161,9 +161,18 @@ const BookingSystem = ({ onClose }) => {
       setError('Vælg venligst dato og frisør');
       return;
     }
-    if (currentStep === 2 && selectedServices.length === 0) {
-      setError('Vælg venligst mindst én tjeneste');
-      return;
+    if (currentStep === 2) {
+      if (bookingType === 'individual' && selectedServices.length === 0) {
+        setError('Vælg venligst mindst én tjeneste');
+        return;
+      }
+      if (bookingType === 'corporate') {
+        const hasValidEmployees = employees.some(emp => emp.name && emp.selectedServices.length > 0);
+        if (!hasValidEmployees) {
+          setError('Tilføj mindst én medarbejder med navn og tjeneste');
+          return;
+        }
+      }
     }
     if (currentStep === 3 && !selectedSlot) {
       setError('Vælg venligst et tidspunkt');
