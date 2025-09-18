@@ -494,8 +494,11 @@ const BookingSystem = ({ onClose }) => {
         {currentStep === 2 && bookingType === 'individual' && (
           <Card className="bg-gray-900/50 border-gold/20">
             <CardHeader>
-              <CardTitle className="text-gold">Vælg tjenester</CardTitle>
-              <p className="text-gray-300">Du kan vælge flere tjenester</p>
+              <CardTitle className="text-gold flex items-center">
+                <span className="mr-2">👤</span>
+                Vælg tjenester - Privat Booking
+              </CardTitle>
+              <p className="text-gray-300">Du kan vælge flere tjenester for din personlige booking</p>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
