@@ -386,9 +386,14 @@ const Home = () => {
       <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
-            src={settings.hero_image || "https://images.unsplash.com/photo-1573586927918-3e6476da8395?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwzfHxyZXRybyUyMGJhcmJlcnxlbnwwfHx8fDE3NTc5NzcyODB8MA&ixlib=rb-4.1.0&q=85"}
+            src={settings.hero_image || "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwxfHxiYXJiZXJzaG9wfGVufDB8fHx8MTczMjgzMjAzMnww&ixlib=rb-4.1.0&q=85"}
             alt="Frisor LaFata barbershop"
             className="w-full h-full object-cover opacity-30"
+            onLoad={() => console.log('Hero image loaded:', settings.hero_image || 'fallback')}
+            onError={(e) => {
+              console.error('Hero image failed to load:', e.target.src);
+              e.target.src = "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwxfHxiYXJiZXJzaG9wfGVufDB8fHx8MTczMjgzMjAzMnww&ixlib=rb-4.1.0&q=85";
+            }}
           />
           <div className="absolute inset-0 bg-black/70"></div>
         </div>
