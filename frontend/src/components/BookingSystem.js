@@ -377,21 +377,41 @@ const BookingSystem = ({ onClose }) => {
         {currentStep === 1 && (
           <div className="mb-6">
             <Tabs value={bookingType} onValueChange={setBookingType} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-gray-900/50">
+              <TabsList className="grid w-full grid-cols-2 bg-black/70 border border-gold/30 rounded-lg p-1">
                 <TabsTrigger 
                   value="individual" 
-                  className="data-[state=active]:bg-gold data-[state=active]:text-black text-gray-300"
+                  className="data-[state=active]:bg-gold data-[state=active]:text-black data-[state=active]:font-bold text-gold font-semibold border-0 hover:bg-gold/20 transition-all duration-200"
                 >
-                  Privat Booking
+                  👤 Privat Booking
                 </TabsTrigger>
                 <TabsTrigger 
                   value="corporate" 
-                  className="data-[state=active]:bg-gold data-[state=active]:text-black text-gray-300"
+                  className="data-[state=active]:bg-gold data-[state=active]:text-black data-[state=active]:font-bold text-gold font-semibold border-0 hover:bg-gold/20 transition-all duration-200"
                 >
-                  Corporate Booking
+                  🏢 Corporate Booking
                 </TabsTrigger>
               </TabsList>
             </Tabs>
+            
+            {/* Visual indicator of selected booking type */}
+            <div className="mt-4 p-3 rounded-lg border border-gold/30 bg-gold/10">
+              <div className="flex items-center space-x-2">
+                <span className="text-2xl">
+                  {bookingType === 'individual' ? '👤' : '🏢'}
+                </span>
+                <div>
+                  <h3 className="text-gold font-bold">
+                    {bookingType === 'individual' ? 'Privat Booking' : 'Corporate Booking'}
+                  </h3>
+                  <p className="text-gray-300 text-sm">
+                    {bookingType === 'individual' 
+                      ? 'Book en personlig frisørtime til dig selv'
+                      : 'Book frisørbesøg til virksomheden for flere medarbejdere'
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
