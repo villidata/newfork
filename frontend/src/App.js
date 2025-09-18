@@ -325,8 +325,18 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <Scissors className="h-8 w-8 text-gold mr-3" />
-              <h1 className="text-2xl font-bold text-gold font-serif">{settings.site_title}</h1>
+              <div className="relative">
+                <Scissors className="h-10 w-10 text-gold mr-4 transform rotate-12" />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gold rounded-full opacity-60 animate-pulse"></div>
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-3xl font-extrabold text-transparent bg-gradient-to-r from-gold via-yellow-400 to-gold bg-clip-text font-serif tracking-wide">
+                  {settings.site_title || "Frisor LaFata"}
+                </h1>
+                <div className="text-xs text-gold/70 font-light tracking-[0.2em] uppercase">
+                  Classic Barbershop
+                </div>
+              </div>
             </div>
             
             {/* Desktop Navigation */}
