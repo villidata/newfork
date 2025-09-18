@@ -609,30 +609,43 @@ const BookingSystem = ({ onClose }) => {
                   </div>
 
                   <div>
-                    <Label className="text-gold mb-2 block">Vælg tjenester</Label>
+                    <Label className="text-gold mb-2 block flex items-center">
+                      <span className="mr-2">🛍️</span>
+                      Vælg tjenester for {employee.name || `Medarbejder ${index + 1}`}
+                    </Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {services.map((service) => (
-                        <div
-                          key={service.id}
-                          className={`p-3 rounded border cursor-pointer transition-all ${
-                            employee.selectedServices.includes(service.id)
-                              ? 'border-gold bg-gold/10'
-                              : 'border-gold/20 hover:border-gold/50'
-                          }`}
-                          onClick={() => updateEmployeeServices(index, service.id, !employee.selectedServices.includes(service.id))}
-                        >
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={employee.selectedServices.includes(service.id)}
-                              className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
-                            />
-                            <div className="flex-1">
-                              <p className="text-sm font-medium text-gold">{service.name}</p>
-                              <p className="text-xs text-gray-400">{service.duration_minutes} min - {service.price} DKK</p>
+                      {services.map((service) => {
+                        const isSelected = employee.selectedServices.includes(service.id);
+                        return (
+                          <div
+                            key={service.id}
+                            className={`p-3 rounded border-2 cursor-pointer transition-all ${
+                              isSelected
+                                ? 'border-gold bg-gold/20 shadow-lg transform scale-105'
+                                : 'border-gold/30 hover:border-gold/60 hover:bg-gold/5'
+                            }`}
+                            onClick={() => updateEmployeeServices(index, service.id, !isSelected)}
+                          >
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                checked={isSelected}
+                                className="border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                              />
+                              <div className="flex-1">
+                                <p className={`text-sm font-medium ${isSelected ? 'text-gold font-bold' : 'text-gray-300'}`}>
+                                  {service.name}
+                                </p>
+                                <p className={`text-xs ${isSelected ? 'text-gold/80' : 'text-gray-400'}`}>
+                                  {service.duration_minutes} min - {service.price} DKK
+                                </p>
+                              </div>
+                              {isSelected && (
+                                <span className="text-gold text-lg">✓</span>
+                              )}
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
