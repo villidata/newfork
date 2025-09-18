@@ -157,6 +157,17 @@ const Home = () => {
     return fixedUrl;
   };
 
+  // Function to scroll to a specific section
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   useEffect(() => {
     console.log('Starting fetchData - direct approach');
     
