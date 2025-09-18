@@ -788,7 +788,6 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
               Facebook
             </Label>
             <Input
-              key={`facebook_url-${isEditing ? 'edit' : 'new'}`}
               value={staffData.facebook_url || ''}
               onChange={(e) => handleFieldChange('facebook_url', e.target.value)}
               className="bg-black/50 border-gold/30 text-white"
