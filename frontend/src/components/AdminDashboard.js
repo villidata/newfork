@@ -801,7 +801,6 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
               LinkedIn
             </Label>
             <Input
-              key={`linkedin_url-${isEditing ? 'edit' : 'new'}`}
               value={staffData.linkedin_url || ''}
               onChange={(e) => handleFieldChange('linkedin_url', e.target.value)}
               className="bg-black/50 border-gold/30 text-white"
