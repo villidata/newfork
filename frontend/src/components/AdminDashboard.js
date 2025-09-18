@@ -835,7 +835,6 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
             <div>
               <Label className="text-gold text-sm">X (Twitter)</Label>
               <Input
-                key={`twitter_url-${isEditing ? 'edit' : 'new'}`}
                 value={staffData.twitter_url || ''}
                 onChange={(e) => handleFieldChange('twitter_url', e.target.value)}
                 className="bg-black/50 border-gold/30 text-white"
