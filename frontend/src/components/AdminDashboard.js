@@ -709,7 +709,6 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
       <div>
         <Label className="text-gold">Bio</Label>
         <Textarea
-          key={`bio-${isEditing ? 'edit' : 'new'}`}
           value={staffData.bio || ''}
           onChange={(e) => handleFieldChange('bio', e.target.value)}
           className="bg-black/50 border-gold/30 text-white"
