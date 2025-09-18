@@ -141,6 +141,13 @@ const Home = () => {
     }
   };
 
+  // Function to fix image URLs that point to wrong domain
+  const fixImageUrl = (url) => {
+    if (!url) return '';
+    // Replace wrong domain with correct domain
+    return url.replace('stylista-admin.preview.emergentagent.com', 'barberedit.preview.emergentagent.com');
+  };
+
   useEffect(() => {
     console.log('Starting fetchData - direct approach');
     
