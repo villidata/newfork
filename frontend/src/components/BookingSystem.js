@@ -558,8 +558,11 @@ const BookingSystem = ({ onClose }) => {
         {currentStep === 2 && bookingType === 'corporate' && (
           <Card className="bg-gray-900/50 border-gold/20">
             <CardHeader>
-              <CardTitle className="text-gold">Medarbejdere og tjenester</CardTitle>
-              <p className="text-gray-300">Tilføj medarbejdere og vælg tjenester for hver</p>
+              <CardTitle className="text-gold flex items-center">
+                <span className="mr-2">🏢</span>
+                Medarbejdere og tjenester - Corporate Booking
+              </CardTitle>
+              <p className="text-gray-300">Tilføj medarbejdere og vælg tjenester for hver person</p>
             </CardHeader>
             <CardContent className="space-y-6">
               {employees.map((employee, index) => (
