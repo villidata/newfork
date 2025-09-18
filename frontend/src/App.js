@@ -465,7 +465,12 @@ const Home = () => {
               >
                 Book din tid nu
               </Button>
-              <Button variant="outline" size="lg" className="border-gold text-gold hover:bg-gold hover:text-black text-lg px-8 py-3">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="border-gold text-gold hover:bg-gold hover:text-black text-lg px-8 py-3"
+                onClick={() => scrollToSection('services')}
+              >
                 Se vores tjenester
               </Button>
             </div>
