@@ -214,6 +214,18 @@ frontend:
           agent: "main"
           comment: "Not yet implemented. Need to add homepage sections fetching to App.js and update the public website to use the customizable layout configuration from backend API. Current website is stuck on 'Loading...' screen."
 
+  - task: "Multi-Language Support Implementation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "COMPLETE MULTI-LANGUAGE IMPLEMENTATION: Fully integrated i18next across the entire application. IMPLEMENTED FEATURES: 1) i18next configuration with Danish (da) and English (en) support, 2) LanguageSwitcher component added to both desktop and mobile navigation, 3) All hardcoded text replaced with translation keys in App.js (navigation, hero, services, staff, gallery, contact sections), 4) Comprehensive translation files with 100+ translation keys, 5) BookingSystem component updated with useTranslation hook, 6) Proper initialization in index.js, 7) Language persistence in localStorage, 8) Fallback to Danish as default language. Ready for comprehensive testing to verify language switching functionality works across all sections."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
