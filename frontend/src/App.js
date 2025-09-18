@@ -334,15 +334,15 @@ const Home = () => {
               <div className="flex items-center space-x-6">
                 {/* Main Navigation Links - Fixed positions */}
                 <div className="flex items-center space-x-6">
-                  <a href="#home" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">Hjem</a>
-                  <a href="#services" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">Tjenester</a>
-                  <a href="#staff" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">Frisører</a>
-                  <a href="#gallery" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">Galleri</a>
+                  <a href="#home" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">{t('navigation.home')}</a>
+                  <a href="#services" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">{t('navigation.services')}</a>
+                  <a href="#staff" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">{t('navigation.staff')}</a>
+                  <a href="#gallery" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">{t('navigation.gallery')}</a>
                   
                   {/* Social Media Link - Fixed width container */}
                   <div className="w-24 flex justify-center">
                     {settings.social_media_enabled && (
-                      <a href="#social" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">Social</a>
+                      <a href="#social" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">{t('navigation.social')}</a>
                     )}
                   </div>
                   
@@ -359,17 +359,18 @@ const Home = () => {
                     ))}
                   </div>
                   
-                  <a href="#contact" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">Kontakt</a>
+                  <a href="#contact" className="text-gold hover:text-gold/80 transition-colors px-3 py-2 whitespace-nowrap">{t('navigation.contact')}</a>
                 </div>
                 
-                {/* Booking Button - Fixed width container */}
-                <div className="w-24 flex justify-center ml-4">
+                {/* Language Switcher and Booking Button */}
+                <div className="flex items-center space-x-4 ml-4">
+                  <LanguageSwitcher />
                   {settings.booking_system_enabled !== false && (
                     <Button 
                       className="bg-gold text-black hover:bg-gold/90 font-semibold whitespace-nowrap px-4 py-2"
                       onClick={() => setShowBooking(true)}
                     >
-                      Book tid
+                      {t('navigation.bookAppointment')}
                     </Button>
                   )}
                 </div>
