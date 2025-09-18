@@ -825,7 +825,6 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
             <div>
               <Label className="text-gold text-sm">TikTok</Label>
               <Input
-                key={`tiktok_url-${isEditing ? 'edit' : 'new'}`}
                 value={staffData.tiktok_url || ''}
                 onChange={(e) => handleFieldChange('tiktok_url', e.target.value)}
                 className="bg-black/50 border-gold/30 text-white"
