@@ -814,7 +814,6 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
               YouTube
             </Label>
             <Input
-              key={`youtube_url-${isEditing ? 'edit' : 'new'}`}
               value={staffData.youtube_url || ''}
               onChange={(e) => handleFieldChange('youtube_url', e.target.value)}
               className="bg-black/50 border-gold/30 text-white"
