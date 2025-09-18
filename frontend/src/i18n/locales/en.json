@@ -55,10 +55,23 @@
   "contact": {
     "title": "Contact Us",
     "subtitle": "Book your appointment today",
-    "description": "Contact us to book your next barbering session or if you have questions.",
+    "description": "Book your appointment or contact us for more information",
     "phone": "Phone",
     "email": "Email", 
-    "address": "Address"
+    "address": "Address",
+    "openingHours": "Opening Hours",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday", 
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "closed": "Closed",
+    "weekdays": "Mon-Fri",
+    "contactForm": "Contact us",
+    "bookingUnavailable": "Online booking is temporarily unavailable. Contact us directly to book your appointment.",
+    "orCall": "Or call us at"
   },
   "common": {
     "loading": "Loading...",
