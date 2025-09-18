@@ -699,7 +699,6 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
       <div>
         <Label className="text-gold">Name</Label>
         <Input
-          key={`name-${isEditing ? 'edit' : 'new'}`}
           value={staffData.name || ''}
           onChange={(e) => handleFieldChange('name', e.target.value)}
           className="bg-black/50 border-gold/30 text-white"
