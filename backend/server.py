@@ -402,6 +402,73 @@ class BookingUpdate(BaseModel):
     notes: Optional[str] = None
     admin_notes: Optional[str] = None
 
+# Corporate booking models
+class EmployeeService(BaseModel):
+    employee_name: str
+    service_ids: List[str]  # List of service IDs for this employee
+    notes: Optional[str] = ""
+
+class CorporateBooking(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    # Company information
+    company_name: str
+    company_contact_person: str
+    company_email: str
+    company_phone: str
+    company_address: str
+    company_city: str
+    company_postal_code: str
+    # Booking details
+    staff_id: str
+    booking_date: date
+    booking_time: time
+    # Employee services
+    employees: List[EmployeeService]
+    total_employees: int
+    # Pricing
+    company_travel_fee: float  # Extra cost for coming to company
+    total_services_price: float
+    total_price: float
+    # Status and payment
+    payment_method: str = "invoice"  # "invoice", "cash", "paypal"
+    payment_status: str = "pending"  # "pending", "paid", "cancelled"
+    status: str = "pending"  # "pending", "confirmed", "cancelled", "completed"
+    # Additional information
+    special_requirements: str = ""
+    admin_notes: str = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CorporateBookingCreate(BaseModel):
+    # Company information
+    company_name: str
+    company_contact_person: str
+    company_email: str
+    company_phone: str
+    company_address: str
+    company_city: str
+    company_postal_code: str
+    # Booking details
+    staff_id: str
+    booking_date: date
+    booking_time: time
+    # Employee services
+    employees: List[EmployeeService]
+    # Pricing
+    company_travel_fee: float
+    # Payment and additional info
+    payment_method: str = "invoice"
+    special_requirements: str = ""
+
+class CorporateBookingUpdate(BaseModel):
+    booking_date: Optional[date] = None
+    booking_time: Optional[time] = None
+    staff_id: Optional[str] = None
+    status: Optional[str] = None
+    payment_status: Optional[str] = None
+    special_requirements: Optional[str] = None
+    admin_notes: Optional[str] = None
+
 class EmailTemplate(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
