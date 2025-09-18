@@ -252,6 +252,85 @@ const BookingSystem = ({ onClose }) => {
     }
   };
 
+  const handleCorporateBooking = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      // Prepare employee services data
+      const employeeServices = employees.map(emp => ({
+        employee_name: emp.name,
+        service_ids: emp.selectedServices,
+        notes: emp.notes || ''
+      }));
+
+      // Create corporate booking
+      const corporateBookingData = {
+        company_name: corporateInfo.companyName,
+        company_contact_person: corporateInfo.contactPerson,
+        company_email: corporateInfo.email,
+        company_phone: corporateInfo.phone,
+        company_address: corporateInfo.address,
+        company_city: corporateInfo.city,
+        company_postal_code: corporateInfo.postalCode,
+        staff_id: selectedStaff,
+        booking_date: selectedDate.toISOString().split('T')[0],
+        booking_time: selectedSlot + ':00',
+        employees: employeeServices,
+        company_travel_fee: parseFloat(corporateInfo.travelFee) || 0,
+        payment_method: paymentMethod,
+        special_requirements: corporateInfo.specialRequirements
+      };
+
+      const response = await axios.post(`${API}/corporate-bookings`, corporateBookingData);
+      
+      setBookingConfirmed(true);
+      setSuccess(true);
+      setCurrentStep(6);
+      
+    } catch (error) {
+      console.error('Corporate booking failed:', error);
+      setError('Corporate booking mislykkedes. Prøv igen.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addEmployee = () => {
+    setEmployees([...employees, { name: '', selectedServices: [], notes: '' }]);
+  };
+
+  const removeEmployee = (index) => {
+    if (employees.length > 1) {
+      setEmployees(employees.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateEmployee = (index, field, value) => {
+    const updated = [...employees];
+    updated[index] = { ...updated[index], [field]: value };
+    setEmployees(updated);
+  };
+
+  const updateEmployeeServices = (index, serviceId, checked) => {
+    const updated = [...employees];
+    if (checked) {
+      updated[index].selectedServices = [...updated[index].selectedServices, serviceId];
+    } else {
+      updated[index].selectedServices = updated[index].selectedServices.filter(id => id !== serviceId);
+    }
+    setEmployees(updated);
+  };
+
+  const getCorporateTotalPrice = () => {
+    const serviceIds = employees.flatMap(emp => emp.selectedServices);
+    const servicesPrice = serviceIds.reduce((total, serviceId) => {
+      const service = services.find(s => s.id === serviceId);
+      return total + (service ? service.price : 0);
+    }, 0);
+    return servicesPrice + parseFloat(corporateInfo.travelFee || 0);
+  };
+
   const selectedStaffMember = staff.find(s => s.id === selectedStaff);
 
   return (
