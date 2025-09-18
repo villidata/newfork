@@ -1945,6 +1945,7 @@ async def get_public_settings():
             "hero_subtitle": "i Hjertet af Byen",
             "hero_description": "Oplev den autentiske barber-oplevelse hos Frisor LaFata.",
             "hero_image": "",
+            "hero_image_opacity": 30,  # Default 30% opacity
             "social_media_enabled": True,
             "social_media_title": "Follow Us",
             "social_media_description": "Se vores seneste arbejde og tilbud på sociale medier",
