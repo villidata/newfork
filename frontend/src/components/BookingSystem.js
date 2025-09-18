@@ -342,13 +342,43 @@ const BookingSystem = ({ onClose }) => {
             Book din tid hos Frisor LaFata
           </DialogTitle>
           <DialogDescription className="text-gray-300">
-            Trin {currentStep} af 5 - {currentStep === 1 ? 'Vælg dato og frisør' : 
-                                      currentStep === 2 ? 'Vælg tjenester' :
-                                      currentStep === 3 ? 'Vælg tidspunkt' :
-                                      currentStep === 4 ? 'Dine oplysninger' :
-                                      currentStep === 5 ? 'Bekræft booking' : 'Booking bekræftet'}
+            {bookingType === 'individual' ? (
+              `Trin ${currentStep} af 5 - ${currentStep === 1 ? 'Vælg dato og frisør' : 
+                                        currentStep === 2 ? 'Vælg tjenester' :
+                                        currentStep === 3 ? 'Vælg tidspunkt' :
+                                        currentStep === 4 ? 'Dine oplysninger' :
+                                        currentStep === 5 ? 'Bekræft booking' : 'Booking bekræftet'}`
+            ) : (
+              `Corporate Booking - Trin ${currentStep} af 5 - ${currentStep === 1 ? 'Vælg dato og frisør' : 
+                                        currentStep === 2 ? 'Medarbejdere og tjenester' :
+                                        currentStep === 3 ? 'Vælg tidspunkt' :
+                                        currentStep === 4 ? 'Virksomhedsoplysninger' :
+                                        currentStep === 5 ? 'Bekræft corporate booking' : 'Booking bekræftet'}`
+            )}
           </DialogDescription>
         </DialogHeader>
+
+        {/* Booking Type Selection */}
+        {currentStep === 1 && (
+          <div className="mb-6">
+            <Tabs value={bookingType} onValueChange={setBookingType} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 bg-gray-900/50">
+                <TabsTrigger 
+                  value="individual" 
+                  className="data-[state=active]:bg-gold data-[state=active]:text-black text-gray-300"
+                >
+                  Privat Booking
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="corporate" 
+                  className="data-[state=active]:bg-gold data-[state=active]:text-black text-gray-300"
+                >
+                  Corporate Booking
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        )}
 
         {error && (
           <Alert className="border-red-500 bg-red-500/10">
@@ -360,9 +390,14 @@ const BookingSystem = ({ onClose }) => {
         {success && currentStep === 6 && (
           <div className="text-center py-8">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gold mb-2">Booking bekræftet!</h3>
+            <h3 className="text-2xl font-bold text-gold mb-2">
+              {bookingType === 'corporate' ? 'Corporate Booking bekræftet!' : 'Booking bekræftet!'}
+            </h3>
             <p className="text-gray-300 mb-4">
-              Din booking er blevet bekræftet. Du vil modtage en bekræftelse på email.
+              {bookingType === 'corporate' 
+                ? 'Jeres corporate booking er blevet bekræftet. I vil modtage en bekræftelse på email.'
+                : 'Din booking er blevet bekræftet. Du vil modtage en bekræftelse på email.'
+              }
             </p>
             <Button onClick={onClose} className="bg-gold text-black hover:bg-gold/90">
               Luk
