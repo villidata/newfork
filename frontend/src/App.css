@@ -300,18 +300,20 @@ a:focus {
   }
 }
 
-/* Logo Styling */
+/* Logo Styling - Responsive Navigation Logo */
 .logo-text {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
   letter-spacing: -0.02em;
   background: linear-gradient(135deg, #D4AF37 0%, #FFD700 35%, #D4AF37 100%);
   background-size: 200% 200%;
-  animation: logoShimmer 3s ease-in-out infinite alternate;
+  animation: logoShimmer 4s ease-in-out infinite alternate;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
+  line-height: 1.1;
+  max-width: 200px;
 }
 
 @keyframes logoShimmer {
@@ -323,63 +325,69 @@ a:focus {
   }
 }
 
-.logo-text::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, transparent 0%, rgba(255, 215, 0, 0.1) 50%, transparent 100%);
-  opacity: 0;
-  animation: logoGlow 2s ease-in-out infinite alternate;
-}
-
-@keyframes logoGlow {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
 .logo-subtitle {
   font-family: 'Inter', sans-serif;
   font-weight: 300;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(212, 175, 55, 0.8);
+  color: rgba(212, 175, 55, 0.7);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  line-height: 1;
+  margin-top: -2px;
 }
 
 .logo-icon {
-  filter: drop-shadow(0 2px 4px rgba(212, 175, 55, 0.3));
+  filter: drop-shadow(0 1px 2px rgba(212, 175, 55, 0.3));
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .logo-icon:hover {
-  transform: rotate(15deg) scale(1.1);
-  filter: drop-shadow(0 4px 8px rgba(212, 175, 55, 0.5));
+  transform: rotate(15deg) scale(1.05);
+  filter: drop-shadow(0 2px 4px rgba(212, 175, 55, 0.5));
 }
 
-.logo-pulse {
-  animation: logoPulse 2s infinite;
+/* Responsive Logo Sizing */
+@media (max-width: 640px) {
+  .logo-text {
+    font-size: 1rem;
+    max-width: 120px;
+    letter-spacing: -0.01em;
+  }
+  
+  .logo-subtitle {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+  }
 }
 
-@keyframes logoPulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
+@media (min-width: 641px) and (max-width: 1024px) {
+  .logo-text {
+    font-size: 1.25rem;
+    max-width: 160px;
   }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.8;
+  
+  .logo-subtitle {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
   }
-  100% {
-    transform: scale(1);
-    opacity: 1;
+}
+
+@media (min-width: 1025px) {
+  .logo-text {
+    font-size: 1.5rem;
+    max-width: 200px;
   }
+  
+  .logo-subtitle {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+  }
+}
+
+/* Navigation height consistency */
+nav .flex.items-center {
+  min-height: 4rem;
 }
 
 /* High contrast mode support */
