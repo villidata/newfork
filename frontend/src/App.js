@@ -173,7 +173,12 @@ const Home = () => {
         const settingsRes = await fetch(`${API}/public/settings`);
         if (settingsRes.ok) {
           const settingsData = await settingsRes.json();
-          setSettings(settingsData);
+          // Fix hero image URL
+          const fixedSettingsData = {
+            ...settingsData,
+            hero_image: fixImageUrl(settingsData.hero_image)
+          };
+          setSettings(fixedSettingsData);
         }
         
         // Gallery data
