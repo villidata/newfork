@@ -169,9 +169,15 @@ const BookingSystem = ({ onClose }) => {
       setError('Vælg venligst et tidspunkt');
       return;
     }
-    if (currentStep === 4 && (!customerInfo.name || !customerInfo.email || !customerInfo.phone)) {
-      setError('Udfyld venligst alle påkrævede felter');
-      return;
+    if (currentStep === 4) {
+      if (bookingType === 'individual' && (!customerInfo.name || !customerInfo.email || !customerInfo.phone)) {
+        setError('Udfyld venligst alle påkrævede felter');
+        return;
+      }
+      if (bookingType === 'corporate' && (!corporateInfo.companyName || !corporateInfo.contactPerson || !corporateInfo.email || !corporateInfo.phone || !corporateInfo.address || !corporateInfo.city || !corporateInfo.postalCode)) {
+        setError('Udfyld venligst alle påkrævede felter');
+        return;
+      }
     }
     
     setError('');
