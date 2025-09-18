@@ -1402,6 +1402,37 @@ Best regards,
                   </div>
                 </div>
               </div>
+              
+              <div>
+                <Label className="text-gold">Hero Image Transparency (%)</Label>
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={settings.hero_image_opacity || 30}
+                    onChange={(e) => handleSettingChange('hero_image_opacity', parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                    style={{
+                      background: `linear-gradient(to right, #D4AF37 0%, #D4AF37 ${settings.hero_image_opacity || 30}%, #374151 ${settings.hero_image_opacity || 30}%, #374151 100%)`
+                    }}
+                  />
+                  <div className="w-12 text-center">
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={settings.hero_image_opacity || 30}
+                      onChange={(e) => handleSettingChange('hero_image_opacity', parseInt(e.target.value) || 30)}
+                      className="bg-black/50 border-gold/30 text-white text-center text-sm h-8"
+                    />
+                  </div>
+                  <span className="text-gold text-sm">%</span>
+                </div>
+                <p className="text-gray-400 text-xs mt-1">
+                  Higher values make the background image more visible. Lower values make it more transparent.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
