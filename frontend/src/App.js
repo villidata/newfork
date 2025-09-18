@@ -324,17 +324,18 @@ const Home = () => {
       <nav className="fixed top-0 w-full bg-black/90 backdrop-blur-md z-50 border-b border-gold/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <div className="relative">
-                <Scissors className="h-10 w-10 text-gold mr-4 transform rotate-12" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gold rounded-full opacity-60 animate-pulse"></div>
+            <div className="flex items-center logo-pulse">
+              <div className="relative mr-4">
+                <Scissors className="h-12 w-12 text-gold logo-icon transform rotate-12" />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gold rounded-full opacity-80 animate-pulse"></div>
+                <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-yellow-400 rounded-full opacity-60 animate-pulse" style={{animationDelay: '0.5s'}}></div>
               </div>
               <div className="flex flex-col">
-                <h1 className="text-3xl font-extrabold text-transparent bg-gradient-to-r from-gold via-yellow-400 to-gold bg-clip-text font-serif tracking-wide">
+                <h1 className="text-4xl logo-text">
                   {settings.site_title || "Frisor LaFata"}
                 </h1>
-                <div className="text-xs text-gold/70 font-light tracking-[0.2em] uppercase">
-                  Classic Barbershop
+                <div className="logo-subtitle text-xs mt-1">
+                  Klassisk Barbering
                 </div>
               </div>
             </div>
