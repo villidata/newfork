@@ -1,0 +1,67 @@
+{
+  "navigation": {
+    "home": "Home",
+    "services": "Services", 
+    "staff": "Barbers",
+    "gallery": "Gallery",
+    "social": "Social",
+    "contact": "Contact",
+    "bookAppointment": "Book Appointment"
+  },
+  "hero": {
+    "title": "Classic Barbering",
+    "subtitle": "in the Heart of the City",
+    "description": "Experience the authentic barber experience at Frisor LaFata. We combine traditional craftsmanship with modern techniques.",
+    "bookNow": "Book your appointment now",
+    "seeServices": "See our services",
+    "since2010": "Since 2010"
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "Professional barbering and styling",
+    "description": "We offer a wide range of services from classic cuts to modern styling.",
+    "duration": "{{minutes}} min",
+    "price": "{{price}} DKK"
+  },
+  "staff": {
+    "title": "Meet Our Team",
+    "subtitle": "Experienced barbers with passion",  
+    "description": "Our skilled barbers have many years of experience and are ready to give you the perfect look.",
+    "yearsExperience": "{{years}} years experience"
+  },
+  "booking": {
+    "title": "Book your appointment at Frisor LaFata",
+    "individualBooking": "Private Booking",
+    "corporateBooking": "Corporate Booking",
+    "individualDescription": "Book a personal barber appointment for yourself",
+    "corporateDescription": "Book barber visits to the company for multiple employees",
+    "selectDate": "Select date",
+    "selectStaff": "Select barber",
+    "selectServices": "Select services",
+    "selectTime": "Select time",
+    "customerInfo": "Your information",
+    "confirmBooking": "Confirm booking",
+    "bookingConfirmed": "Booking confirmed!"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Book your appointment today",
+    "description": "Contact us to book your next barbering session or if you have questions.",
+    "phone": "Phone",
+    "email": "Email", 
+    "address": "Address"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit"
+  }
+}
