@@ -566,9 +566,15 @@ const BookingSystem = ({ onClose }) => {
             </CardHeader>
             <CardContent className="space-y-6">
               {employees.map((employee, index) => (
-                <div key={index} className="p-4 bg-black/30 rounded-lg border border-gold/20">
+                <div key={index} className="p-4 bg-black/40 rounded-lg border-2 border-gold/30">
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-gold font-semibold">Medarbejder {index + 1}</h4>
+                    <h4 className="text-gold font-semibold flex items-center">
+                      <span className="mr-2">👤</span>
+                      Medarbejder {index + 1}
+                      {employee.name && (
+                        <span className="ml-2 text-sm font-normal text-gray-300">({employee.name})</span>
+                      )}
+                    </h4>
                     {employees.length > 1 && (
                       <Button 
                         variant="outline" 
