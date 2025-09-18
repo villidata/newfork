@@ -1075,6 +1075,7 @@ const SettingsManager = ({ token, onRefresh }) => {
     hero_subtitle: 'i Hjertet af Byen',
     hero_description: 'Oplev den autentiske barber-oplevelse hos Frisor LaFata. Vi kombinerer traditionel håndværk med moderne teknikker.',
     hero_image: '',
+    hero_image_opacity: 30,
     paypal_client_id: '',
     paypal_client_secret: '',
     paypal_sandbox_mode: true,
