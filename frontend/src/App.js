@@ -29,6 +29,7 @@ import {
 import BookingSystem from "./components/BookingSystem";
 import AdminApp from "./components/AdminDashboard";
 import PublicPage from "./components/PublicPage";
+import LanguageSwitcher from "./components/LanguageSwitcher";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
