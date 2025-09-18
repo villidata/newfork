@@ -742,7 +742,6 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
       <div>
         <Label className="text-gold">Email</Label>
         <Input
-          key={`email-${isEditing ? 'edit' : 'new'}`}
           type="email"
           value={staffData.email || ''}
           onChange={(e) => handleFieldChange('email', e.target.value)}
