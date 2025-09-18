@@ -753,7 +753,6 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
       <div>
         <Label className="text-gold">Specialties</Label>
         <Input
-          key={`specialties-${isEditing ? 'edit' : 'new'}`}
           value={Array.isArray(staffData.specialties) ? staffData.specialties.join(', ') : (staffData.specialties || '')}
           onChange={(e) => {
             const specialties = e.target.value.split(',').map(s => s.trim()).filter(s => s);
