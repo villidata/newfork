@@ -849,7 +849,6 @@ const StaffForm = ({ staffData, onChange, onSubmit, onCancel, loading, title, is
               Personal Website
             </Label>
             <Input
-              key={`website_url-${isEditing ? 'edit' : 'new'}`}
               value={staffData.website_url || ''}
               onChange={(e) => handleFieldChange('website_url', e.target.value)}
               className="bg-black/50 border-gold/30 text-white"
