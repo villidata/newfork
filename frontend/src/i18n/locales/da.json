@@ -43,6 +43,15 @@
     "confirmBooking": "Bekræft booking",
     "bookingConfirmed": "Booking bekræftet!"
   },
+  "gallery": {
+    "title": "Vores Arbejde",
+    "subtitle": "Før og efter transformationer",
+    "description": "Se før og efter fotos af vores fantastiske transformationer",
+    "comingSoon": "Galleri kommer snart",
+    "beforeBadge": "Før",
+    "afterBadge": "Efter",
+    "viewMore": "Se mere galleri"
+  },
   "contact": {
     "title": "Kontakt Os",
     "subtitle": "Book din tid i dag",
