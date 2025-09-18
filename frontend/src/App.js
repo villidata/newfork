@@ -455,14 +455,14 @@ const Home = () => {
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
           <div className="mb-8">
             <Badge variant="outline" className="border-gold text-gold mb-4 text-sm">
-              Siden 2010
+              {t('hero.since2010')}
             </Badge>
             <h2 className="text-5xl md:text-7xl font-bold text-gold mb-6 font-serif leading-tight">
-              {settings.hero_title}
-              <span className="block text-4xl md:text-5xl text-gold/80 mt-2">{settings.hero_subtitle}</span>
+              {settings.hero_title || t('hero.title')}
+              <span className="block text-4xl md:text-5xl text-gold/80 mt-2">{settings.hero_subtitle || t('hero.subtitle')}</span>
             </h2>
             <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              {settings.hero_description}
+              {settings.hero_description || t('hero.description')}
             </p>
           </div>
           
@@ -473,7 +473,7 @@ const Home = () => {
                 className="bg-gold text-black hover:bg-gold/90 text-lg px-8 py-3 font-semibold"
                 onClick={() => setShowBooking(true)}
               >
-                Book din tid nu
+                {t('hero.bookNow')}
               </Button>
               <Button 
                 variant="outline" 
@@ -481,7 +481,7 @@ const Home = () => {
                 className="border-gold text-gold hover:bg-gold hover:text-black text-lg px-8 py-3"
                 onClick={() => scrollToSection('services')}
               >
-                Se vores tjenester
+                {t('hero.seeServices')}
               </Button>
             </div>
           )}
