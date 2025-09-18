@@ -506,9 +506,9 @@ const Home = () => {
                   <h3 className="text-xl font-semibold text-gold mb-2">{service.name}</h3>
                   <div className="flex items-center justify-center text-gray-300 mb-3">
                     <Clock className="h-4 w-4 mr-1" />
-                    <span className="text-sm">{service.duration_minutes} min</span>
+                    <span className="text-sm">{t('services.duration', { minutes: service.duration_minutes })}</span>
                   </div>
-                  <div className="text-2xl font-bold text-gold">{service.price} DKK</div>
+                  <div className="text-2xl font-bold text-gold">{t('services.price', { price: service.price })}</div>
                   {service.description && (
                     <p className="text-gray-300 text-sm mt-2">{service.description}</p>
                   )}
