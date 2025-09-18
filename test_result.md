@@ -234,9 +234,9 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Multi-Language Support Implementation"
     - "HomepageEditor Component - Core Implementation"
     - "HomepageEditor Integration - Admin Dashboard"
-    - "Homepage Layout System - Public Website Integration"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
