@@ -724,15 +724,15 @@ const Home = () => {
           ) : (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">📸</div>
-              <h3 className="text-xl font-semibold text-gray-300 mb-2">Galleri kommer snart</h3>
-              <p className="text-gray-400">Vi arbejder på at uploade vores seneste arbejde</p>
+              <h3 className="text-xl font-semibold text-gray-300 mb-2">{t('gallery.comingSoon')}</h3>
+              <p className="text-gray-400">{t('gallery.description')}</p>
             </div>
           )}
           
           {galleryItems.length > 6 && (
             <div className="text-center mt-12">
               <Button variant="outline" className="border-gold text-gold hover:bg-gold hover:text-black">
-                Se mere galleri
+                {t('gallery.viewMore')}
               </Button>
             </div>
           )}
