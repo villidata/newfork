@@ -942,7 +942,7 @@ const Home = () => {
                   <MapPin className="h-6 w-6 text-gold" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gold">Address</h3>
+                  <h3 className="text-lg font-semibold text-gold">{t('contact.address')}</h3>
                   <p className="text-gray-300">{settings.address}</p>
                 </div>
               </div>
@@ -952,7 +952,7 @@ const Home = () => {
                   <Phone className="h-6 w-6 text-gold" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gold">Telefon</h3>
+                  <h3 className="text-lg font-semibold text-gold">{t('contact.phone')}</h3>
                   <p className="text-gray-300">{settings.contact_phone}</p>
                 </div>
               </div>
@@ -962,7 +962,7 @@ const Home = () => {
                   <Mail className="h-6 w-6 text-gold" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gold">Email</h3>
+                  <h3 className="text-lg font-semibold text-gold">{t('contact.email')}</h3>
                   <p className="text-gray-300">{settings.contact_email}</p>
                 </div>
               </div>
