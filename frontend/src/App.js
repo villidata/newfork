@@ -142,96 +142,58 @@ const Home = () => {
   };
 
   useEffect(() => {
-    console.log('useEffect triggered, starting simple data fetch');
+    console.log('Starting fetchData - direct approach');
     
-    const loadData = async () => {
+    // Set loading to false immediately and then load data in background
+    setLoading(false);
+    
+    // Load data directly without complex error handling
+    const fetchData = async () => {
       try {
-        console.log('Starting individual API calls...');
+        // Staff data
+        const staffRes = await fetch(`${API}/staff`);
+        if (staffRes.ok) {
+          const staffData = await staffRes.json();
+          setStaff(staffData);
+        }
         
-        // Load staff data first (includes avatars)
-        try {
-          const staffResponse = await fetch(`${API}/staff`);
-          if (staffResponse.ok) {
-            const staffData = await staffResponse.json();
-            setStaff(staffData);
-            console.log('✅ Staff data loaded with avatars:', staffData.length);
-          }
-        } catch (e) {
-          console.log('Staff API failed, using fallback');
-          setStaff([{ id: "1", name: "Kristofer Bruno la Fata", bio: "Specialist", experience_years: 8, specialties: [], avatar_url: "" }]);
+        // Settings data (includes hero image)
+        const settingsRes = await fetch(`${API}/public/settings`);
+        if (settingsRes.ok) {
+          const settingsData = await settingsRes.json();
+          setSettings(settingsData);
         }
-
-        // Load settings (includes hero image)
-        try {
-          const settingsResponse = await fetch(`${API}/public/settings`);
-          if (settingsResponse.ok) {
-            const settingsData = await settingsResponse.json();
-            setSettings(settingsData);
-            console.log('✅ Settings loaded with hero image:', settingsData.hero_image ? 'YES' : 'NO');
-          }
-        } catch (e) {
-          console.log('Settings API failed, using fallback');
-          setSettings({ 
-            site_title: "Frisor LaFata", 
-            hero_title: "Klassisk Barbering", 
-            hero_subtitle: "i Hjertet af Byen",
-            booking_system_enabled: true 
-          });
+        
+        // Gallery data
+        const galleryRes = await fetch(`${API}/gallery?featured_only=false`);
+        if (galleryRes.ok) {
+          const galleryData = await galleryRes.json();
+          setGalleryItems(galleryData);
         }
-
-        // Load gallery (includes before/after images)
-        try {
-          const galleryResponse = await fetch(`${API}/gallery?featured_only=false`);
-          if (galleryResponse.ok) {
-            const galleryData = await galleryResponse.json();
-            setGalleryItems(galleryData);
-            console.log('✅ Gallery loaded with images:', galleryData.length);
-          }
-        } catch (e) {
-          console.log('Gallery API failed, using fallback');
-          setGalleryItems([]);
+        
+        // Services data
+        const servicesRes = await fetch(`${API}/services`);
+        if (servicesRes.ok) {
+          const servicesData = await servicesRes.json();
+          setServices(servicesData);
         }
-
-        // Load services
-        try {
-          const servicesResponse = await fetch(`${API}/services`);
-          if (servicesResponse.ok) {
-            const servicesData = await servicesResponse.json();
-            setServices(servicesData);
-            console.log('✅ Services loaded:', servicesData.length);
-          }
-        } catch (e) {
-          console.log('Services API failed, using fallback');
-          setServices([{ name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" }]);
+        
+        // Pages data
+        const pagesRes = await fetch(`${API}/public/pages`);
+        if (pagesRes.ok) {
+          const pagesData = await pagesRes.json();
+          setPages(pagesData);
         }
-
-        // Load pages
-        try {
-          const pagesResponse = await fetch(`${API}/public/pages`);
-          if (pagesResponse.ok) {
-            const pagesData = await pagesResponse.json();
-            setPages(pagesData);
-            console.log('✅ Pages loaded:', pagesData.length);
-          }
-        } catch (e) {
-          console.log('Pages API failed, using fallback');
-          setPages([]);
-        }
-
-        console.log('✅ All data loading completed');
+        
+        console.log('All data loaded successfully');
         
       } catch (error) {
-        console.error('Critical error in loadData:', error);
+        console.error('Error loading data:', error);
       }
-      
-      // Always set loading to false regardless of success/failure
-      console.log('Setting loading to false...');
-      setLoading(false);
-      console.log('Loading should now be false');
     };
-
-    // Start loading data
-    loadData();
+    
+    // Start loading data in background
+    fetchData();
   }, []);
 
   const getServiceIcon = (iconValue) => {
