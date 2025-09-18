@@ -161,7 +161,12 @@ const Home = () => {
         const staffRes = await fetch(`${API}/staff`);
         if (staffRes.ok) {
           const staffData = await staffRes.json();
-          setStaff(staffData);
+          // Fix avatar URLs
+          const fixedStaffData = staffData.map(staff => ({
+            ...staff,
+            avatar_url: fixImageUrl(staff.avatar_url)
+          }));
+          setStaff(fixedStaffData);
         }
         
         // Settings data (includes hero image)
