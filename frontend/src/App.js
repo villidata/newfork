@@ -145,7 +145,9 @@ const Home = () => {
   const fixImageUrl = (url) => {
     if (!url) return '';
     // Replace wrong domain with correct domain
-    return url.replace('stylista-admin.preview.emergentagent.com', 'barberedit.preview.emergentagent.com');
+    const fixedUrl = url.replace('stylista-admin.preview.emergentagent.com', 'barberedit.preview.emergentagent.com');
+    console.log('Fixed image URL:', url, '->', fixedUrl);
+    return fixedUrl;
   };
 
   useEffect(() => {
