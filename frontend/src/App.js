@@ -661,9 +661,9 @@ const Home = () => {
       <section id="gallery" className="py-20 bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gold mb-4 font-serif">Vores Arbejde</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gold mb-4 font-serif">{t('gallery.title')}</h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Se før og efter fotos af vores fantastiske transformationer
+              {t('gallery.description')}
             </p>
           </div>
           
