@@ -581,7 +581,7 @@ const Home = () => {
                   
                   <div className="flex items-center justify-center text-gold mb-4">
                     <Star className="h-4 w-4 mr-1" />
-                    <span className="text-sm">{member.experience_years} års erfaring</span>
+                    <span className="text-sm">{t('staff.yearsExperience', { years: member.experience_years })}</span>
                   </div>
 
                   {/* Social Media Icons */}
