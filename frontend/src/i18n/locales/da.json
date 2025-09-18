@@ -1,0 +1,67 @@
+{
+  "navigation": {
+    "home": "Hjem",
+    "services": "Tjenester", 
+    "staff": "Frisører",
+    "gallery": "Galleri",
+    "social": "Social",
+    "contact": "Kontakt",
+    "bookAppointment": "Book tid"
+  },
+  "hero": {
+    "title": "Klassisk Barbering",
+    "subtitle": "i Hjertet af Byen",
+    "description": "Oplev den autentiske barber-oplevelse hos Frisor LaFata. Vi kombinerer traditionel håndværk med moderne teknikker.",
+    "bookNow": "Book din tid nu",
+    "seeServices": "Se vores tjenester",
+    "since2010": "Siden 2010"
+  },
+  "services": {
+    "title": "Vores Tjenester",
+    "subtitle": "Professionel barbering og styling",
+    "description": "Vi tilbyder et bredt udvalg af tjenester fra klassiske klipninger til moderne styling.",
+    "duration": "{{minutes}} min",
+    "price": "{{price}} DKK"
+  },
+  "staff": {
+    "title": "Mød Vores Team",
+    "subtitle": "Erfarne barbere med passion",
+    "description": "Vores dygtige barbere har mange års erfaring og står klar til at give dig den perfekte look.",
+    "yearsExperience": "{{years}} års erfaring"
+  },
+  "booking": {
+    "title": "Book din tid hos Frisor LaFata",
+    "individualBooking": "Privat Booking",
+    "corporateBooking": "Corporate Booking",
+    "individualDescription": "Book en personlig frisørtime til dig selv",
+    "corporateDescription": "Book frisørbesøg til virksomheden for flere medarbejdere",
+    "selectDate": "Vælg dato",
+    "selectStaff": "Vælg frisør",
+    "selectServices": "Vælg tjenester",
+    "selectTime": "Vælg tidspunkt",
+    "customerInfo": "Dine oplysninger",
+    "confirmBooking": "Bekræft booking",
+    "bookingConfirmed": "Booking bekræftet!"
+  },
+  "contact": {
+    "title": "Kontakt Os",
+    "subtitle": "Book din tid i dag",
+    "description": "Kontakt os for at booke din næste barbering eller hvis du har spørgsmål.",
+    "phone": "Telefon",
+    "email": "Email",
+    "address": "Adresse"
+  },
+  "common": {
+    "loading": "Indlæser...",
+    "error": "Der opstod en fejl",
+    "close": "Luk",
+    "save": "Gem",
+    "cancel": "Annuller",
+    "edit": "Rediger",
+    "delete": "Slet",
+    "add": "Tilføj",
+    "next": "Næste",
+    "previous": "Forrige",
+    "submit": "Send"
+  }
+}
