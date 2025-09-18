@@ -142,99 +142,47 @@ const Home = () => {
   };
 
   useEffect(() => {
-    console.log('useEffect triggered, starting data fetch');
-    setLoading(false);
+    console.log('useEffect triggered, fetching real data from backend');
     
-    // Fetch real data from backend
-    const loadData = async () => {
+    const loadRealData = async () => {
       try {
-        // Fetch real staff data from backend
-        const staffResponse = await fetch(`${API}/staff`);
-        if (staffResponse.ok) {
-          const realStaffData = await staffResponse.json();
-          setStaff(realStaffData);
-          console.log('Real staff data loaded:', realStaffData.length, 'members');
-        } else {
-          // Fallback staff data only if API fails
-          setStaff([
-            { 
-              id: "fallback-1",
-              name: "Kristofer Bruno la Fata", 
-              bio: "Specialist i klassisk barbering",
-              experience_years: 8,
-              specialties: ["Classic cuts", "Beard styling"],
-              instagram_url: "",
-              facebook_url: "",
-              linkedin_url: "",
-              youtube_url: "",
-              tiktok_url: "",
-              twitter_url: "",
-              website_url: "",
-              avatar_url: ""
-            }
-          ]);
-        }
+        console.log('Loading real data from backend APIs...');
+        
+        // Load real data from all APIs
+        const [servicesRes, staffRes, settingsRes, pagesRes, galleryRes] = await Promise.all([
+          fetch(`${API}/services`).then(res => res.ok ? res.json() : []).catch(() => []),
+          fetch(`${API}/staff`).then(res => res.ok ? res.json() : []).catch(() => []),
+          fetch(`${API}/public/settings`).then(res => res.ok ? res.json() : {}).catch(() => ({})),
+          fetch(`${API}/public/pages`).then(res => res.ok ? res.json() : []).catch(() => []),
+          fetch(`${API}/gallery?featured_only=false`).then(res => res.ok ? res.json() : []).catch(() => [])
+        ]);
 
-        // Fetch real services data
-        const servicesResponse = await fetch(`${API}/services`);
-        if (servicesResponse.ok) {
-          const realServicesData = await servicesResponse.json();
-          setServices(realServicesData);
-          console.log('Real services data loaded:', realServicesData.length, 'services');
-        } else {
-          // Fallback services data
-          setServices([
-            { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" },
-            { name: "Skæg trimning", duration_minutes: 20, price: 200, category: "beard", icon: "🪒" },
-            { name: "Vask & styling", duration_minutes: 45, price: 400, category: "styling", icon: "💧" },
-            { name: "Farvning", duration_minutes: 60, price: 600, category: "coloring", icon: "🎨" }
-          ]);
-        }
+        console.log('Backend data loaded:', {
+          services: servicesRes?.length,
+          staff: staffRes?.length, 
+          settings: !!settingsRes,
+          pages: pagesRes?.length,
+          gallery: galleryRes?.length
+        });
 
-        // Fetch real settings data
-        const settingsResponse = await fetch(`${API}/public/settings`);
-        if (settingsResponse.ok) {
-          const realSettingsData = await settingsResponse.json();
-          setSettings(realSettingsData);
-          console.log('Real settings data loaded');
-        } else {
-          // Fallback settings data
-          setSettings({
-            site_title: "Frisor LaFata",
-            hero_title: "Klassisk Barbering",
-            hero_subtitle: "i Hjertet af Byen",
-            hero_description: "Oplev den autentiske barber-oplevelse hos Frisor LaFata.",
-            booking_system_enabled: true,
-            social_media_enabled: true,
-            contact_phone: "+45 12 34 56 78",
-            contact_email: "info@frisorlafata.dk",
-            address: "Hovedgaden 123, 1000 København"
-          });
-        }
-
-        // Fetch pages and gallery
-        const pagesResponse = await fetch(`${API}/public/pages`);
-        if (pagesResponse.ok) {
-          const realPagesData = await pagesResponse.json();
-          setPages(realPagesData);
-        } else {
-          setPages([
-            { id: "1", title: "Om Os", slug: "om-os" },
-            { id: "2", title: "Priser", slug: "priser" }
-          ]);
-        }
-
-        const galleryResponse = await fetch(`${API}/gallery?featured_only=false`);
-        if (galleryResponse.ok) {
-          const realGalleryData = await galleryResponse.json();
-          setGalleryItems(realGalleryData);
-        } else {
-          setGalleryItems([]);
-        }
-
+        // Set the real data from backend
+        setServices(servicesRes || []);
+        setStaff(staffRes || []);
+        setSettings(settingsRes || {});
+        setPages(pagesRes || []);
+        setGalleryItems(galleryRes || []);
+        
+        console.log('Real backend data set successfully');
+        console.log('Hero image URL:', settingsRes?.hero_image);
+        console.log('Staff avatar URLs:', staffRes?.map(s => s.avatar_url));
+        
       } catch (error) {
-        console.error('Error loading data:', error);
-        // Set minimal fallback data if everything fails
+        console.error('Error loading real data:', error);
+        
+        // Only use fallback data if everything fails
+        setServices([
+          { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" }
+        ]);
         setStaff([
           { 
             id: "error-fallback",
@@ -247,9 +195,6 @@ const Home = () => {
             avatar_url: ""
           }
         ]);
-        setServices([
-          { name: "Klipning", duration_minutes: 30, price: 350, category: "haircut", icon: "✂️" }
-        ]);
         setSettings({
           site_title: "Frisor LaFata",
           hero_title: "Klassisk Barbering",
@@ -259,10 +204,13 @@ const Home = () => {
         });
         setPages([]);
         setGalleryItems([]);
+      } finally {
+        console.log('Setting loading to false');
+        setLoading(false);
       }
     };
 
-    loadData();
+    loadRealData();
   }, []);
 
   const getServiceIcon = (iconValue) => {
