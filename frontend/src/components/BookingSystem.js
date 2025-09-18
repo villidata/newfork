@@ -22,6 +22,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const BookingSystem = ({ onClose }) => {
+  const { t } = useTranslation();
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedStaff, setSelectedStaff] = useState('');
   const [selectedServices, setSelectedServices] = useState([]);
