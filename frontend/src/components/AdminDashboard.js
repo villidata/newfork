@@ -1432,6 +1432,67 @@ Best regards,
                   Higher values make the background image more visible. Lower values make it more transparent.
                 </p>
               </div>
+
+              {/* Video Background Settings */}
+              <div className="border-t border-gold/20 pt-6">
+                <h4 className="text-gold text-lg font-semibold mb-4">Video Background Settings</h4>
+                
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-gold">Hero Video URL</Label>
+                    <Input
+                      type="url"
+                      value={settings.hero_video || ''}
+                      onChange={(e) => handleSettingChange('hero_video', e.target.value)}
+                      className="bg-black/50 border-gold/30 text-white"
+                      placeholder="https://example.com/video.mp4"
+                    />
+                    <p className="text-gray-400 text-xs mt-1">
+                      Enter URL to video file (MP4, WebM, or OGG format recommended)
+                    </p>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="hero_video_enabled"
+                        checked={settings.hero_video_enabled || false}
+                        onChange={(e) => handleSettingChange('hero_video_enabled', e.target.checked)}
+                        className="w-4 h-4 text-gold bg-black border-gold/30 rounded focus:ring-gold focus:ring-2"
+                      />
+                      <label htmlFor="hero_video_enabled" className="text-white text-sm">
+                        Enable Video Background
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="hero_text_overlay"
+                        checked={settings.hero_text_overlay_enabled !== false}
+                        onChange={(e) => handleSettingChange('hero_text_overlay_enabled', e.target.checked)}
+                        className="w-4 h-4 text-gold bg-black border-gold/30 rounded focus:ring-gold focus:ring-2"
+                      />
+                      <label htmlFor="hero_text_overlay" className="text-white text-sm">
+                        Show Text Overlay
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="bg-yellow-900/20 border border-yellow-600/30 rounded-lg p-3">
+                    <p className="text-yellow-300 text-sm">
+                      <strong>💡 Video Background Tips:</strong><br/>
+                      • When video is enabled and text overlay is disabled, only video plays with minimal branding<br/>
+                      • Video will loop automatically and play muted for autoplay compatibility<br/>
+                      • Recommended: Use short (10-30 second) looping clips for best performance<br/>
+                      • Text like "Siden 2010, Frisør LaFata, i Hjertet af Århus" will be hidden when text overlay is off
+                    </p>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
