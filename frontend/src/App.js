@@ -448,18 +448,40 @@ const Home = () => {
       {/* Hero Section */}
       <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
-            src={settings.hero_image || "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwxfHxiYXJiZXJzaG9wfGVufDB8fHx8MTczMjgzMjAzMnww&ixlib=rb-4.1.0&q=85"}
-            alt="Frisor LaFata barbershop"
-            className="w-full h-full object-cover"
-            style={{ opacity: (settings.hero_image_opacity || 30) / 100 }}
-            onLoad={() => console.log('Hero image loaded:', settings.hero_image || 'fallback', 'opacity:', settings.hero_image_opacity || 30)}
-            onError={(e) => {
-              console.error('Hero image failed to load:', e.target.src);
-              e.target.src = "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwxfHxiYXJiZXJzaG9wfGVufDB8fHx8MTczMjgzMjAzMnww&ixlib=rb-4.1.0&q=85";
-            }}
-          />
-          <div className="absolute inset-0 bg-black/70"></div>
+          {settings.hero_video_enabled && settings.hero_video ? (
+            <>
+              <video 
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+                className="w-full h-full object-cover"
+                onLoadStart={() => console.log('Hero video loading:', settings.hero_video)}
+                onError={(e) => console.error('Hero video failed to load:', e.target.src)}
+              >
+                <source src={settings.hero_video} type="video/mp4" />
+                <source src={settings.hero_video} type="video/webm" />
+                <source src={settings.hero_video} type="video/ogg" />
+                Your browser does not support the video tag.
+              </video>
+              <div className="absolute inset-0 bg-black/30"></div>
+            </>
+          ) : (
+            <>
+              <img 
+                src={settings.hero_image || "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwxfHxiYXJiZXJzaG9wfGVufDB8fHx8MTczMjgzMjAzMnww&ixlib=rb-4.1.0&q=85"}
+                alt="Frisor LaFata barbershop"
+                className="w-full h-full object-cover"
+                style={{ opacity: (settings.hero_image_opacity || 30) / 100 }}
+                onLoad={() => console.log('Hero image loaded:', settings.hero_image || 'fallback', 'opacity:', settings.hero_image_opacity || 30)}
+                onError={(e) => {
+                  console.error('Hero image failed to load:', e.target.src);
+                  e.target.src = "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwxfHxiYXJiZXJzaG9wfGVufDB8fHx8MTczMjgzMjAzMnww&ixlib=rb-4.1.0&q=85";
+                }}
+              />
+              <div className="absolute inset-0 bg-black/70"></div>
+            </>
+          )}
         </div>
         
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
