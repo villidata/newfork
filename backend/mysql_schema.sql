@@ -32,7 +32,7 @@ CREATE TABLE services (
     price DECIMAL(10,2) NOT NULL,
     description TEXT,
     category VARCHAR(100) DEFAULT 'general',
-    icon VARCHAR(100) DEFAULT '✨',
+    icon VARCHAR(100) DEFAULT 'sparkles',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
