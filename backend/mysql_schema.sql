@@ -1,8 +1,8 @@
 -- Frisor LaFata MySQL Database Schema
 -- Created for conversion from MongoDB
 
-CREATE DATABASE IF NOT EXISTS frisor_lafata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE frisor_lafata;
+CREATE DATABASE IF NOT EXISTS target_lafata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE target_lafata;
 
 -- Users table
 CREATE TABLE users (
