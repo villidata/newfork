@@ -1,0 +1,25 @@
+# MySQL Database Configuration for target_lafata
+
+## Database Connection Settings (backend/.env):
+DB_TYPE="mysql"
+MYSQL_HOST="localhost"
+MYSQL_USER="target_lafata"
+MYSQL_PASSWORD="your_password_here"
+MYSQL_DATABASE="target_lafata"
+
+## Video Background Settings (added to database):
+- hero_video TEXT
+- hero_video_enabled BOOLEAN DEFAULT FALSE
+- hero_text_overlay_enabled BOOLEAN DEFAULT TRUE
+- hero_image_opacity DECIMAL(3,2) DEFAULT 0.70
+
+## Admin Panel Video Settings Location:
+Admin Dashboard → Settings → General → Video Background Settings
+
+## Features:
+✅ Video background with autoplay and loop
+✅ Text overlay toggle (hide/show hero text)
+✅ Multi-language support (Danish/English)
+✅ Responsive logo "Frisør LaFata Klassik Barbering"
+✅ Complete admin functionality
+✅ Booking system with corporate options
