@@ -1,0 +1,23 @@
+# Frontend .env Configuration Options
+
+## Option 1: Same Domain Backend (Recommended)
+REACT_APP_BACKEND_URL=https://frisorlafata.dk
+WDS_SOCKET_PORT=443
+
+## Option 2: Subdomain Backend
+REACT_APP_BACKEND_URL=https://api.frisorlafata.dk
+WDS_SOCKET_PORT=443
+
+## Option 3: Different Port
+REACT_APP_BACKEND_URL=https://frisorlafata.dk:8001
+WDS_SOCKET_PORT=443
+
+## Option 4: Keep Using Emergent (Temporary)
+REACT_APP_BACKEND_URL=https://fresor-admin.preview.emergentagent.com
+WDS_SOCKET_PORT=443
+
+## Important Notes:
+- Your backend must be accessible at this URL
+- Backend API endpoints must be prefixed with /api
+- Example: https://frisorlafata.dk/api/settings
+- Make sure CORS is configured to allow your frontend domain
