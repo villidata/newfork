@@ -125,6 +125,10 @@ CREATE TABLE site_settings (
     hero_subtitle VARCHAR(255) DEFAULT 'i Hjertet af Byen',
     hero_description TEXT DEFAULT 'Oplev den autentiske barber-oplevelse hos Frisor LaFata.',
     hero_image TEXT,
+    hero_video TEXT,
+    hero_video_enabled BOOLEAN DEFAULT FALSE,
+    hero_text_overlay_enabled BOOLEAN DEFAULT TRUE,
+    hero_image_opacity DECIMAL(3,2) DEFAULT 0.70,
     -- PayPal settings
     paypal_client_id VARCHAR(255),
     paypal_client_secret VARCHAR(255),
