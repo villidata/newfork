@@ -67,7 +67,7 @@ You have **TWO deployment options**:
 - All features work (booking, admin, multi-language)
 
 ### ⚠️ **Note:**
-- Uses existing backend at `https://retro-barber.preview.emergentagent.com`
+- Uses existing backend at `https://frisor-ssl-deploy.preview.emergentagent.com`
 - Admin login works at `yourdomain.com/admin`
 
 ---
