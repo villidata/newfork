@@ -2144,8 +2144,8 @@ async def create_paypal_payment(booking_id: str, amount: float = None):
             "intent": "sale",
             "payer": {"payment_method": "paypal"},
             "redirect_urls": {
-                "return_url": f"https://fresor-admin.preview.emergentagent.com/payment/success?booking_id={booking_id}",
-                "cancel_url": f"https://fresor-admin.preview.emergentagent.com/payment/cancel?booking_id={booking_id}"
+                "return_url": f"https://retro-barber.preview.emergentagent.com/payment/success?booking_id={booking_id}",
+                "cancel_url": f"https://retro-barber.preview.emergentagent.com/payment/cancel?booking_id={booking_id}"
             },
             "transactions": [{
                 "item_list": {
