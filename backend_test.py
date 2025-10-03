@@ -2241,6 +2241,390 @@ class FrisorLaFataAPITester:
             is_sorted = nav_orders == sorted(nav_orders)
             print(f"     Navigation order sorted: {'✅' if is_sorted else '❌'}")
 
+    def test_mysql_database_connectivity(self):
+        """Test MySQL database connectivity and operations"""
+        print("\n" + "🗄️ MYSQL DATABASE CONNECTIVITY TESTS" + "=" * 30)
+        
+        # Note: Based on backend code analysis, the system is actually using MongoDB, not MySQL
+        # The review request mentions MySQL but the implementation uses MongoDB
+        print("⚠️  NOTE: Backend is configured for MongoDB, not MySQL as mentioned in review request")
+        print("   MongoDB URL from backend/.env: mongodb://localhost:27017")
+        print("   Database operations are handled through MongoDB collections")
+        
+        # Test database operations through API endpoints (which use MongoDB)
+        success_count = 0
+        total_tests = 4
+        
+        # Test 1: Data persistence through staff creation
+        if self.admin_token:
+            original_token = self.token
+            self.token = self.admin_token
+            
+            test_staff = {
+                "name": f"DB Test Staff {datetime.now().strftime('%H%M%S')}",
+                "bio": "Testing database persistence",
+                "experience_years": 3,
+                "specialties": ["database-test"],
+                "phone": "+45 12 34 56 78",
+                "email": "dbtest@frisorlafata.dk"
+            }
+            
+            success, response = self.run_test("Database Persistence - Create Staff", "POST", "staff", 200, data=test_staff)
+            if success:
+                success_count += 1
+                test_staff_id = response.get('id')
+                
+                # Test 2: Data retrieval
+                success, staff_list = self.run_test("Database Retrieval - Get Staff", "GET", "staff", 200)
+                if success and any(staff['id'] == test_staff_id for staff in staff_list):
+                    success_count += 1
+                    print("   ✅ Data retrieval confirmed - staff found in database")
+                
+                # Test 3: Data update
+                update_data = {"bio": "Updated database test bio"}
+                success, update_response = self.run_test("Database Update - Update Staff", "PUT", f"staff/{test_staff_id}", 200, data=update_data)
+                if success and update_response.get('bio') == "Updated database test bio":
+                    success_count += 1
+                    print("   ✅ Data update confirmed - changes persisted")
+                
+                # Test 4: Data deletion
+                success, delete_response = self.run_test("Database Deletion - Delete Staff", "DELETE", f"staff/{test_staff_id}", 200)
+                if success:
+                    success_count += 1
+                    print("   ✅ Data deletion confirmed")
+            
+            self.token = original_token
+        
+        print(f"\n📊 Database Connectivity Tests: {success_count}/{total_tests} passed")
+        return success_count == total_tests
+
+    def test_image_upload_endpoint(self):
+        """Test image upload endpoint comprehensively"""
+        print("\n" + "🖼️ IMAGE UPLOAD ENDPOINT TESTS" + "=" * 35)
+        
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+        
+        # Test different image formats
+        image_formats = [
+            ('test_image.jpg', 'image/jpeg'),
+            ('test_image.png', 'image/png'),
+            ('test_image.gif', 'image/gif')
+        ]
+        
+        uploaded_images = []
+        
+        for filename, content_type in image_formats:
+            success, response = self._test_image_upload_format(filename, content_type)
+            if success and 'image_url' in response:
+                uploaded_images.append(response['image_url'])
+        
+        # Test authentication requirement
+        self._test_image_upload_auth_required()
+        
+        # Test invalid file type
+        self._test_image_upload_invalid_file()
+        
+        # Test static file serving for uploaded images
+        for image_url in uploaded_images:
+            self._test_image_static_serving(image_url)
+        
+        return len(uploaded_images) > 0, uploaded_images
+
+    def _test_image_upload_format(self, filename, content_type):
+        """Test image upload with specific format"""
+        # Create test image content
+        test_image_content = b"fake_image_content_for_testing_" + filename.encode() + b"_binary_data" * 50
+        
+        url = f"{self.api_url}/upload/image"
+        headers = {'Authorization': f'Bearer {self.admin_token}'}
+        files = {'image': (filename, io.BytesIO(test_image_content), content_type)}
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing Image Upload - {filename}...")
+        
+        try:
+            response = requests.post(url, headers=headers, files=files, timeout=15)
+            
+            success = response.status_code == 200
+            if success:
+                self.tests_passed += 1
+                response_data = response.json()
+                image_url = response_data.get('image_url', '')
+                
+                # Verify URL format and directory
+                expected_domain = "https://frisor-ssl-deploy.preview.emergentagent.com"
+                expected_path = "/uploads/images/"
+                
+                if image_url.startswith(expected_domain) and expected_path in image_url:
+                    print(f"✅ Passed - Correct URL format: {image_url}")
+                else:
+                    print(f"❌ URL format issue - Expected {expected_domain}{expected_path}, got: {image_url}")
+                    success = False
+                
+                return success, response_data
+            else:
+                print(f"❌ Failed - Status: {response.status_code}")
+                try:
+                    error_data = response.json()
+                    print(f"   Error: {error_data}")
+                except:
+                    print(f"   Error: {response.text}")
+                return False, {}
+                
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False, {}
+
+    def _test_image_upload_auth_required(self):
+        """Test that image upload requires admin authentication"""
+        # Test without token
+        url = f"{self.api_url}/upload/image"
+        files = {'image': ('test.jpg', io.BytesIO(b"test_image"), 'image/jpeg')}
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing Image Upload - No Auth (should fail)...")
+        
+        try:
+            response = requests.post(url, files=files, timeout=10)
+            if response.status_code == 401 or response.status_code == 403:
+                self.tests_passed += 1
+                print(f"✅ Passed - Correctly rejected unauthorized request: {response.status_code}")
+                return True
+            else:
+                print(f"❌ Failed - Should reject unauthorized request, got: {response.status_code}")
+                return False
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False
+
+    def _test_image_upload_invalid_file(self):
+        """Test image upload with invalid file type"""
+        url = f"{self.api_url}/upload/image"
+        headers = {'Authorization': f'Bearer {self.admin_token}'}
+        files = {'image': ('test.txt', io.BytesIO(b"not an image"), 'text/plain')}
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing Image Upload - Invalid File Type (should fail)...")
+        
+        try:
+            response = requests.post(url, headers=headers, files=files, timeout=10)
+            if response.status_code == 400:
+                self.tests_passed += 1
+                print(f"✅ Passed - Correctly rejected invalid file type: {response.status_code}")
+                return True
+            else:
+                print(f"❌ Failed - Should reject invalid file type, got: {response.status_code}")
+                return False
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False
+
+    def _test_image_static_serving(self, image_url):
+        """Test that uploaded image is accessible via static file serving"""
+        self.tests_run += 1
+        print(f"\n🔍 Testing Image Static Serving...")
+        print(f"   URL: {image_url}")
+        
+        try:
+            response = requests.get(image_url, timeout=10)
+            
+            if response.status_code == 200:
+                self.tests_passed += 1
+                content_type = response.headers.get('content-type', '')
+                content_length = response.headers.get('content-length', 'Unknown')
+                print(f"✅ Passed - Image accessible")
+                print(f"   Content-Type: {content_type}")
+                print(f"   Content-Length: {content_length}")
+                return True
+            else:
+                print(f"❌ Failed - Image not accessible: {response.status_code}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Failed - Error accessing image: {str(e)}")
+            return False
+
+    def test_static_file_serving_comprehensive(self):
+        """Test static file serving from /api/uploads/ paths"""
+        print("\n" + "📁 STATIC FILE SERVING TESTS" + "=" * 35)
+        
+        if not self.admin_token:
+            print("❌ Skipped - No admin token available")
+            return False, {}
+        
+        # Test 1: Upload files to different directories
+        test_files = []
+        
+        # Upload avatar
+        success, avatar_response = self._test_avatar_upload_file_type('static_test_avatar.jpg', 'image/jpeg')
+        if success and 'avatar_url' in avatar_response:
+            test_files.append(('avatar', avatar_response['avatar_url']))
+        
+        # Upload image
+        success, image_response = self._test_image_upload_format('static_test_image.png', 'image/png')
+        if success and 'image_url' in image_response:
+            test_files.append(('image', image_response['image_url']))
+        
+        # Upload video
+        success, video_response = self._test_video_upload_format('static_test_video.mp4', 'video/mp4')
+        if success and 'video_url' in video_response:
+            test_files.append(('video', video_response['video_url']))
+        
+        # Test 2: Verify all uploaded files are accessible
+        accessible_files = 0
+        for file_type, file_url in test_files:
+            self.tests_run += 1
+            print(f"\n🔍 Testing Static File Access - {file_type.upper()}...")
+            print(f"   URL: {file_url}")
+            
+            try:
+                response = requests.get(file_url, timeout=10)
+                if response.status_code == 200:
+                    self.tests_passed += 1
+                    accessible_files += 1
+                    print(f"✅ Passed - {file_type.upper()} file accessible")
+                    print(f"   Content-Type: {response.headers.get('content-type', 'Unknown')}")
+                    print(f"   Content-Length: {response.headers.get('content-length', 'Unknown')}")
+                else:
+                    print(f"❌ Failed - {file_type.upper()} file not accessible: {response.status_code}")
+            except Exception as e:
+                print(f"❌ Failed - Error accessing {file_type} file: {str(e)}")
+        
+        print(f"\n📊 Static File Serving: {accessible_files}/{len(test_files)} files accessible")
+        return accessible_files == len(test_files)
+
+    def run_comprehensive_tests(self):
+        """Run all comprehensive tests for Frisor LaFata backend deployment"""
+        print("🚀 STARTING COMPREHENSIVE FRISOR LAFATA BACKEND DEPLOYMENT TESTS")
+        print("=" * 70)
+        print(f"Backend URL: {self.base_url}")
+        print(f"API URL: {self.api_url}")
+        print("Expected Database: MySQL (Note: Implementation uses MongoDB)")
+        print("=" * 70)
+
+        # 1. Authentication & Admin Tests
+        print("\n" + "🔐 AUTHENTICATION & ADMIN TESTS" + "=" * 35)
+        self.test_root_endpoint()
+        admin_login_success, admin_response = self.test_admin_login()
+        if not admin_login_success:
+            print("❌ CRITICAL: Admin login failed - cannot proceed with admin-required tests")
+            return False
+        
+        # Test JWT token authentication
+        self.test_get_current_user()
+        
+        # 2. Core CRUD Operations Tests
+        print("\n" + "📊 CORE CRUD OPERATIONS TESTS" + "=" * 32)
+        
+        # Services CRUD
+        self.test_get_services()
+        self.test_create_service_with_admin()
+        self.test_update_service()
+        
+        # Staff CRUD
+        self.test_get_staff()
+        self.test_create_staff_with_admin()
+        self.test_update_staff()
+        
+        # Bookings CRUD
+        staff_success, staff_list = self.test_get_staff()
+        services_success, services_list = self.test_get_services()
+        
+        if staff_success and services_success and staff_list and services_list:
+            staff_id = staff_list[0]['id']
+            service_ids = [services_list[0]['id']]
+            
+            # Test booking creation and management
+            tomorrow = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
+            self.test_available_slots(staff_id, tomorrow)
+            
+            booking_success, booking_response = self.test_create_booking(
+                staff_id, service_ids, tomorrow, "10:00"
+            )
+            if booking_success and 'id' in booking_response:
+                self.created_booking_id = booking_response['id']
+            
+            self.test_get_bookings()
+        
+        # Settings CRUD
+        self.test_get_settings()
+        self.test_update_settings()
+        self.test_get_public_settings()
+        
+        # 3. File Upload Endpoints Tests
+        print("\n" + "📁 FILE UPLOAD ENDPOINTS TESTS" + "=" * 32)
+        
+        # Avatar upload
+        self.test_avatar_upload_comprehensive()
+        
+        # Image upload
+        self.test_image_upload_endpoint()
+        
+        # Static file serving
+        self.test_static_file_serving_comprehensive()
+        
+        # 4. Homepage Editor API Tests
+        print("\n" + "🏠 HOMEPAGE EDITOR API TESTS" + "=" * 35)
+        self.test_homepage_editor_comprehensive()
+        
+        # 5. Database Connectivity Tests
+        print("\n" + "🗄️ DATABASE CONNECTIVITY TESTS" + "=" * 32)
+        self.test_mysql_database_connectivity()
+        
+        # 6. Additional Comprehensive Tests
+        print("\n" + "🚀 ADDITIONAL COMPREHENSIVE TESTS" + "=" * 30)
+        self.test_enhanced_page_model()
+        self.test_video_upload_endpoint()
+        self.test_public_pages_api()
+        self.test_page_crud_enhanced_features()
+        self.test_gallery_comprehensive()
+        self.test_staff_avatar_integration()
+        self.test_database_avatar_urls_consistency()
+        
+        # 7. Cleanup Tests
+        print("\n" + "🧹 CLEANUP TESTS" + "=" * 45)
+        self.test_delete_booking()
+        self.test_delete_service()
+        self.test_delete_staff()
+        self.test_delete_page()
+        
+        # Final Results
+        print("\n" + "📊 FRISOR LAFATA BACKEND DEPLOYMENT TEST RESULTS" + "=" * 20)
+        print(f"Total Tests Run: {self.tests_run}")
+        print(f"Tests Passed: {self.tests_passed}")
+        print(f"Tests Failed: {self.tests_run - self.tests_passed}")
+        print(f"Success Rate: {(self.tests_passed/self.tests_run)*100:.1f}%")
+        
+        # Critical endpoints summary
+        critical_endpoints = [
+            "Admin Login (/api/auth/login)",
+            "JWT Authentication",
+            "Services CRUD",
+            "Staff CRUD", 
+            "Bookings CRUD",
+            "Settings API",
+            "Avatar Upload",
+            "Image Upload",
+            "Static File Serving",
+            "Homepage Editor API",
+            "Database Operations"
+        ]
+        
+        print(f"\n🎯 CRITICAL ENDPOINTS TESTED:")
+        for endpoint in critical_endpoints:
+            print(f"   ✅ {endpoint}")
+        
+        if self.tests_passed == self.tests_run:
+            print("\n🎉 ALL FRISOR LAFATA BACKEND TESTS PASSED! 🎉")
+            print("✅ Backend deployment is fully functional for the barbershop website")
+        else:
+            print(f"\n⚠️  {self.tests_run - self.tests_passed} tests failed")
+            print("❌ Some backend functionality may need attention")
+        
+        return self.tests_passed == self.tests_run
+
 def main():
     """Main test execution with priority endpoint focus"""
     tester = FrisorLaFataAPITester()
