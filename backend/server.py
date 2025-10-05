@@ -838,7 +838,25 @@ async def create_staff(staff: StaffCreate, current_user: User = Depends(get_curr
 @api_router.get("/staff", response_model=List[Staff])
 async def get_staff():
     staff_list = await db.staff.find().to_list(length=None)
-    return [Staff(**parse_from_mongo(staff)) for staff in staff_list]
+    result = []
+    for staff in staff_list:
+        staff_data = parse_from_mongo(staff)
+        # Fix avatar_url if it's None
+        if staff_data.get('avatar_url') is None:
+            staff_data['avatar_url'] = ""
+        # Fix available_hours if it's a list instead of dict
+        if isinstance(staff_data.get('available_hours'), list):
+            staff_data['available_hours'] = {
+                "monday": {"start": "09:00", "end": "18:00", "enabled": True},
+                "tuesday": {"start": "09:00", "end": "18:00", "enabled": True},
+                "wednesday": {"start": "09:00", "end": "18:00", "enabled": True},
+                "thursday": {"start": "09:00", "end": "18:00", "enabled": True},
+                "friday": {"start": "09:00", "end": "18:00", "enabled": True},
+                "saturday": {"start": "10:00", "end": "16:00", "enabled": True},
+                "sunday": {"start": None, "end": None, "enabled": False}
+            }
+        result.append(Staff(**staff_data))
+    return result
 
 @api_router.put("/staff/{staff_id}", response_model=Staff)
 async def update_staff(staff_id: str, staff_update: StaffUpdate, current_user: User = Depends(get_current_user)):
