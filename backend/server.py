@@ -251,7 +251,7 @@ class Staff(BaseModel):
     specialties: List[str] = Field(default_factory=list)
     phone: str = ""
     email: str = ""
-    avatar_url: str = ""
+    avatar_url: Optional[str] = ""
     portfolio_images: List[str] = Field(default_factory=list)
     # Social Media Links
     instagram_url: str = ""
@@ -261,7 +261,7 @@ class Staff(BaseModel):
     twitter_url: str = ""
     youtube_url: str = ""
     website_url: str = ""
-    available_hours: dict = Field(default_factory=lambda: {
+    available_hours: Optional[dict] = Field(default_factory=lambda: {
         "monday": {"start": "09:00", "end": "18:00", "enabled": True},
         "tuesday": {"start": "09:00", "end": "18:00", "enabled": True},
         "wednesday": {"start": "09:00", "end": "18:00", "enabled": True},
