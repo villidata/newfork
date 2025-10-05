@@ -352,7 +352,7 @@ const BookingSystem = ({ onClose }) => {
     return servicesPrice + parseFloat(corporateInfo.travelFee || 0);
   };
 
-  const selectedStaffMember = staff.find(s => s.id === selectedStaff);
+  const selectedStaffMember = Array.isArray(staff) ? staff.find(s => s.id === selectedStaff) : null;
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
