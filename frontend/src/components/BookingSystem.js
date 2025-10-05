@@ -90,10 +90,12 @@ const BookingSystem = ({ onClose }) => {
   const fetchStaff = async () => {
     try {
       const response = await axios.get(`${API}/staff`);
-      setStaff(response.data);
+      // Ensure response.data is always an array
+      setStaff(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Failed to fetch staff:', error);
       setError('Kunne ikke hente frisører');
+      setStaff([]); // Set empty array on error
     }
   };
 
