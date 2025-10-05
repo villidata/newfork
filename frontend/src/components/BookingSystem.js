@@ -102,10 +102,12 @@ const BookingSystem = ({ onClose }) => {
   const fetchServices = async () => {
     try {
       const response = await axios.get(`${API}/services`);
-      setServices(response.data);
+      // Ensure response.data is always an array
+      setServices(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Failed to fetch services:', error);
       setError('Kunne ikke hente tjenester');
+      setServices([]); // Set empty array on error
     }
   };
 
