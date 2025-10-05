@@ -23,8 +23,8 @@ async def fix_image_urls():
     print("=== FIXING REMAINING BROKEN IMAGE URLS ===")
     
     # Define URL mappings
-    old_domain = "https://frisor-ssl-deploy.preview.emergentagent.com"
-    new_domain = "https://frisor-ssl-deploy.preview.emergentagent.com"
+    old_domain = "https://retro-salon.preview.emergentagent.com"
+    new_domain = "https://retro-salon.preview.emergentagent.com"
     
     # 1. Fix site settings hero_image
     print("\n1. Fixing site settings hero_image...")

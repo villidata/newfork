@@ -13,7 +13,7 @@ REACT_APP_BACKEND_URL=https://frisorlafata.dk:8001
 WDS_SOCKET_PORT=443
 
 ## Option 4: Keep Using Emergent (Temporary)
-REACT_APP_BACKEND_URL=https://frisor-ssl-deploy.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://retro-salon.preview.emergentagent.com
 WDS_SOCKET_PORT=443
 
 ## Important Notes:

@@ -154,7 +154,7 @@ const Home = () => {
     fixedUrl = fixedUrl.replace('stylista-admin.preview.emergentagent.com', 'barberedit.preview.emergentagent.com');
     
     // Replace localhost with correct external domain
-    fixedUrl = fixedUrl.replace('http://localhost:8001/api/', 'https://frisor-ssl-deploy.preview.emergentagent.com/api/');
+    fixedUrl = fixedUrl.replace('http://localhost:8001/api/', 'https://retro-salon.preview.emergentagent.com/api/');
     
     console.log('Fixed image URL:', url, '->', fixedUrl);
     return fixedUrl;
